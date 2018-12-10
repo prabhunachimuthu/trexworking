@@ -1,0 +1,935 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Helper
+@using OneDirect.Models
+@using OneDirect.ViewModels
+@using Newtonsoft.Json
+@{
+
+}
+<style type="text/css">
+    #calendar1 {
+        
+    }
+
+    .mask2 {
+        background-color: #000;
+        display: block;
+        height: 100%;
+        left: 0;
+        opacity: .8;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+   
+</style>
+<section class="content-header">
+
+
+    <h1>
+        <span>@((ViewBag.UserName != null && ViewBag.UserName.ToLower() != "admin") ? ViewBag.UserName + "'s Appointments" : "All Appointments")</span>
+    </h1>
+
+    @*kajal*@
+    @if (Context.Session.GetString("UserType") == ConstantsVar.Therapist.ToString())
+    {
+    <ol class="breadcrumb">
+        <li><a href="~/Therapist/Dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Appointments</li>
+    </ol>
+
+    }
+    else
+    {
+    <ol class="breadcrumb">
+        <li><a href="~/Support/Dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Appointments</li>
+    </ol>
+
+    }
+
+   
+</section>
+<div class="row" style="display:none">
+    <div class="col-md-12">
+        <div class="box box-default with-border">
+            <div class="box-header with-border">
+                @if (Context.Session.GetString("UserType") == "0")
+                {
+                    <div class="col-md-4">
+                        <div class="radio">
+
+
+                            <label>
+                                <input type="radio" id="forward" name="forward" data-actionurl="@Url.Action("Index", "Appointments", new { id = "History", patId = ViewBag.PatId })" @(ViewBag.page == "History" ? "checked" : "") />
+                                History
+
+                            </label>
+
+
+                        </div>
+                    </div>
+                }
+                else if (Context.Session.GetString("UserType") == "0")
+                {
+                    <div class="col-md-4">
+                        <div class="radio">
+
+                            <label>
+                                <input type="radio" id="forward" name="forward" data-actionurl="@Url.Action("Index", "Appointments", new { id = "Calendar" })" @(ViewBag.page == "Calendar" ? "checked" : "") />
+                                Appointment Calendar
+
+                            </label>
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="radio">
+
+                            <label>
+                                <input type="radio" id="forward" name="forward" data-actionurl="@Url.Action("Index", "Appointments", new { id = "Availability" })" @(ViewBag.page == "Availability" ? "checked" : "") />
+                                Generally Available on these days
+                            </label>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="radio">
+
+                            <label>
+                                <input type="radio" id="forward" name="forward" data-actionurl="@Url.Action("Index", "Appointments", new { id = "History" })" @(ViewBag.page == "History" ? "checked" : "") />
+                                History
+
+                            </label>
+
+
+
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Main content -->
+<!-- Main content -->
+<section class="content" style="padding-top: 20px;">
+    <div class="row">
+        <!-- /.col -->
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header">
+                    
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            @if (Context.Session.GetString("UserType") == "0")
+                            {
+                                <div class="nav-tabs-custom" style="margin-bottom:0px !important;">
+                                    <ul class="nav nav-tabs">
+                                        <li class="@(ViewBag.page == "History" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_1" data-value="@Url.Action("Index", "Appointments", new { id = "History" })" data-toggle="tab">History</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+
+                                        <div class="tab-pane @(ViewBag.page == "History" ? "active" : "")" id="tab_3">
+                                            <div class="box-body no-padding">
+                                                <div class="content col-sm-12 no-padding" style="width: 100% !important;height: auto !important;">
+
+
+                                                    @if (ViewBag.history != null)
+                                                    {
+                                                        <div class="box" style="border-top:none;box-shadow:none">
+
+                                                            <div class="box-body">
+                                                                <div class="col-md-12" style="padding-bottom:10px;padding-top:10px;">
+                                                                    <div class="dropdown pull-right">
+                                                                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                                                                            @ViewBag.SelectedPatient
+                                                                            <span class="caret"></span>
+                                                                        </button>
+                                                                        <ul class="dropdown-menu">
+                                                                            @foreach (Patient p in ViewBag.Patients)
+                                                                            {
+                                                                                <li><a href="@Url.Action("Index", "Appointments", new { @id = "History", @patId = p.PatientId })">@p.PatientName</a></li>
+                                                                            }
+                                                                            <li><a href="@Url.Action("Index", "Appointments", new { @id = "History" })">All</a></li>
+                                                                        </ul>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div id="example1_wrapper" class="col-md-12 dataTables_wrapper form-inline dt-bootstrap" style="clear:both">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-12" style="overflow-x:auto;">
+                                                                            <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                                                                <thead>
+                                                                                    <tr role="row">
+                                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Patient Name</th>
+                                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Doctor Name</th>
+                                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Appointment Time </th>
+                                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Status</th>
+                                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Actions</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @if (ViewBag.History != null)
+                                                                                    {
+                                                                                        List<AppointmentScheduleListView> lview = (List<AppointmentScheduleListView>)ViewBag.History;
+                                                                                        var i = 0;
+                                                                                        @foreach (var item in lview.OrderByDescending(x => x.AppointmentDate))
+                                                                                        {
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    @if (item.TotalSession > 0)
+                                                                                                    {
+                                                                                                        
+                                                                                                    {
+                                                                                                        <a href="@Url.Action("Patient", "Provider", new { id = item.PatientRx.PatientId, Username = item.PatientName, EquipmentType = item.PatientRx.EquipmentType, actuator = item.PatientRx.DeviceConfiguration })">@item.PatientName</a>
+
+                                                                                                        }
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        @item.PatientName
+
+                                                                                                    }
+
+                                                                                                </td>
+                                                                                                <td>@item.Provider.Name</td>
+                                                                                                <td>@(Convert.ToDateTime(item.AppointmentDate).ToString("MM-dd-yyyy hh:mm tt")) - @(Convert.ToDateTime(item.AppointmentDate).AddMinutes(30).ToString("hh:mm tt"))</td>
+                                                                                                <td>@(item.Status == "Open" ? "-" : item.Status)</td>
+                                                                                                <td>@Html.ActionLink("Delete", "deleteappointment", new { appointmentid = item.AppointmentId }, new { @class = "label label-primary", onclick = "return confirm('Are you sure want to delete the appointment?')" })</td>
+                                                                                            </tr>
+
+
+                                                                                        }
+                                                                                    }
+
+                                                                                <tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="nav-tabs-custom" style="margin-bottom:0px !important;">
+                                    <ul class="nav nav-tabs">
+                                        <li class="@(ViewBag.page == "Calendar" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_1" data-value="@Url.Action("Index", "Appointments", new { id = "Calendar" })" data-toggle="tab">Appointment Calendar</a>
+                                        </li>
+                                        <li class="@(ViewBag.page == "Availability" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_2" data-value="@Url.Action("Index", "Appointments", new { id = "Availability" })" data-toggle="tab">Generally Available on these days</a>
+                                        </li>
+                                        <li class="@(ViewBag.page == "History" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_3" data-value="@Url.Action("Index", "Appointments", new { id = "History" })" data-toggle="tab">History</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+
+                                        <div class="tab-pane @(ViewBag.page == "Calendar" ? "active" : "")" id="tab_1">
+                                            <div class="box-body no-padding">
+                                                <div class="content col-sm-12 no-padding" style="width: 100% !important;height: auto !important;">
+                                                    @if (ViewBag.appointment != null || ViewBag.Page == "Calendar")
+                                                    {
+                                                        <div class="box" style="border-top:none;box-shadow:none">
+                                                            <div class="box-header">
+                                                                <div class="col-md-12" style="padding-bottom:10px;">
+                                                                    <div class="col-md-3" id="romflexion">
+                                                                        <button type="button" class="btn btn-default btn-sm active">
+                                                                            <i class="fa fa-square text-green"></i>
+                                                                        </button>&nbsp;Available
+                                                                    </div>
+                                                                    <div class="col-md-3" id="romflexion">
+                                                                        <button type="button" class="btn btn-default btn-sm active">
+                                                                            <i class="fa fa-square text-blue"></i>
+                                                                        </button>&nbsp;Booked
+                                                                    </div>
+                                                                    <div class="col-md-3" id="romflexion">
+                                                                        <button type="button" class="btn btn-default btn-sm active">
+                                                                            <i class="fa fa-square text-red"></i>
+                                                                        </button>&nbsp;Ready to Start
+                                                                    </div>
+                                                                    <div class="col-md-3" id="romflexion">
+                                                                        <button type="button" class="btn btn-default btn-sm active">
+                                                                            <i class="fa fa-square text-gray"></i>
+                                                                        </button>&nbsp;Blocked
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="box-body">
+                                                                @if (ViewBag.availability != null || ViewBag.Page == "Calendar")
+                                                                {
+                    <!-- THE CALENDAR -->
+                                                                    <div id="calendar"></div>
+                                                                }
+                                                            </div>
+                                                        </div>
+
+
+
+
+
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane @(ViewBag.page == "Availability" ? "active" : "")" id="tab_2">
+                                            <div class="box-body no-padding">
+                                                <div class="content col-sm-12 no-padding">
+                                                    @if (ViewBag.availability != null || ViewBag.Page == "Availability")
+                                                    {
+                                                        <div class="box" style="border-top:none;box-shadow:none">
+                                                            <div class="box-header">
+                                                                <div class="col-md-12" style="padding-bottom:10px;">
+                                                                    <div class="col-md-3" id="romflexion">
+                                                                        <button type="button" class="btn btn-default btn-sm active">
+                                                                            <i class="fa fa-square text-green"></i>
+                                                                        </button>&nbsp;Available
+                                                                    </div>
+
+                                                                    <div class="col-md-3" id="romflexion">
+                                                                        <button type="button" class="btn btn-default btn-sm active">
+                                                                            <i class="fa fa-square text-gray"></i>
+                                                                        </button>&nbsp;Not Available
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="box-body">
+                                                                @if (ViewBag.appointment != null || ViewBag.Page == "Availability")
+                                                                {
+
+                                                                    <div id="calendar1"></div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    }
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane @(ViewBag.page == "History" ? "active" : "")" id="tab_3">
+                                            <div class="box-body no-padding">
+                                                <div class="content col-sm-12 no-padding" style="width: 100% !important;height: auto !important;">
+
+
+                                                    @if (ViewBag.history != null)
+                                                    {
+                                                        <div class="box" style="border-top:none;box-shadow:none">
+
+                                                            <div class="box-body">
+                                                                <div class="col-md-12" style="padding-bottom:10px;padding-top:10px;">
+                                                                    <div class="dropdown pull-right">
+                                                                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                                                                            @ViewBag.SelectedPatient
+                                                                            <span class="caret"></span>
+                                                                        </button>
+                                                                        <ul class="dropdown-menu">
+                                                                            @foreach (Patient p in ViewBag.Patients)
+                                                                            {
+                                                                                <li><a href="@Url.Action("Index", "Appointments", new { @id = "History", @patId = p.PatientId })">@p.PatientName</a></li>
+                                                                            }
+                                                                            <li><a href="@Url.Action("Index", "Appointments", new { @id = "History" })">All</a></li>
+                                                                        </ul>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div id="example1_wrapper" class="col-md-12 dataTables_wrapper form-inline dt-bootstrap" style="clear:both">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-12" style="overflow-x:auto;">
+                                                                            <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                                                                <thead>
+                                                                                    <tr role="row">
+                                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Patient Name</th>
+                                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Doctor Name</th>
+                                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Appointment Time </th>
+                                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Status</th>
+                                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Actions</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @if (ViewBag.History != null)
+                                                                                    {
+                                                                                        List<AppointmentScheduleListView> lview = (List<AppointmentScheduleListView>)ViewBag.History;
+                                                                                        var i = 0;
+                                                                                        @foreach (var item in lview.OrderByDescending(x => x.AppointmentDate))
+                                                                                        {
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    @if (item.TotalSession > 0)
+                                                                                                    {
+                                                                                                       
+                                                                                                    {
+                                                                                                        <a href="@Url.Action("Patient", "Provider", new { id = item.PatientRx.PatientId, Username = item.PatientName, EquipmentType = item.PatientRx.EquipmentType, actuator = item.PatientRx.DeviceConfiguration })">@item.PatientName</a>
+
+                                                                                                        }
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        @item.PatientName
+
+                                                                                                    }
+
+                                                                                                </td>
+                                                                                                <td>@item.Provider.Name</td>
+                                                                                                <td>@(Convert.ToDateTime(item.AppointmentDate).ToString("MM-dd-yyyy hh:mm tt")) - @(Convert.ToDateTime(item.AppointmentDate).AddMinutes(30).ToString("hh:mm tt"))</td>
+                                                                                                <td>@(item.Status == "Open" ? "-" : item.Status)</td>
+                                                                                                <td>@Html.ActionLink("Delete", "deleteappointment", new { appointmentid = item.AppointmentId }, new { @class = "label label-primary", onclick = "return confirm('Are you sure want to delete the appointment?')" })</td>
+                                                                                            </tr>
+
+
+                                                                                        }
+                                                                                    }
+
+                                                                                <tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /. box -->
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>
+@if (ViewBag.availability != null)
+{
+    <div class="mask2" id="mask2" style="display:none"></div>
+    <div id="divpopup2" class="col-md-6" style="border:1px solid white;display:none;position:fixed;top:25%;left:25%;z-index:300003">
+        <section class="content-header">
+            <span style="color:white" id="messageid"></span>
+        </section>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <input type="hidden" id="hdday" value="" />
+                        <input type="hidden" id="hdhour" value="" />
+                        <input type="hidden" id="hdminute" value="" />
+                        <input type="hidden" id="hdoffset" value="" />
+                        <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                            <div class="row">
+                                <div class="col-sm-12" style="overflow-x:auto;">
+                                    <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                       
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-footer">
+                        <div class="col-md-12">
+                            <span id="messagebottom"></span>
+                        </div>
+                        <button type="button" id="btnYes" class="btn btn-success pull-right" onclick="deleteappointments();" style="margin-left:10px;">Yes</button>
+
+                        <button type="button" id="btnNo" class="btn btn-default pull-right" onclick="$('#divpopup2').hide();$('#mask2').hide();window.location.reload();" style="margin-left:10px;">No</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+
+        </div>
+    </div>
+
+}
+<a href="" id="vseeurl" style="display:none"></a>
+
+
+
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js" type="text/javascript"></script>
+
+<script>
+
+    $(function () {
+        "use strict";
+
+        var startslot=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((Context.Session.GetString("UserType") =="1"? ConfigVars.NewInstance.slots.Support_StartTime : ConfigVars.NewInstance.slots.Therapist_StartTime)));
+        var endslot=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((Context.Session.GetString("UserType") =="1"? ConfigVars.NewInstance.slots.Support_EndTime : ConfigVars.NewInstance.slots.Therapist_EndTime)));
+        var slotduration=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ConfigVars.NewInstance.slots.SlotDuration));
+       
+
+        $("input:radio[name='forward']").change(function(){
+
+            window.location = $(this).attr("data-actionurl");
+        });
+
+       
+
+        window.setInterval(function () {
+            refreshappointments();
+
+
+        }, 60000);
+
+
+
+    });
+    function getTimeZone() {
+
+               ////local
+        //return /\((.*)\)/.exec(new Date().toString())[1];
+        //Heroku
+        return moment.tz.guess();
+
+       
+    }
+    function triggerfunction(tab) {
+       
+        window.location = $(tab).find('a').attr("data-value");
+    }
+    function refreshappointments()
+    {
+        if(location.pathname.indexOf("Calendar") >0)
+        {
+            //showMask();
+            $.ajax({
+                url: '@Url.Action("refresh","appointments")',
+                
+                type: 'post',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if(data!=null)
+                    {
+                        console.log(data);
+                        if(data.result =="success" && data.appointmentlist !=null)
+                        {
+                            
+                            $('#calendar').fullCalendar( 'removeEvents');
+                            $('#calendar').fullCalendar( 'addEventSource', data.appointmentlist);
+                            $('#calendar').fullCalendar( 'refetchEvents' );
+                            hideMask();
+                        }
+                    }
+                },
+                error: function (data) {
+                   
+                }
+            });
+        }
+
+    }
+    function deleteappointments()
+    {
+       
+        showMask();
+        var urlvalue="";
+        if(slotduration =="30")
+        {
+            urlvalue='@Url.Action("delete","appointments")'+"?day="+ $("#hdday").val()+"&hour="+ $("#hdhour").val()+"&minute="+ $("#hdminute").val()+"&timezoneoffset="+encodeURIComponent(getTimeZone());
+        }
+        else
+        {
+            urlvalue= '@Url.Action("delete","appointments")'+"?day="+ $("#hdday").val()+"&hour="+ $("#hdhour").val()+"&timezoneoffset="+encodeURIComponent(getTimeZone());
+
+        }
+        $.ajax({
+            url: urlvalue,
+            
+            type: 'post',
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                if(data!=null)
+                {
+                    console.log(data);
+                    if(data.result !="" )
+                    {
+                        window.location.reload();
+                    }
+                }
+            },
+            error: function (data) {
+               
+            }
+        });
+
+
+    }
+
+    $(function () {
+        var startslot=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((Context.Session.GetString("UserType") =="1"? ConfigVars.NewInstance.slots.Support_StartTime : ConfigVars.NewInstance.slots.Therapist_StartTime)));
+        var endslot=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((Context.Session.GetString("UserType") =="1"? ConfigVars.NewInstance.slots.Support_EndTime : ConfigVars.NewInstance.slots.Therapist_EndTime)));
+        var slotduration=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ConfigVars.NewInstance.slots.SlotDuration));
+        var availability=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.availability));
+        var appointment=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.appointment));
+       
+
+        /* initialize the calendar
+         -----------------------------------------------------------------*/
+        //Date for the calendar events (dummy data)
+        var d=new Date();
+        if (availability != null || "@ViewBag.Page" == "Availability")
+        {
+
+            $('#calendar1').fullCalendar({
+
+                header: {
+                    left: '',
+                    center: '',
+                    right: ''
+                },
+                allDaySlot: false,
+                buttonText: {
+                    today: 'today',
+                    month: 'month',
+                    week: 'week',
+                    day: 'day'
+                },
+                contentHeight: 'auto',
+               
+                slotDuration: (slotduration=="30" ? '00:30:00' :'01:00:00'),
+                minTime: startslot,
+                maxTime:endslot,
+                
+                defaultView: 'agendaWeek',
+                columnFormat: 'dddd',
+                timeFormat: 'H(:mm)',
+                slotEventOverlap:false,
+                events:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.availability)),
+                
+                eventClick: function(calEvent, jsEvent, view) {
+                   
+                    showMask();
+                  
+                    var urlvalue="";
+                    if(slotduration =="30")
+                    {
+                        urlvalue='@Url.Action("insert","appointments")'+"?day="+calEvent.start.day()+"&hour="+calEvent.start.hour()+"&minute="+calEvent.start.minute()+"&timezoneoffset="+ encodeURIComponent(getTimeZone());
+                    }
+                    else
+                    {
+                        urlvalue= '@Url.Action("insert","appointments")'+"?day="+calEvent.start.day()+"&hour="+calEvent.start.hour()+"&timezoneoffset="+ encodeURIComponent(getTimeZone());
+
+                    }
+                    $.ajax({
+                        url: urlvalue,
+                       
+                        type: 'post',
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            if(data!=null)
+                            {
+                                console.log(data);
+                                if(data.result !="" && data.appointments==null)
+                                {
+                                    window.location.reload();
+                                }
+                                if(data.result !="" && data.appointments !=null && data.appointments.length >0)
+                                {
+                                    var rowdata=[];
+                                    for(var i=0;i<data.appointments.length;i++)
+                                    {
+                                        rowdata.push(new Array('@Context.Session.GetString("UserName")', data.appointments[i].patient.patientName,moment(data.appointments[i].datetime).format("YYYY-MM-DD hh A"),data.appointments[i].callStatus));
+
+                                    }
+                                    console.log(rowdata);
+                                    
+                                    $("#divpopup2").show();
+                                    $("#mask2").show();
+                                    $("#messageid").text("You have following Appointment booked by Patients For "+ moment(new Date(calEvent.start.format())).format("dddd hh A"));
+                                    $("#messagebottom").text("Making " + moment(new Date(calEvent.start.format())).format("dddd hh A")+ " unavailable will cancel these appointments  Do you want to cancel all these appointments?");
+                                    $("#hdday").val(new Date(calEvent.start.format()).getDay());
+                                    $("#hdhour").val(new Date(calEvent.start.format()).getHours());
+                                    $("#hdminute").val(new Date(calEvent.start.format()).getMinutes());
+                                    $("#hdoffset").val(getTimeZone());
+
+                                    $('#example1').dataTable({
+                                        "data": rowdata,
+                                        "stateSave": true,
+                                        "stateDuration": -1,
+                                        "columns": [
+                                            { "title": "Name" },
+                                            { "title": "Patient Name" },
+                                            { "title": "Date" },
+                                            { "title": "Status" }
+                                        ]
+                                    })
+                                }
+                            }
+                        },
+                        error: function (data) {
+                            
+                        }
+                    });
+                },
+                dayClick: function(date, jsEvent, view) {
+                    showMask();
+                  
+                    var urlvalue="";
+                    if(slotduration =="30")
+                    {
+                        urlvalue='@Url.Action("insert","appointments")'+"?day="+new Date(date.format()).getDay()+"&hour="+new Date(date.format()).getHours()+"&minute="+new Date(date.format()).getMinutes()+"&timezoneoffset="+ encodeURIComponent(getTimeZone());
+                    }
+                    else
+                    {
+                        urlvalue= '@Url.Action("insert","appointments")'+"?day="+new Date(date.format()).getDay()+"&hour="+new Date(date.format()).getHours()+"&timezoneoffset="+ encodeURIComponent(getTimeZone());
+
+                    }
+                    $.ajax({
+                        url: urlvalue,
+                        
+                        type: 'post',
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            if(data!=null)
+                            {
+                                console.log(data);
+                                if(data.result !="" && data.appointments==null)
+                                {
+                                    window.location.reload();
+                                }
+                                if(data.result !="" && data.appointments !=null && data.appointments.length >0)
+                                {
+                                    var rowdata=[];
+                                    for(var i=0;i<data.appointments.length;i++)
+                                    {
+                                        rowdata.push(new Array('@Context.Session.GetString("UserName")', data.appointments[i].patient.patientName,moment(data.appointments[i].datetime).format("YYYY-MM-DD hh A"),data.appointments[i].callStatus));
+                                    }
+                                    console.log(rowdata);
+                                    $("#divpopup2").show();
+                                    $("#mask2").show();
+                                    $("#messageid").text("You have following Appointment booked by Patients For "+ moment(new Date(date.format())).format("dddd hh A"));
+                                    $("#messagebottom").text("Making " + moment(new Date(date.format())).format("dddd hh A")+ " unavailable will cancel these appointments  Do you want to cancel all these appointments?");
+                                    $("#hdday").val(new Date(date.format()).getDay());
+                                    $("#hdhour").val(new Date(date.format()).getHours());
+                                    $("#hdminute").val(new Date(calEvent.start.format()).getMinutes());
+                                    $("#hdoffset").val(getTimeZone());
+
+                                    $('#example1').dataTable({
+                                        "data": rowdata,
+                                        "stateSave": true,
+                                        "stateDuration": -1,
+                                        "columns": [
+                                            { "title": "Name" },
+                                            { "title": "Patient Name" },
+                                            { "title": "Date" },
+                                            { "title": "Status" }
+                                        ]
+                                    })
+                                }
+                            }
+                        },
+                        error: function (data) {
+                            
+                        }
+                    });
+                   
+                },
+                
+                eventDurationEditable: false,
+                editable: false,
+                droppable: false, // this allows things to be dropped onto the calendar !!!
+
+            })
+        }
+        else if (appointment != null || "@ViewBag.Page" == "Calendar")
+        {
+            console.log(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.appointment)));
+            var endDate=moment().add(60, 'days');
+
+
+            $('#calendar').fullCalendar({
+                firstDay:d.getDay(),
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: ''
+                },
+                slotDuration: (slotduration=="30" ? '00:30:00' :'01:00:00'),
+               
+                minTime:startslot,
+                maxTime:endslot,
+               
+                contentHeight: 'auto',
+                scrollTime: '10:00:00',
+               
+                buttonText: {
+                    today: 'today',
+                    month: 'month',
+                    week: 'week',
+                    day: 'day'
+                },
+
+                viewRender: function(currentView){
+                    var minDate = moment();
+                    // Past
+                    if ((minDate >= currentView.start && minDate <= currentView.end)) {
+                        $(".fc-prev-button").prop('disabled', true);
+                        $(".fc-prev-button").addClass('fc-state-disabled');
+                    }
+                    else {
+                        $(".fc-prev-button").removeClass('fc-state-disabled');
+                        $(".fc-prev-button").prop('disabled', false);
+                    }
+
+                    if ((currentView.end >=endDate)) {
+                        $(".fc-next-button").prop('disabled', true);
+                        $(".fc-next-button").addClass('fc-state-disabled');
+                    }
+                    else
+                    {
+
+                        $(".fc-next-button").removeClass('fc-state-disabled');
+                        $(".fc-next-button").prop('disabled', false);
+                    }
+
+                },
+                dayClick: function(date, jsEvent, view) {
+                    showMask();
+                   
+                    $.ajax({
+                        url: '@Url.Action("insertschedule","appointments")'+"?date="+moment(date).format("YYYY-MM-DD HH:mm:ss")+"&timezoneoffset="+ encodeURIComponent(getTimeZone())+"&color=white",
+                       
+                        type: 'post',
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            if(data!=null)
+                            {
+                                console.log(data);
+                                if(data.result !="" && data.appointments==null)
+                                {
+                                    window.location.reload();
+                                }
+                            }
+                        },
+                        error: function (data) {
+                           
+                        }
+                    });
+                },
+                eventClick: function(calEvent, jsEvent, view) {
+                    console.log(calEvent);
+                    if(calEvent.backgroundColor=="green" ||calEvent.backgroundColor=="grey")
+                    {
+                       
+                        showMask();
+                        
+
+                        $.ajax({
+                            url: '@Url.Action("insertschedule","appointments")'+"?date="+moment(calEvent.start._i).format("YYYY-MM-DD HH:mm:ss")+"&timezoneoffset="+ encodeURIComponent(getTimeZone())+"&color="+calEvent.backgroundColor,
+                           
+                            type: 'post',
+                            dataType: 'json',
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                if(data!=null)
+                                {
+                                    console.log(data);
+                                    if(data.result !="" && data.appointments==null)
+                                    {
+                                        window.location.reload();
+                                    }
+                                }
+                            },
+                            error: function (data) {
+                               
+                            }
+                        });
+                    }
+                    else if(calEvent.backgroundColor=="red")
+                    {
+                        $.ajax({
+                            url: '@Url.Action("generateuri", "appointments")'+"?id="+calEvent.appointmentid,
+                           
+                            type: 'get',
+                            dataType: 'json',
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                if(data!=null)
+                                {
+                                    console.log(data);
+                                    if(data.result =="success" && data.url !="")
+                                    {
+                                        $("#vseeurl").attr("href",data.url);
+                                        $("#vseeurl")[0].click();
+                                        
+                                    }
+                                }
+                            },
+                            error: function (data) {
+                                
+                            }
+                        });
+                    }
+                },
+
+                
+                allDaySlot: false,
+                defaultView: 'agendaWeek',
+
+                
+                slotEventOverlap:false,
+                events:@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.appointment)),
+               
+                eventDurationEditable: false,
+                editable: false,
+                droppable: false, // this allows things to be dropped onto the calendar !!!
+
+            })
+        }
+        else
+        {
+            $('#example1').dataTable({
+                "language": {
+                    "emptyTable": "No appointments requested"
+                },
+                "stateSave": true,
+                "stateDuration": -1,
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [-1] /* 1st one, start by the right */
+                }]
+            });
+           
+        }
+
+    })
+</script>

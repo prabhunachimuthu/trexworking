@@ -1,0 +1,144 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@{
+
+}
+@model IEnumerable<OneDirect.ViewModels.NewPatient>
+<section class="content-header">
+
+        @if (ViewBag.TherapistName != null)
+        {
+            <h1>
+                <span>@ViewBag.TherapistName's Patients </span>
+            </h1>
+        }
+        else
+        {
+            <h1>
+                <span>Patients</span>
+            </h1>
+        }
+    
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Patients</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+
+<div class="col-md-2" style="padding-top:20px">
+    <table class="table table-bordered text-center">
+        <td>
+            @if (@Context.Session.GetString("UserType") != "2" && @Context.Session.GetString("UserType") != "3")
+            {
+                @Html.ActionLink("Create Patient", "CreatePatient", "CreatePatient", new { }, new { @class = "btn btn-block btn-warning btn-sm" })
+            }
+        </td>
+    </table>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+               
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12" style="overflow-x:auto">
+                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Patient Name</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Patient ID</th>
+                                            @if (ViewBag.TherapistType == null && ViewBag.TherapistType != "4")
+                                            {
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist Name: activate to sort column descending" style="width: 182px;">Therapist Name</th>
+                                            }
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">DOB</th>
+                                           
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Surgery Type</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Side</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Surgery Date</th>
+
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Phone</th>
+                                            
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions : activate to sort column descending" style="width: 182px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null)
+                                        {
+                                            @foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <td>@item.PatientName</td>
+                                                    <td>@item.PatientId</td>
+                                                    @if (ViewBag.TherapistType == null && ViewBag.TherapistType != "4")
+                                                    {
+                                                        <td>@item.ProviderId</td>
+                                                    }
+
+                                                    <td>@(item.Dob.HasValue ? Convert.ToDateTime(item.Dob).ToString("MMM-dd-yyyy") : "")</td>
+                                                    
+                                                    <td>@item.EquipmentType</td>
+                                                    <td>@item.Side</td>
+                                                    <td>@(item.SurgeryDate.HasValue ? Convert.ToDateTime(item.SurgeryDate).ToString("MMM-dd-yyyy") : "")</td>
+                                                    <td>@item.PhoneNumber</td>
+                                                   
+                                                    <td style="white-space: nowrap;">
+                                                        <div>
+                                                            <div style="float:left;margin-right: 1px;">
+                                                                @Html.ActionLink("Exercises", "ProtocolList", new { patId = item.PatientId, Username = item.PatientName, eType = item.EquipmentType }, new { @class = "label label-primary" })
+                                                            </div>
+
+                                                            <div>
+                                                                @Html.ActionLink("Sessions", "Index", "SessionView", new { id = item.PatientId, Username = item.PatientName, Etype = item.EquipmentType }, new { @class = "label label-primary" })
+                                                            </div>
+
+                                                        </div>
+                                                        <div style="margin-top:5px;">
+                                                            @Html.ActionLink("Rx", "PatientRX", new { patid = item.PatientId, operaton = "edit" }, new { @class = "label label-primary" })
+
+                                                            @Html.ActionLink("Edit", "CreatePatient", "CreatePatient", new { patid = item.PatientId, operaton = "edit" }, new { @class = "label label-primary" })
+
+                                                          
+                                                        </div>
+                                                        <div style="margin-top:6px;">
+
+                                                            @Html.ActionLink("Appointments", "Index", "Appointments", new { id = "History", patId = item.PatientId }, new { @class = "label label-primary" })
+
+
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+                                            }
+                                        }
+
+                                    <tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example1').DataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1, -2, -3] /* 1st one, start by the right */
+            }]
+        });
+
+    });
+
+</script>

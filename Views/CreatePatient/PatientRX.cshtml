@@ -1,0 +1,731 @@
+﻿@using OneDirect.ViewModels
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Helper
+@model NewPatientWithProtocol
+
+@{
+
+}
+
+<section class="content-header">
+    <h1>
+        @if (ViewBag.Action == "edit")
+        {
+            <span>@ViewBag.PatientName Rx</span>
+        }
+        else
+        {
+            <span>Add Patient Rx</span> <span style="color:red;font-size:14px;">Patient record not created, will be created only after you Submit this form</span>
+        }
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Patient Rx</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+<div class="col-md-12" style="padding-top:20px">
+    <!-- Horizontal Form -->
+    <div class="box box-info">
+
+        <!-- /.box-header -->
+        <!-- form start -->
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("Surgerydate", (DateTime)ViewBag.SurgeryDate)
+            @Html.Hidden("etype", (string)ViewBag.EquipmentType)
+
+            @if (Context.Session.GetString("UserType") == ConstantsVar.Therapist.ToString())
+            {
+                @if (ViewBag.EquipmentType == "Ankle" || ViewBag.EquipmentType == "Knee")
+                {
+                    @for (int i = 0; i < Model.NewPatientRXList.Count(); i++)
+                    {
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].EquipmentType)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].DeviceConfiguration)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProtocolEnum)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProtocolName)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].RxId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].PatientId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProviderId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].Action)
+                        <div class="box-body" style="font-size:small">
+                            <div class="col-md-12  no-padding">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="EquipmentType" class="control-label">Therapy Type</label>
+                                        <div>
+                                            <h4>@Model.NewPatientRXList[i].TherapyType</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            @Html.TextBoxFor(model => @Model.NewPatientRXList[i].RxStartDate, new { @class = "form-control datepicker", autocomplete = "off", @readonly = true })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].RxStartDate, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>End Date</label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            @Html.TextBoxFor(model => @Model.NewPatientRXList[i].RxEndDate, new { @class = "form-control datepicker", autocomplete = "off", @readonly = true })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].RxEndDate, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-6  no-padding" style="margin-bottom:2px;margin-top:2px;">
+                                    <h4>@Model.NewPatientRXList[i].HeadingFlexion</h4>
+                                    <div class="col-md-6" style="margin-left: -14px;">
+                                        <div class="form-group" style="margin-bottom:2px;">
+                                            <label for="MaxUpLimit" class="control-label">Current End Range</label>
+                                            <div>Angle should be between @Model.NewPatientRXList[i].Flex_Current_Start to @Model.NewPatientRXList[i].Flex_Current_End</div>
+                                            <div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].CurrentFlexion, new { @class = "form-control", @type = "number", autocomplete = "off", @readonly = true })
+                                                @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].CurrentFlexion)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" style="margin-bottom:2px;">
+                                            <label for="MaxDownLimit" class="control-label">End Range Goal</label>
+                                            <div>Angle should be between @Model.NewPatientRXList[i].Flex_Goal_Start to @Model.NewPatientRXList[i].Flex_Goal_End</div>
+                                            <div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].GoalFlexion, new { @class = "form-control", @type = "number", autocomplete = "off", @readonly = true })
+                                                @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].GoalFlexion)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6  no-padding" style="margin-bottom:2px;margin-top:2px;">
+                                    <h4>@Model.NewPatientRXList[i].HeadingExtension</h4>
+                                    <div class="col-md-6" style="margin-left: -14px;">
+                                        <div class="form-group" style="margin-bottom:2px;">
+                                            <label for="MaxUpLimit" class="control-label">Current End Range</label>
+                                            <div>Angle should be between @Model.NewPatientRXList[i].Ext_Current_Start to @Model.NewPatientRXList[i].Ext_Current_End</div>
+                                            <div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].CurrentExtension, new { @class = "form-control", @type = "number", autocomplete = "off", @readonly = true })
+                                                @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].CurrentExtension)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" style="margin-bottom:2px;">
+                                            <label for="MaxDownLimit" class="control-label">End Range Goal</label>
+                                            <div>Angle should be between @Model.NewPatientRXList[i].Ext_Goal_Start to @Model.NewPatientRXList[i].Ext_Goal_End</div>
+                                            <div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].GoalExtension, new { @class = "form-control", @type = "number", autocomplete = "off", @readonly = true })
+                                                @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].GoalExtension)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 no-padding" style="margin-left: 11px;">
+                            <div class="col-md-3">
+                                <div class="form-group" style="margin-bottom:2px;">
+                                    <label for="PainThreshold" class="control-label">Pain Threshold</label>
+                                    <div>
+                                        @Html.TextBoxFor(model => @Model.PainThreshold, new { @class = "form-control", @type = "number", autocomplete = "off", @readonly = true })
+                                        @Html.ValidationMessageFor(model => @Model.PainThreshold)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" style="margin-bottom:2px;">
+                                    <label for="RateOfChange" class="control-label">Degrees per Exercise</label>
+                                    <div>
+                                        @Html.TextBoxFor(model => @Model.RateOfChange, new { @class = "form-control", @type = "number", autocomplete = "off", @readonly = true })
+                                        @Html.ValidationMessageFor(model => @Model.RateOfChange)
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    }
+                }
+                else
+                {
+                    @for (int i = 0; i < Model.NewPatientRXList.Count(); i++)
+                    {
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].EquipmentType)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].DeviceConfiguration)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProtocolEnum)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProtocolName)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].RxId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].PatientId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProviderId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].Action)
+                        <div class="box-body" style="font-size:small;border:1px solid gray">
+
+                            @if (Model.NewPatientRXList[i].TherapyType == "Straight Arm Forward Flexion" || Model.NewPatientRXList[i].TherapyType == "Forward Flexion")
+                            {
+                                <div class="col-md-12  no-padding">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Start Date</label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].RxStartDate, new { @class = "form-control datepicker", autocomplete = "off", @readonly = true })
+
+                                            </div>
+                                            @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].RxStartDate, "", new { @class = "error" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>End Date</label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].RxEndDate, new { @class = "form-control datepicker", autocomplete = "off", @readonly = true })
+
+                                            </div>
+                                            @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].RxEndDate, "", new { @class = "error" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="col-md-12  no-padding">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="EquipmentType" class="control-label">Therapy Type</label>
+                                        <div>
+                                            <h4>@Model.NewPatientRXList[i].TherapyType</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12  no-padding">
+                                <h4 style="padding-left: 14px;">@Model.NewPatientRXList[i].HeadingFlexion</h4>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="MaxUpLimit" class="control-label">Current End Range</label>
+                                        <div>Angle should be between @Model.NewPatientRXList[i].Flex_Current_Start to @Model.NewPatientRXList[i].Flex_Current_End</div>
+                                        <div>
+                                            @Html.TextBoxFor(model => @Model.NewPatientRXList[i].CurrentFlexion, new { @class = "form-control", @type = "number", autocomplete = "off", @readonly = true })
+                                            @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].CurrentFlexion)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group" style="margin-bottom:2px;">
+                                        <label for="MaxDownLimit" class="control-label">End Range Goal</label>
+                                        <div>Angle should be between @Model.NewPatientRXList[i].Flex_Goal_Start to @Model.NewPatientRXList[i].Flex_Goal_End</div>
+                                        <div>
+                                            @Html.TextBoxFor(model => @Model.NewPatientRXList[i].GoalFlexion, new { @class = "form-control", @type = "number", autocomplete = "off", @readonly = true })
+                                            @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].GoalFlexion)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                    //kajal
+                    <div class="col-md-12  no-padding" style="margin-left: 11px;">
+                        <div class="col-md-3">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="PainThreshold" class="control-label">Pain Threshold</label>
+                                <div>
+                                    @Html.TextBoxFor(model => @Model.PainThreshold, new { @class = "form-control", @type = "number", autocomplete = "off", @readonly = true })
+                                    @Html.ValidationMessageFor(model => @Model.PainThreshold)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="RateOfChange" class="control-label">Degrees per Exercise</label>
+                                <div>
+                                    @Html.TextBoxFor(model => @Model.RateOfChange, new { @class = "form-control", @type = "number", autocomplete = "off", @readonly = true })
+                                    @Html.ValidationMessageFor(model => @Model.RateOfChange)
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+
+                @if (ViewBag.EquipmentType == "Ankle" || ViewBag.EquipmentType == "Knee")
+                {
+                    @for (int i = 0; i < Model.NewPatientRXList.Count(); i++)
+                    {
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].EquipmentType)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].DeviceConfiguration)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProtocolEnum)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProtocolName)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].RxId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].PatientId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProviderId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].Action)
+                        <div class="box-body" style="font-size:small">
+                            <div class="col-md-12  no-padding">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="EquipmentType" class="control-label">Therapy Type</label>
+                                        <div>
+                                            <h4>@Model.NewPatientRXList[i].TherapyType</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            @Html.TextBoxFor(model => @Model.NewPatientRXList[i].RxStartDate, new { @class = "form-control datepicker", autocomplete = "off" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].RxStartDate, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>End Date</label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            @Html.TextBoxFor(model => @Model.NewPatientRXList[i].RxEndDate, new { @class = "form-control datepicker", autocomplete = "off" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].RxEndDate, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-6 no-padding" style="margin-bottom:2px;margin-top:2px;">
+                                    <h4>@Model.NewPatientRXList[i].HeadingFlexion</h4>
+                                    <div class="col-md-6" style="margin-left: -14px;">
+                                        <div class="form-group" style="margin-bottom:2px;">
+                                            <label for="MaxUpLimit" class="control-label">Current End Range</label>
+                                            <div>Angle should be between @Model.NewPatientRXList[i].Flex_Current_Start to @Model.NewPatientRXList[i].Flex_Current_End</div>
+                                            <div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].CurrentFlexion, new { @class = "form-control", @type = "number", autocomplete = "off" })
+                                                @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].CurrentFlexion)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" style="margin-bottom:2px;">
+                                            <label for="MaxDownLimit" class="control-label">End Range Goal</label>
+                                            <div>Angle should be between @Model.NewPatientRXList[i].Flex_Goal_Start to @Model.NewPatientRXList[i].Flex_Goal_End</div>
+                                            <div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].GoalFlexion, new { @class = "form-control", @type = "number", autocomplete = "off" })
+                                                @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].GoalFlexion)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 no-padding" style="margin-bottom:2px;margin-top:2px;">
+                                    <h4>@Model.NewPatientRXList[i].HeadingExtension</h4>
+                                    <div class="col-md-6" style="margin-left: -14px;">
+                                        <div class="form-group" style="margin-bottom:2px;">
+                                            <label for="MaxUpLimit" class="control-label">Current End Range</label>
+                                            <div>Angle should be between @Model.NewPatientRXList[i].Ext_Current_Start to @Model.NewPatientRXList[i].Ext_Current_End</div>
+                                            <div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].CurrentExtension, new { @class = "form-control", @type = "number", autocomplete = "off" })
+                                                @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].CurrentExtension)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" style="margin-bottom:2px;">
+                                            <label for="MaxDownLimit" class="control-label">End Range Goal</label>
+                                            <div>Angle should be between @Model.NewPatientRXList[i].Ext_Goal_Start to @Model.NewPatientRXList[i].Ext_Goal_End</div>
+                                            <div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].GoalExtension, new { @class = "form-control", @type = "number", autocomplete = "off" })
+                                                @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].GoalExtension)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-12  no-padding" style="margin-left: 11px;">
+                            <div class="col-md-3">
+                                <div class="form-group" style="margin-bottom:2px;">
+                                    <label for="PainThreshold" class="control-label">Pain Threshold</label>
+                                    <div>
+                                        @Html.TextBoxFor(model => @Model.PainThreshold, new { @class = "form-control", @type = "number", autocomplete = "off" })
+                                        @Html.ValidationMessageFor(model => @Model.PainThreshold)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" style="margin-bottom:2px;">
+                                    <label for="RateOfChange" class="control-label">Degrees per Exercise</label>
+                                    <div>
+                                        @Html.TextBoxFor(model => @Model.RateOfChange, new { @class = "form-control", @type = "number", autocomplete = "off" })
+                                        @Html.ValidationMessageFor(model => @Model.RateOfChange)
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                }
+                else
+                {
+                    @for (int i = 0; i < Model.NewPatientRXList.Count(); i++)
+                    {
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].EquipmentType)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].DeviceConfiguration)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProtocolEnum)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProtocolName)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].RxId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].PatientId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].ProviderId)
+                        @Html.HiddenFor(model => Model.NewPatientRXList[i].Action)
+                        <div class="box-body" style="font-size:small;border:1px solid gray">
+
+                            @if (Model.NewPatientRXList[i].TherapyType == "Straight Arm Forward Flexion" || Model.NewPatientRXList[i].TherapyType == "Forward Flexion")
+                            {
+                                <div class="col-md-12">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Start Date</label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].RxStartDate, new { @class = "form-control datepicker", autocomplete = "off" })
+
+                                            </div>
+                                            @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].RxStartDate, "", new { @class = "error" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>End Date</label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                @Html.TextBoxFor(model => @Model.NewPatientRXList[i].RxEndDate, new { @class = "form-control datepicker", autocomplete = "off" })
+
+                                            </div>
+                                            @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].RxEndDate, "", new { @class = "error" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="col-md-12">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="EquipmentType" class="control-label">Therapy Type</label>
+                                        <div>
+                                            <h4>@Model.NewPatientRXList[i].TherapyType</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <h4 style="padding-left: 14px;">@Model.NewPatientRXList[i].HeadingFlexion</h4>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="MaxUpLimit" class="control-label">Current End Range</label>
+                                        <div>Angle should be between @Model.NewPatientRXList[i].Flex_Current_Start to @Model.NewPatientRXList[i].Flex_Current_End</div>
+                                        <div>
+                                            @Html.TextBoxFor(model => @Model.NewPatientRXList[i].CurrentFlexion, new { @class = "form-control", @type = "number", autocomplete = "off" })
+                                            @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].CurrentFlexion)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group" style="margin-bottom:2px;">
+                                        <label for="MaxDownLimit" class="control-label">End Range Goal</label>
+                                        <div>Angle should be between @Model.NewPatientRXList[i].Flex_Goal_Start to @Model.NewPatientRXList[i].Flex_Goal_End</div>
+                                        <div>
+                                            @Html.TextBoxFor(model => @Model.NewPatientRXList[i].GoalFlexion, new { @class = "form-control", @type = "number", autocomplete = "off" })
+                                            @Html.ValidationMessageFor(model => @Model.NewPatientRXList[i].GoalFlexion)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    }
+                    //kajal
+                    <div class="col-md-12">
+                        <div class="col-md-4">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="PainThreshold" class="control-label">Pain Threshold</label>
+                                <div>
+                                    @Html.TextBoxFor(model => @Model.PainThreshold, new { @class = "form-control", @type = "number", autocomplete = "off" })
+                                    @Html.ValidationMessageFor(model => @Model.PainThreshold)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="RateOfChange" class="control-label">Degrees per Exercise</label>
+                                <div>
+                                    @Html.TextBoxFor(model => @Model.RateOfChange, new { @class = "form-control", @type = "number", autocomplete = "off" })
+                                    @Html.ValidationMessageFor(model => @Model.RateOfChange)
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+
+            }
+
+            <div class="box-footer">
+                @if (ViewBag.Action == "edit")
+
+
+                {
+                    @if (Context.Session.GetString("UserType") != ConstantsVar.Therapist.ToString())
+                    {
+                        <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Save Changes</button>
+                    }
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Submit</button>
+                }
+                @if (Context.Session.GetString("UserType") == ConstantsVar.Admin.ToString())
+                {
+                    @Html.ActionLink("Cancel", "Index", "Patient", new { }, new { @class = "btn btn-warning pull-right", autocomplete = "off" })
+                }
+                else if (Context.Session.GetString("UserType") == ConstantsVar.Support.ToString())
+                {
+                    @Html.ActionLink("Cancel", "Dashboard", "Support", new { id = @Context.Session.GetString("UserId") }, new { @class = "btn btn-warning pull-right", autocomplete = "off" })
+                }
+
+                else if (Context.Session.GetString("UserType") == ConstantsVar.Provider.ToString())
+                {
+                    @Html.ActionLink("Cancel", "Dashboard", "Provider", new { id = @Context.Session.GetString("UserId") }, new { @class = "btn btn-warning pull-right", autocomplete = "off" })
+                }
+            </div>
+        }
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $('.datepicker1').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+        $('.datepicker').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+
+            var etype = $('#etype').val();
+
+            if ($('#NewPatientRXList_0__RxStartDate').val().length >= 8) {
+                $('#NewPatientRXList_0__RxStartDate').val($.datepicker.formatDate('M-dd-yy', new Date($('#NewPatientRXList_0__RxStartDate').val())));
+            }
+            else {
+                $("#datepicker1").val('');
+            }
+
+            if ($('#NewPatientRXList_0__RxEndDate').val().length >= 8) {
+                $('#NewPatientRXList_0__RxEndDate').val($.datepicker.formatDate('M-dd-yy', new Date($('#NewPatientRXList_0__RxEndDate').val())));
+            }
+            else {
+                $("#datepicker").val('');
+            }
+            if (etype == "Shoulder") {
+
+            }
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+                var surgery_date = $.datepicker.formatDate('M-dd-yy', new Date($('#Surgerydate').val()));// $('#Surgerydate').val();
+
+                for (var i = 0; i <= 2; i++) {
+
+                    var start_date = $('#NewPatientRXList_' + i + '__RxStartDate').val();
+                    var end_date = $('#NewPatientRXList_' + i + '__RxEndDate').val();
+
+                    var flex_min = parseInt($('#NewPatientRXList_' + i + '__CurrentFlexion').val());
+                    var flex_max = parseInt($('#NewPatientRXList_' + i + '__GoalFlexion').val());
+
+                    if (etype == "Knee") {
+                        var exten_min = parseInt($('#NewPatientRXList_' + i + '__CurrentExtension').val());
+                        var exten_max = parseInt($('#NewPatientRXList_' + i + '__GoalExtension').val());
+
+                        if (new Date(surgery_date) > new Date(start_date)) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].RxStartDate']").html("<br><span for='NewPatientRXList[" + i + "].RxStartDate' class='' style='color:red'>Rx Start date should be greater than Surgery date</span>");
+
+                            return false;
+                        }
+                        if (new Date(start_date) > new Date(end_date)) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].RxEndDate']").html("<br><span for='NewPatientRXList[" + i + "].RxEndDate' class='' style='color:red'>Rx End date should be greater than Surgery date</span>");
+
+                            return false;
+                        }
+
+                        if (flex_min < parseInt('@Constants.Knee_Flex_Current_Start') || flex_min > parseInt('@Constants.Knee_Flex_Current_End')) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentFlexion' class='' style='color:red'>Angle should be greater than or equal to @Constants.Knee_Flex_Current_Start and lesser than or equal to @Constants.Knee_Flex_Current_End </span>");
+                            $('#NewPatientRXList[' + i + '].CurrentFlexion').focus();
+                            return false;
+                        }
+                        if (flex_max < parseInt('@Constants.Knee_Flex_Goal_Start') || flex_max > parseInt('@Constants.Knee_Flex_Goal_End')) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be greater than or equal to @Constants.Knee_Flex_Goal_Start and lesser than or equal to @Constants.Knee_Flex_Goal_End</span>");
+                            $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                            return false;
+                        }
+                        if (flex_max < flex_min) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be greater than Current angle</span>");
+                            $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                            return false;
+                        }
+                        if (exten_min > parseInt('@Constants.Knee_Ext_Current_Start') || exten_min < parseInt('@Constants.Knee_Ext_Current_End')) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentExtension']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentExtension' class='' style='color:red'>Angle should be greater than or equal to @Constants.Knee_Ext_Current_Start and lesser than or equal to @Constants.Knee_Ext_Current_End</span>");
+                            $('#NewPatientRXList[' + i + '].CurrentExtension').focus();
+                            return false;
+                        }
+                        if (exten_max > parseInt('@Constants.Knee_Ext_Goal_Start') || exten_max < parseInt('@Constants.Knee_Ext_Goal_End')) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalExtension']").html("<br><span for='#NewPatientRXList[" + i + "].GoalExtension' class='' style='color:red'>Angle should be greater than or equal to @Constants.Knee_Ext_Goal_Start and lesser than or equal to @Constants.Knee_Ext_Goal_End</span>");
+                            $('#NewPatientRXList[' + i + '].GoalExtension').focus();
+                            return false;
+                        }
+                        if (exten_max > exten_min) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalExtension']").html("<br><span for='#NewPatientRXList[" + i + "].GoalExtension' class='' style='color:red'>Angle should be less than Current angle</span>");
+                            $('#NewPatientRXList[' + i + '].GoalExtension').focus();
+                            return false;
+                        }
+                    }
+                    else if (etype == "Ankle") {
+                        var exten_min = parseInt($('#NewPatientRXList_' + i + '__CurrentExtension').val());
+                        var exten_max = parseInt($('#NewPatientRXList_' + i + '__GoalExtension').val());
+
+                        if (new Date(surgery_date) > new Date(start_date)) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].RxStartDate']").html("<br><span for='NewPatientRXList[" + i + "].RxStartDate' class='' style='color:red'>Rx Start date should be greater than Surgery date</span>");
+
+                            return false;
+                        }
+                        if (flex_min < parseInt('@Constants.Ankle_Flex_Current_Start') || flex_min > parseInt('@Constants.Ankle_Flex_Current_End')) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentFlexion' class='' style='color:red'>Angle should be greater than or equal to @Constants.Ankle_Flex_Current_Start and lesser than or equal to @Constants.Ankle_Flex_Current_End </span>");
+                            $('#NewPatientRXList[' + i + '].CurrentFlexion').focus();
+                            return false;
+                        }
+
+                        if (flex_max < parseInt('@Constants.Ankle_Flex_Goal_Start') || flex_max > parseInt('@Constants.Ankle_Flex_Goal_End')) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be greater than or equal to @Constants.Ankle_Flex_Goal_Start and lesser than or equal to @Constants.Ankle_Flex_Goal_End</span>");
+                            $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                            return false;
+                        }
+                        if (flex_max < flex_min) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be greater than Current angle</span>");
+                            $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                            return false;
+                        }
+                        if (exten_min > parseInt('@Constants.Ankle_Ext_Current_Start') || exten_min < parseInt('@Constants.Ankle_Ext_Current_End')) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentExtension']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentExtension' class='' style='color:red'>Angle should be greater than or equal to @Constants.Ankle_Ext_Current_End and lesser than or equal to @Constants.Ankle_Ext_Current_Start</span>");
+                            $('#NewPatientRXList[' + i + '].CurrentExtension').focus();
+                            return false;
+                        }
+                        if (exten_max > parseInt('@Constants.Ankle_Ext_Goal_Start') || exten_max < parseInt('@Constants.Ankle_Ext_Goal_End')) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalExtension']").html("<br><span for='#NewPatientRXList[" + i + "].GoalExtension' class='' style='color:red'>Angle should be greater than or equal to @Constants.Ankle_Ext_Goal_End and lesser than or equal to @Constants.Ankle_Ext_Goal_Start</span>");
+                            $('#NewPatientRXList[' + i + '].GoalExtension').focus();
+                            return false;
+                        }
+                        if (exten_max > exten_min) {
+                            $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalExtension']").html("<br><span for='#NewPatientRXList[" + i + "].GoalExtension' class='' style='color:red'>Angle should be less than Current angle</span>");
+                            $('#NewPatientRXList[' + i + '].GoalExtension').focus();
+                            return false;
+                        }
+                    }
+                    else {
+
+                        var protocol_name = $('#NewPatientRXList_' + i + '__ProtocolName').val();
+                        if (protocol_name == "Forward Flexion") {
+                            if (new Date(surgery_date) > new Date(start_date)) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].RxStartDate']").html("<br><span for='NewPatientRXList[" + i + "].RxStartDate' class='' style='color:red'>Rx Start date should be greater than Surgery date</span>");
+
+                                return false;
+                            }
+                            if (new Date(start_date) > new Date(end_date)) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].RxEndDate']").html("<br><span for='NewPatientRXList[" + i + "].RxEndDate' class='' style='color:red'>Rx End date should be greater than Surgery date</span>");
+
+                                return false;
+                            }
+                            if (flex_min < parseInt('@Constants.Sh_Flex_Current') || flex_min > parseInt('@Constants.Sh_Flex_Goal')) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentFlexion' class='' style='color:red'>Angle should be greater than @Constants.Sh_Flex_Current</span>");
+                                $('#NewPatientRXList[' + i + '].CurrentFlexion').focus();
+                                return false;
+                            }
+                            if (flex_max > parseInt('@Constants.Sh_Flex_Goal')) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be less than or equal to @Constants.Sh_Flex_Goal</span>");
+                                $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                return false;
+                            }
+                            if (flex_max < flex_min) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be greater than Current angle</span>");
+                                $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                return false;
+                            }
+                        }
+                        if (protocol_name == "External Rotation") {
+
+                            if (flex_min < parseInt('@Constants.Sh_ExRot_Current') || flex_min > parseInt('@Constants.Sh_ExRot_Goal')) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentFlexion' class='' style='color:red'>Angle should be greater than @Constants.Sh_ExRot_Current</span>");
+                                $('#NewPatientRXList[' + i + '].CurrentFlexion').focus();
+                                return false;
+                            }
+                            if (flex_max > parseInt('@Constants.Sh_ExRot_Goal') || flex_max < flex_min) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be less than or equal to @Constants.Sh_ExRot_Goal</span>");
+                                $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                return false;
+                            }
+                        }
+                        if (protocol_name == "Abduction") {
+
+                            if (flex_min < parseInt('@Constants.Sh_Abd_Current') || flex_min > parseInt('@Constants.Sh_Abd_Goal')) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentFlexion' class='' style='color:red'>Angle should be greater than  @Constants.Sh_Abd_Current</span>");
+                                $('#NewPatientRXList[' + i + '].CurrentFlexion').focus();
+                                return false;
+                            }
+                            if (flex_max > parseInt('@Constants.Sh_Abd_Goal') || flex_max < flex_min) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be less than or equal to  @Constants.Sh_Abd_Goal</span>");
+                                $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                return false;
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+    </script>
+
+}
+
+

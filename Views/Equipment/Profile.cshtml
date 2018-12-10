@@ -1,0 +1,117 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model OneDirect.ViewModels.EquipmentView
+<section class="content-header">
+    <h1>
+        View / Edit Equipment
+       
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Equipment</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+<div class="col-md-12" style="padding-top:20px">
+    <!-- Horizontal Form -->
+    <div class="box box-info">
+       
+        <!-- /.box-header -->
+        <!-- form start -->
+        @using (Html.BeginForm())
+        {
+            <div class="box-body" style="font-size:small">
+          
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Equipment Type</label>
+
+                        <div>
+                            @if (ViewBag.equipment != null)
+                            {
+                                @Html.DropDownListFor(model => model.EquipmentType, ViewBag.equipment as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.EquipmentType, "", new { @class = "error" })
+                            }
+                            @Html.HiddenFor(model => model.AssignmentId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Patient</label>
+
+                        <div>
+                            @if (ViewBag.Patient != null)
+                            {
+                                @Html.DropDownListFor(model => model.PatientId, ViewBag.Patient as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.PatientId, "", new { @class = "error" })
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Therapist</label>
+
+                        <div>
+                            @if (ViewBag.Therapists != null)
+                            {
+                                @Html.DropDownListFor(model => model.TherapistId, ViewBag.Therapists as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.TherapistId, "", new { @class = "error" })
+                                @Html.HiddenFor(model => model.EquipmentId, new { @class = "form-control" })
+                                @Html.HiddenFor(model => model.DateTime, new { @class = "form-control" })
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Address</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.Address, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Address)
+
+                        </div>
+                    </div>
+
+                </div>
+                
+
+
+                </div>
+        <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Submit</button>
+                <a href="@Url.Action("Index","Equipment")" class="btn btn-warning pull-right">Cancel</a>
+
+               
+
+            </div>
+        <!-- /.box-footer -->
+        }
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+            });
+        });
+    </script>
+}
+

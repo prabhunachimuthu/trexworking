@@ -1,0 +1,1306 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using Highsoft.Web.Mvc.Stocks
+@using OneDirect.Helper
+<!-- Main content -->
+<!-- Main content -->
+<section class="content" style="padding-top: 20px;">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+
+                </div>
+
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                                @if (ViewBag.PatientRx != null)
+                                {
+                                    @if (ViewBag.EquipmentType.ToLower() == "shoulder")
+                                    {
+                                        <div class="nav-tabs-custom" style="margin-bottom:0px !important;" id="tabs">
+                                            <ul class="nav nav-tabs">
+
+                                                <li class="@(ViewBag.actuator == "Forward Flexion" ? "active" : "")" onclick="triggerfunction(this)">
+                                                    <a href="#tab_1" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = "Forward Flexion", tab = "Dashboard" })" data-toggle="tab">@ViewBag.flexionString</a>
+                                                </li>
+
+                                                <li class="@(ViewBag.actuator == "External Rotation" ? "active" : "")" onclick="triggerfunction(this)">
+                                                    <a href="#tab_2" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = "External Rotation", tab = "Dashboard" })" data-toggle="tab">@ViewBag.flexionString1</a>
+                                                </li>
+
+                                            </ul>
+
+                                            <div class="tab-content">
+                                                <div class="tab-pane @(ViewBag.actuator == "Forward Flexion" ? "active" : "")" id="tab_1">
+                                                    <div class="box-body no-padding">
+                                                        <div class="content col-sm-12 no-padding">
+                                                            @if (ViewBag.actuator == "Forward Flexion")
+                                                            {
+
+                                                                <div class="col-sm-12">
+                                                                    <div class="row">
+                                                                        @if (ViewBag.FlexionData != null)
+                                                                        {
+
+                                                                            @*HighStock Chart Start*@
+                                                                            <div class="box box-solid">
+                                                                                <div class="box-header with-border">
+
+                                                                                    <h3 class="box-title">Patient Shoulder ROM</h3>
+
+                                                                                    <div class="box-tools pull-right">
+                                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                            <i class="fa fa-minus"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+
+
+
+                                                                                <div class="box-header with-border">
+                                                                                    <div class="col-md-4 col-xs-4">
+                                                                                        <div class="radio">
+                                                                                            <label>
+                                                                                                <input type="radio" id="highstockflexion" name="highstockrom" checked />
+                                                                                                Flexion
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-md-8 col-xs-8 pull-right  no-padding">
+                                                                                        <div class="col-md-6 col-xs-6">
+                                                                                            <div class="checkbox">
+                                                                                                <label>
+                                                                                                    <input type="checkbox" id="chkhighstockpain" data-value="show" checked />
+
+                                                                                                    <span>Show Pain</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-6 col-xs-6">
+                                                                                            <div class="checkbox">
+                                                                                                <label>
+                                                                                                    <input type="checkbox" id="chkhighstocksession" data-value="show" checked />
+                                                                                                    <span>Show Session</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="box-body">
+                                                                                    @if (ViewBag.FlexionData != null)
+                                                                                    {
+
+                                                                                        <div class="col-md-12 col-xs-12" id="divhighstockflexionpainsession" data-value="rom" style="display:block">
+                                                                                            <div id="chartflexion" style="min-width: 310px;height:500px; margin: 0 auto"></div>
+
+                                                                                            @*@(Html.Highsoft().GetHighstock(
+                                                                                                new Highstock
+                                                                                                {
+                                                                                                Chart = new Highsoft.Web.Mvc.Stocks.Chart
+                                                                                                {
+                                                                                                Height = 500,
+                                                                                                                                                                    //    Events = new ChartEvents {
+                                                                                                                                                                    //        Load = "loadAjaxData"
+                                                                                                                                                                    //}
+                                                                                                                                                                },
+                                                                                                                                                                //XAxis = new List<XAxis>
+                                                                                                                                                                //{
+                                                                                                                                                                // new XAxis
+                                                                                                                                                                // {
+
+                                                                                                                                                                // Min=Utilities.ConvertToUnixTime(DateTime.Now),
+                                                                                                                                                                // Max=Utilities.ConvertToUnixTime(DateTime.Now),
+
+                                                                                                                                                                // }
+
+                                                                                                                                                                //},
+                                                                                                                                                                RangeSelector = new RangeSelector
+                                                                                                {
+                                                                                                Selected = 0
+                                                                                                },
+                                                                                                Title = new Title
+                                                                                                {
+                                                                                                Text = ""
+                                                                                                },
+                                                                                                YAxis = new List<YAxis>
+                                                                                                {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    new YAxis
+                                                                                                {
+                                                                                                Labels = new YAxisLabels
+                                                                                                {
+                                                                                                Align = YAxisLabelsAlign.Right,
+                                                                                                X = -3
+                                                                                                },
+                                                                                                Title = new YAxisTitle
+                                                                                                {
+                                                                                                Text = "ROM"
+                                                                                                },
+                                                                                                Height = "40%",
+                                                                                                LineWidth = 2,
+
+                                                                                                },
+                                                                                                new YAxis
+                                                                                                {
+                                                                                                Labels = new YAxisLabels
+                                                                                                {
+                                                                                                Align = YAxisLabelsAlign.Right,
+                                                                                                X = -3
+                                                                                                },
+                                                                                                Title = new YAxisTitle
+                                                                                                {
+                                                                                                Text = "Pain"
+                                                                                                },
+                                                                                                Top = "45%",
+                                                                                                Height = "25%",
+                                                                                                Offset = -1,
+                                                                                                LineWidth = 2,
+                                                                                                Id = "PainVolumeAxis",
+                                                                                                },
+                                                                                                new YAxis
+                                                                                                {
+                                                                                                Labels = new YAxisLabels
+                                                                                                {
+                                                                                                Align = YAxisLabelsAlign.Right,
+                                                                                                X = -3
+                                                                                                },
+                                                                                                Title = new YAxisTitle
+                                                                                                {
+                                                                                                Text = "Sessions"
+                                                                                                },
+                                                                                                Top = "75%",
+                                                                                                Height = "25%",
+                                                                                                Offset = -1,
+                                                                                                LineWidth = 2,
+                                                                                                Id = "VolumeAxis",
+                                                                                                }
+
+                                                                                                },
+
+                                                                                                Series = new List<Series>
+                                                                                                {
+
+                                                                                                new ColumnrangeSeries
+                                                                                                {
+                                                                                                // Type=ColumnrangeSeriesType.Columnrange,
+                                                                                                Data = ViewBag.AppleDataFlexion as List<ColumnrangeSeriesData>,
+                                                                                                Name = "ROM",
+                                                                                                TurboThreshold = 100000,
+                                                                                                Tooltip = new ColumnrangeSeriesTooltip
+                                                                                                {
+                                                                                                ValueDecimals = 0
+                                                                                                },
+                                                                                                Zones = new List<ColumnrangeSeriesZone>
+                                                                                                                                                                                                                             {
+
+                                                                                                                                                                                                                             new ColumnrangeSeriesZone
+                                                                                                                                                                                                                             {
+                                                                                                                                                                                                                             Color="Black"
+
+                                                                                                                                                                                                                             },
+
+                                                                                                                                                                                                                             }
+                                                                                                },
+                                                                                                new ColumnSeries
+                                                                                                                                                                                                                             {
+                                                                                                                                                                                                                             Name = "Pain",
+                                                                                                                                                                                                                             Data = ViewBag.PainVolumeDataFlexion as List<ColumnSeriesData>,
+                                                                                                                                                                                                                             DataGrouping = new ColumnSeriesDataGrouping() {Enabled = true, Forced = true },
+                                                                                                                                                                                                                             YAxis = "PainVolumeAxis",
+                                                                                                                                                                                                                             TurboThreshold = 100000,
+                                                                                                                                                                                                                             ShowInNavigator = false,
+                                                                                                                                                                                                                             Zones = new List<ColumnSeriesZone>
+                                                                                                                                                                                                                             {
+                                                                                                                                                                                                                             new ColumnSeriesZone
+                                                                                                                                                                                                                             {
+                                                                                                                                                                                                                             Value=3,
+                                                                                                                                                                                                                             Color="Red"
+
+                                                                                                                                                                                                                             },
+                                                                                                                                                                                                                             new ColumnSeriesZone
+                                                                                                                                                                                                                             {
+                                                                                                                                                                                                                             Color="Green"
+
+                                                                                                                                                                                                                             },
+
+                                                                                                                                                                                                                             }
+                                                                                                                                                                                                                             },
+                                                                                                new ColumnSeries
+                                                                                                {
+                                                                                                Name = "Sessions",
+                                                                                                Data = ViewBag.VolumeDataFlexion as List<ColumnSeriesData>,
+                                                                                                DataGrouping = new ColumnSeriesDataGrouping() {Enabled = true, Forced = true },
+                                                                                                YAxis = "VolumeAxis",
+                                                                                                TurboThreshold = 100000,
+                                                                                                ShowInNavigator = false,
+                                                                                                Zones = new List<ColumnSeriesZone>
+                                                                                                {
+                                                                                                new ColumnSeriesZone
+                                                                                                {
+                                                                                                Value=3,
+                                                                                                Color="Red"
+
+                                                                                                },
+                                                                                                new ColumnSeriesZone
+                                                                                                {
+                                                                                                Color="Green"
+
+                                                                                                },
+                                                                                                }
+                                                                                                //Color="Red"
+                                                                                                },
+
+                                                                                                },
+                                                                                                Navigator = new Navigator
+                                                                                                {
+                                                                                                Enabled = false
+                                                                                                },
+                                                                                                Legend = new Legend
+                                                                                                {
+                                                                                                Enabled = false
+                                                                                                },
+
+                                                                                                },
+
+                                                                                                "chartflexion"
+                                                                                                ))*@
+
+
+                                                                                        </div>
+
+                                                                                    }
+
+
+
+
+                                                                                </div>
+
+
+
+                                                                            </div>
+                                                                            @*HighStock Chart End*@
+                                                                        }
+                                                                    </div>
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-4">
+                                                                            <!-- DONUT CHART -->
+                                                                            <div class="box box-solid">
+                                                                                @if (ViewBag.Usage != null)
+                                                                                {
+                                                                                    <div class="box-header with-border">
+                                                                                        <h3 class="box-title">Usage</h3>
+
+                                                                                        <div class="box-tools pull-right">
+                                                                                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                                <i class="fa fa-minus"></i>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="box-body chart-responsive" align="center">
+                                                                                        <p>Max <code>@ViewBag.Usage.MaxSessionSuggested</code> Sessions Suggested</p>
+                                                                                        <div class="chart" id="sales-chart" style="height: 308px; position: relative;">
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                }
+                                                                                <!-- /.box-body -->
+                                                                            </div>
+                                                                            <!-- /.box -->
+                                                                        </div>
+
+                                                                        <div class="col-md-4">
+                                                                            <!-- DONUT CHART -->
+                                                                            <div class="box box-solid">
+                                                                                <div class="box-header with-border">
+                                                                                    <h3 class="box-title">Pain</h3>
+
+                                                                                    <div class="box-tools pull-right">
+                                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                            <i class="fa fa-minus"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="box-body chart-responsive" align="center">
+                                                                                    <p><code>@(ViewBag.Pain != null ? ViewBag.Pain.TotalPain : "")</code> Pain Recorded</p>
+                                                                                    <div class="chart" id="sales-chart1" style="height: 308px; position: relative;">
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- /.box-body -->
+                                                                            </div>
+                                                                            <!-- /.box -->
+                                                                        </div>
+                                                                        <div class="col-md-4">
+
+                                                                            <div class="box box-solid">
+                                                                                <div class="box-header with-border">
+
+                                                                                    <h3 class="box-title">Range of Motion   </h3>
+
+                                                                                    <div class="box-tools pull-right" style="right:30px;">
+                                                                                        <a href="@Url.Action("PatientRX", "CreatePatient", new { patid = ViewBag.PatientRx.PatientId, operaton = "edit" })" class="btn btn-box-tool">Change ROM</a>
+                                                                                    </div>
+                                                                                    <div class="box-tools pull-right">
+                                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                            <i class="fa fa-minus"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="box-body no-padding">
+
+                                                                                    <div class="chart" id="line-chart-rom" style="margin-top:20px;margin-bottom:38px;height: 300px; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="box box-solid">
+                                                                                <div class="box-header with-border">
+                                                                                    <h3 class="box-title">Treatment Calendar</h3>
+                                                                                    <div class="box-tools pull-right">
+                                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                            <i class="fa fa-minus"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="box-body no-padding">
+                                                                                    <!-- THE CALENDAR -->
+                                                                                    <div id="calendar" class="fc fc-ltr fc-unthemed">
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- /.box-body -->
+                                                                            </div>
+                                                                            <!-- /. box -->
+                                                                        </div>
+                                                                        <div class="col-md-6 no-padding">
+                                                                            <div class="box box-solid">
+                                                                                <div class="box-header">
+                                                                                    <h3 class="box-title">Current Sessions</h3>
+                                                                                    <div class="box-tools pull-right">
+                                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                            <i class="fa fa-minus"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- /.box-header -->
+                                                                                <div class="box-body" id="fullview">
+                                                                                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                                                                                        <div class="row">
+                                                                                            <div class="col-sm-12" style="overflow-x:auto">
+                                                                                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:smaller" role="grid" aria-describedby="example1_info">
+                                                                                                    <thead>
+                                                                                                        <tr role="row">
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Exercise: activate to sort column descending">Name</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="TreatmentDate: activate to sort column descending" style="width:150px">Date</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Duration: activate to sort column descending">Duration (hh:mm:ss)</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Reps: activate to sort column descending">Reps</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Flexion: activate to sort column descending">Flexion</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Extension: activate to sort column descending">Extension</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Pain: activate to sort column descending">Pain</th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody>
+                                                                                                        @if (ViewBag.SessionList != null)
+                                                                                                        {
+                                                                                                            @foreach (var item in ViewBag.SessionList)
+                                                                                                            {
+                                                                                                                <tr role="row">
+                                                                                                                    <td>
+                                                                                                                        @if (Context.Session.GetString("UserType") == "6")
+                                                                                                                        {
+                                                                                                                            <a href="@Url.Action("ViewProtocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName, ExeName = item.Protocol.DeviceConfiguration })">@item.Protocol.ProtocolName</a>
+                                                                                                                        }
+                                                                                                                        else
+                                                                                                                        {
+                                                                                                                            <a href="@Url.Action("Protocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName, ExeName = item.Protocol.DeviceConfiguration })">@item.Protocol.ProtocolName</a>
+                                                                                                                        }
+                                                                                                                    </td>
+                                                                                                                    <td style="width:150px">
+                                                                                                                        @if (item.SessionDate != null)
+                                                                                                                        {
+                                                                                                                            @item.SessionDate.ToString("dd-MMM-yyyy")
+                                                                                                                        }
+                                                                                                                    </td>
+                                                                                                                    <td>@(item.Duration != null ? TimeSpan.FromMinutes(item.Duration) : "")</td>
+                                                                                                                    <td>@(item.Reps != null ? item.Reps : "-")</td>
+
+                                                                                                                    <td class="flexion">@(item.MaxFlexion != null ? item.MaxFlexion : "-")</td>
+
+                                                                                                                    @if (ViewBag.EquipmentType != "Shoulder")
+                                                                                                                    {
+                                                                                                                        <td class="extension">@(item.MaxExtension != null ? item.MaxExtension : "-")</td>
+                                                                                                                    }
+                                                                                                                    else
+                                                                                                                    {
+                                                                                                                        <td class="extension">-</td>
+                                                                                                                    }
+                                                                                                                    <td>@(item.PainCount != null ? item.PainCount : "-")</td>
+                                                                                                                </tr>
+                                                                                                            }
+                                                                                                        }
+                                                                                                    </tbody>
+
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- /.box-body -->
+                                                                                <div class="box-body" id="mobileview">
+                                                                                    @if (ViewBag.SessionList != null)
+                                                                                    {
+                                                                                        @foreach (var item in ViewBag.SessionList)
+                                                                                        {
+                                                                                            <div class="col-md-6">
+                                                                                                <div class="box box-primary">
+                                                                                                    <div class="box-header with-border">
+                                                                                                        <div class=" col-md-12 col-xs-12 no-padding">
+                                                                                                            <div class="col-md-8 col-xs-8" align="left">
+                                                                                                                <h4 class="box-title">
+                                                                                                                    @if (Context.Session.GetString("UserType") == "6")
+                                                                                                                    {
+                                                                                                                        <a href="@Url.Action("ViewProtocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName, ExeName = item.Protocol.DeviceConfiguration})">@item.Protocol.ProtocolName</a>
+                                                                                                                    }
+                                                                                                                    else
+                                                                                                                    {
+                                                                                                                        <a href="@Url.Action("Protocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName, ExeName = item.Protocol.DeviceConfiguration })">@item.Protocol.ProtocolName</a>
+                                                                                                                    }
+
+                                                                                                                </h4>
+
+                                                                                                            </div>
+                                                                                                            <div class="col-md-4 col-xs-4" align="right">
+                                                                                                                @if (item.SessionDate != null)
+                                                                                                                {
+                                                                                                                    @item.SessionDate.ToString("dd-MMM-yyyy")
+                                                                                                                }
+                                                                                                            </div>
+
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    <!-- /.box-header -->
+                                                                                                    <div class="box-body">
+                                                                                                        <div class="col-md-12 col-xs-12">
+                                                                                                            <div class="col-md-4 col-xs-4" align="left">
+                                                                                                                <strong><i class="sorting_asc"></i> Duration (hh:mm:ss)</strong>
+
+                                                                                                                <p class="text-muted">@(item.Duration != null ? TimeSpan.FromMinutes(item.Duration) : "")</p>
+                                                                                                            </div>
+
+                                                                                                            <div class="col-md-4 col-xs-4" align="center">
+                                                                                                                <strong><i class="sorting_asc"></i> Reps</strong>
+
+                                                                                                                <p class="text-muted">@(item.Reps != null ? item.Reps : "")</p>
+                                                                                                            </div>
+                                                                                                            <div class="col-md-4 col-xs-4" align="right">
+                                                                                                                <span style="font-weight:bold">Pain</span>
+                                                                                                                <p class="text-muted">@(item.PainCount != null ? item.PainCount : "")</p>
+                                                                                                            </div>
+
+                                                                                                        </div>
+                                                                                                        <div class="col-md-12 col-xs-12">
+                                                                                                            <div class="col-md-6 col-xs-6" align="left">
+                                                                                                                <span style="font-weight:bold">Flexion</span>
+                                                                                                                <p class="text-muted">@(item.MaxFlexion != null ? item.MaxFlexion : "")</p>
+                                                                                                            </div>
+                                                                                                            <div class="col-md-6 col-xs-6" align="right">
+                                                                                                                <span style="font-weight:bold">Extension</span>
+                                                                                                                @if (ViewBag.EquipmentType != "Shoulder")
+                                                                                                                {
+                                                                                                                    <p class="text-muted">@(item.MaxExtension != null ? item.MaxExtension : "")</p>
+                                                                                                                }
+                                                                                                                else
+                                                                                                                {
+                                                                                                                    <p class="text-muted">-</p>
+
+                                                                                                                }
+                                                                                                            </div>
+
+
+
+
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <!-- /.box-body -->
+
+                                                                                                </div>
+
+
+
+                                                                                            </div>
+                                                                                        }
+                                                                                    }
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane  @(ViewBag.actuator == "External Rotation" ? "active" : "")" id="tab_2">
+                                                    <div class="box-body no-padding">
+                                                        <div class="content col-sm-12 no-padding">
+                                                            @if (ViewBag.actuator == "External Rotation")
+                                                            {
+                                                                <div class="col-sm-12">
+                                                                    <div class="row">
+                                                                        @if (ViewBag.FlexionData != null)
+                                                                        {
+                                                                            @*HighStock Chart Start*@
+                                                                            <div class="box box-solid">
+                                                                                <div class="box-header with-border">
+
+                                                                                    <h3 class="box-title">Patient Shoulder ROM</h3>
+
+                                                                                    <div class="box-tools pull-right">
+                                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                            <i class="fa fa-minus"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+
+
+
+                                                                                <div class="box-header with-border">
+                                                                                    <div class="col-md-4 col-xs-4">
+                                                                                        <div class="radio">
+                                                                                            <label>
+                                                                                                <input type="radio" id="highstockflexion" name="highstockrom" checked />
+                                                                                                Flexion
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-md-8 col-xs-8 pull-right  no-padding">
+                                                                                        <div class="col-md-6 col-xs-6">
+                                                                                            <div class="checkbox">
+                                                                                                <label>
+                                                                                                    <input type="checkbox" id="chkhighstockpain" data-value="show" checked />
+
+                                                                                                    <span>Show Pain</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-6 col-xs-6">
+                                                                                            <div class="checkbox">
+                                                                                                <label>
+                                                                                                    <input type="checkbox" id="chkhighstocksession" data-value="show" checked />
+                                                                                                    <span>Show Session</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="box-body">
+
+                                                                                    @if (ViewBag.FlexionData != null)
+                                                                                    {
+
+                                                                                        <div class="col-md-12 col-xs-12" id="divhighstockflexionpainsession" data-value="rom" style="display:block">
+
+                                                                                            <div id="chartflexion" style="min-width: 310px;height:500px; margin: 0 auto"></div>
+
+                                                                                        </div>
+
+                                                                                    }
+
+
+
+
+                                                                                </div>
+
+
+
+                                                                            </div>
+                                                                            @*HighStock Chart End*@
+                                                                        }
+                                                                    </div>
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-4">
+                                                                            <!-- DONUT CHART -->
+                                                                            <div class="box box-solid">
+                                                                                @if (ViewBag.Usage != null)
+                                                                                {
+                                                                                    <div class="box-header with-border">
+                                                                                        <h3 class="box-title">Usage</h3>
+
+                                                                                        <div class="box-tools pull-right">
+                                                                                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                                <i class="fa fa-minus"></i>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="box-body chart-responsive" align="center">
+                                                                                        <p>Max <code>@ViewBag.Usage.MaxSessionSuggested</code> Sessions Suggested</p>
+                                                                                        <div class="chart" id="sales-chart" style="height: 308px; position: relative;">
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                }
+                                                                                <!-- /.box-body -->
+                                                                            </div>
+                                                                            <!-- /.box -->
+                                                                        </div>
+
+                                                                        <div class="col-md-4">
+                                                                            <!-- DONUT CHART -->
+                                                                            <div class="box box-solid">
+                                                                                <div class="box-header with-border">
+                                                                                    <h3 class="box-title">Pain</h3>
+
+                                                                                    <div class="box-tools pull-right">
+                                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                            <i class="fa fa-minus"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="box-body chart-responsive" align="center">
+                                                                                    <p><code>@(ViewBag.Pain != null ? ViewBag.Pain.TotalPain : "")</code> Pain Recorded</p>
+                                                                                    <div class="chart" id="sales-chart1" style="height: 308px; position: relative;">
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- /.box-body -->
+                                                                            </div>
+                                                                            <!-- /.box -->
+                                                                        </div>
+                                                                        <div class="col-md-4">
+
+                                                                            <div class="box box-solid">
+                                                                                <div class="box-header with-border">
+
+                                                                                    <h3 class="box-title">Range of Motion   </h3>
+
+                                                                                    <div class="box-tools pull-right" style="right:30px;">
+                                                                                        <a href="@Url.Action("PatientRX", "CreatePatient", new { patid = ViewBag.PatientRx.PatientId, operaton = "edit" })" class="btn btn-box-tool">Change ROM</a>
+                                                                                    </div>
+                                                                                    <div class="box-tools pull-right">
+                                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                            <i class="fa fa-minus"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="box-body no-padding">
+
+                                                                                    <div class="chart" id="line-chart-rom" style="margin-top:20px;margin-bottom:38px;height: 300px; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="box box-solid">
+                                                                                <div class="box-header with-border">
+                                                                                    <h3 class="box-title">Treatment Calendar</h3>
+                                                                                    <div class="box-tools pull-right">
+                                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                            <i class="fa fa-minus"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="box-body no-padding">
+                                                                                    <!-- THE CALENDAR -->
+                                                                                    <div id="calendar" class="fc fc-ltr fc-unthemed">
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- /.box-body -->
+                                                                            </div>
+                                                                            <!-- /. box -->
+                                                                        </div>
+                                                                        <div class="col-md-6 no-padding">
+                                                                            <div class="box box-solid">
+                                                                                <div class="box-header">
+                                                                                    <h3 class="box-title">Current Sessions</h3>
+                                                                                    <div class="box-tools pull-right">
+                                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                            <i class="fa fa-minus"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- /.box-header -->
+                                                                                <div class="box-body" id="fullview">
+                                                                                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                                                                                        <div class="row">
+                                                                                            <div class="col-sm-12" style="overflow-x:auto">
+                                                                                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:smaller" role="grid" aria-describedby="example1_info">
+                                                                                                    <thead>
+                                                                                                        <tr role="row">
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Exercise: activate to sort column descending">Name</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="TreatmentDate: activate to sort column descending" style="width:150px">Date</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Duration: activate to sort column descending">Duration (hh:mm:ss)</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Reps: activate to sort column descending">Reps</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Flexion: activate to sort column descending">Flexion</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Extension: activate to sort column descending">Extension</th>
+                                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Pain: activate to sort column descending">Pain</th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody>
+                                                                                                        @if (ViewBag.SessionList != null)
+                                                                                                        {
+                                                                                                            @foreach (var item in ViewBag.SessionList)
+                                                                                                            {
+                                                                                                                <tr role="row">
+                                                                                                                    <td>
+                                                                                                                        @if (Context.Session.GetString("UserType") == "6")
+                                                                                                                        {
+                                                                                                                            <a href="@Url.Action("ViewProtocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName, ExeName = item.Protocol.DeviceConfiguration })">@item.Protocol.ProtocolName</a>
+                                                                                                                        }
+                                                                                                                        else
+                                                                                                                        {
+                                                                                                                            <a href="@Url.Action("Protocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName, ExeName = item.Protocol.DeviceConfiguration })">@item.Protocol.ProtocolName</a>
+                                                                                                                        }
+                                                                                                                    </td>
+                                                                                                                    <td style="width:150px">
+                                                                                                                        @if (item.SessionDate != null)
+                                                                                                                        {
+                                                                                                                            @item.SessionDate.ToString("dd-MMM-yyyy")
+                                                                                                                        }
+                                                                                                                    </td>
+                                                                                                                    <td>@(item.Duration != null ? TimeSpan.FromMinutes(item.Duration) : "")</td>
+                                                                                                                    <td>@(item.Reps != null ? item.Reps : "-")</td>
+
+                                                                                                                    <td class="flexion">@(item.MaxFlexion != null ? item.MaxFlexion : "-")</td>
+
+                                                                                                                    @if (ViewBag.EquipmentType != "Shoulder")
+                                                                                                                    {
+                                                                                                                        <td class="extension">@(item.MaxExtension != null ? item.MaxExtension : "-")</td>
+                                                                                                                    }
+                                                                                                                    else
+                                                                                                                    {
+                                                                                                                        <td class="extension">-</td>
+                                                                                                                    }
+                                                                                                                    <td>@(item.PainCount != null ? item.PainCount : "-")</td>
+                                                                                                                </tr>
+                                                                                                            }
+                                                                                                        }
+                                                                                                    </tbody>
+
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- /.box-body -->
+                                                                                <div class="box-body" id="mobileview">
+                                                                                    @if (ViewBag.SessionList != null)
+                                                                                    {
+                                                                                        @foreach (var item in ViewBag.SessionList)
+                                                                                        {
+                                                                                            <div class="col-md-6">
+                                                                                                <div class="box box-primary">
+                                                                                                    <div class="box-header with-border">
+                                                                                                        <div class=" col-md-12 col-xs-12 no-padding">
+                                                                                                            <div class="col-md-8 col-xs-8" align="left">
+                                                                                                                <h4 class="box-title">
+                                                                                                                    @if (Context.Session.GetString("UserType") == "6")
+                                                                                                                    {
+                                                                                                                        <a href="@Url.Action("ViewProtocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName, ExeName = item.Protocol.DeviceConfiguration})">@item.Protocol.ProtocolName</a>
+                                                                                                                    }
+                                                                                                                    else
+                                                                                                                    {
+                                                                                                                        <a href="@Url.Action("Protocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName, ExeName = item.Protocol.DeviceConfiguration })">@item.Protocol.ProtocolName</a>
+                                                                                                                    }
+
+                                                                                                                </h4>
+
+                                                                                                            </div>
+                                                                                                            <div class="col-md-4 col-xs-4" align="right">
+                                                                                                                @if (item.SessionDate != null)
+                                                                                                                {
+                                                                                                                    @item.SessionDate.ToString("dd-MMM-yyyy")
+                                                                                                                }
+                                                                                                            </div>
+
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    <!-- /.box-header -->
+                                                                                                    <div class="box-body">
+                                                                                                        <div class="col-md-12 col-xs-12">
+                                                                                                            <div class="col-md-4 col-xs-4" align="left">
+                                                                                                                <strong><i class="sorting_asc"></i> Duration (hh:mm:ss)</strong>
+
+                                                                                                                <p class="text-muted">@(item.Duration != null ? TimeSpan.FromMinutes(item.Duration) : "")</p>
+                                                                                                            </div>
+
+                                                                                                            <div class="col-md-4 col-xs-4" align="center">
+                                                                                                                <strong><i class="sorting_asc"></i> Reps</strong>
+
+                                                                                                                <p class="text-muted">@(item.Reps != null ? item.Reps : "")</p>
+                                                                                                            </div>
+                                                                                                            <div class="col-md-4 col-xs-4" align="right">
+                                                                                                                <span style="font-weight:bold">Pain</span>
+                                                                                                                <p class="text-muted">@(item.PainCount != null ? item.PainCount : "")</p>
+                                                                                                            </div>
+
+                                                                                                        </div>
+                                                                                                        <div class="col-md-12 col-xs-12">
+                                                                                                            <div class="col-md-6 col-xs-6" align="left">
+                                                                                                                <span style="font-weight:bold">Flexion</span>
+                                                                                                                <p class="text-muted">@(item.MaxFlexion != null ? item.MaxFlexion : "")</p>
+                                                                                                            </div>
+                                                                                                            <div class="col-md-6 col-xs-6" align="right">
+                                                                                                                <span style="font-weight:bold">Extension</span>
+                                                                                                                @if (ViewBag.EquipmentType != "Shoulder")
+                                                                                                                {
+                                                                                                                    <p class="text-muted">@(item.MaxExtension != null ? item.MaxExtension : "")</p>
+                                                                                                                }
+                                                                                                                else
+                                                                                                                {
+                                                                                                                    <p class="text-muted">-</p>
+
+                                                                                                                }
+                                                                                                            </div>
+
+
+
+
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <!-- /.box-body -->
+
+                                                                                                </div>
+
+
+
+                                                                                            </div>
+                                                                                        }
+                                                                                    }
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="box-body no-padding">
+                                            <div class="content col-md-12 no-padding">
+                                                <div class="col-md-12">
+
+                                                    <div class="row">
+                                                        @if ((ViewBag.FlexionData != null) || (ViewBag.ExtensionData != null) || (ViewBag.FlexionExtensionData != null))
+                                                        {
+                                                            @*HighStock Chart Start*@
+                                                            <div class="box box-solid">
+                                                                <div class="box-header with-border">
+                                                                    @if (!string.IsNullOrEmpty(ViewBag.EquipmentType))
+                                                                    {
+                                                                        if (ViewBag.EquipmentType == "Knee")
+                                                                        {
+                                                                            <h3 class="box-title">Patient Knee ROM</h3>
+                                                                        }
+                                                                        else if (ViewBag.EquipmentType == "Ankle")
+                                                                        {
+                                                                            <h3 class="box-title">Patient Ankle ROM</h3>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <h3 class="box-title">Patient Shoulder ROM</h3>
+                                                                        }
+                                                                    }
+                                                                    <div class="box-tools pull-right">
+                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                            <i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <div class="box-header with-border">
+
+                                                                    <div class="col-md-2 col-xs-3 no-padding">
+                                                                        <div class="radio">
+                                                                            <label>
+                                                                                <input type="radio" id="highstockflexion" name="highstockrom" checked />
+                                                                                @ViewBag.flexionString
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-2 col-xs-3 no-padding">
+                                                                        <div class="radio">
+                                                                            <label>
+                                                                                <input type="radio" id="highstockextension" name="highstockrom" />
+                                                                                @ViewBag.extensionString
+
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-2 col-xs-6 no-padding">
+                                                                        <div class="radio">
+                                                                            <label>
+                                                                                <input type="radio" id="highstockflexionextension" name="highstockrom" />
+                                                                                @ViewBag.flexionString-@ViewBag.extensionString
+
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4 col-xs-12 pull-right  no-padding">
+                                                                        <div class="col-md-6 col-xs-6">
+                                                                            <div class="checkbox no-padding">
+                                                                                <label>
+                                                                                    <input type="checkbox" id="chkhighstockpain" data-value="show" checked />
+
+                                                                                    <span>Show Pain</span>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6 col-xs-6">
+                                                                            <div class="checkbox no-padding">
+                                                                                <label>
+                                                                                    <input type="checkbox" id="chkhighstocksession" data-value="show" checked />
+                                                                                    <span>Show Session</span>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="box-body">
+                                                                    @if (ViewBag.FlexionData != null)
+                                                                    {
+
+                                                                        <div class="col-md-12 col-xs-12" id="divhighstockflexionpainsession" data-value="rom" style="display:block">
+                                                                            <div id="chartflexion" style="min-width: 310px;height:500px; margin: 0 auto"></div>
+
+                                                                        </div>
+                                                                    }
+
+                                                                </div>
+
+
+
+                                                            </div>
+                                                            @*HighStock Chart End*@
+                                                        }
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <!-- DONUT CHART -->
+                                                            <div class="box box-solid">
+                                                                @if (ViewBag.Usage != null)
+                                                                {
+                                                                    <div class="box-header with-border">
+                                                                        <h3 class="box-title">Usage</h3>
+
+                                                                        <div class="box-tools pull-right">
+                                                                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                                <i class="fa fa-minus"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="box-body chart-responsive" align="center">
+                                                                        <p>Max <code>@ViewBag.Usage.MaxSessionSuggested</code> Sessions Suggested</p>
+                                                                        <div class="chart" id="sales-chart" style="height: 308px; position: relative;">
+
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                <!-- /.box-body -->
+                                                            </div>
+                                                            <!-- /.box -->
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <!-- DONUT CHART -->
+                                                            <div class="box box-solid">
+                                                                <div class="box-header with-border">
+                                                                    <h3 class="box-title">Pain</h3>
+
+                                                                    <div class="box-tools pull-right">
+                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                            <i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="box-body chart-responsive" align="center">
+                                                                    <p><code>@(ViewBag.Pain != null ? ViewBag.Pain.TotalPain : "")</code> Pain Recorded</p>
+                                                                    <div class="chart" id="sales-chart1" style="height: 308px; position: relative;">
+
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.box-body -->
+                                                            </div>
+                                                            <!-- /.box -->
+                                                        </div>
+                                                        <div class="col-md-4">
+
+                                                            <div class="box box-solid">
+                                                                <div class="box-header with-border">
+
+                                                                    <h3 class="box-title pull-left">Range of Motion</h3>
+
+                                                                    <div class="box-tools pull-right" style="right:30px;">
+                                                                        <a href="@Url.Action("PatientRX", "CreatePatient", new { patid = ViewBag.PatientRx.PatientId, operaton = "edit" })" class="btn btn-box-tool">Change ROM</a>
+                                                                    </div>
+                                                                    <div class="box-tools pull-right">
+                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                            <i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="box-body no-padding">
+
+                                                                    <div class="chart" id="line-chart-rom" style="margin-top:20px;margin-bottom:38px;height: 300px; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+
+
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="box box-solid">
+                                                                <div class="box-header with-border">
+                                                                    <h3 class="box-title">Treatment Calendar</h3>
+                                                                    <div class="box-tools pull-right">
+                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                            <i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="box-body no-padding">
+                                                                    <!-- THE CALENDAR -->
+                                                                    <div id="calendar" class="fc fc-ltr fc-unthemed">
+
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.box-body -->
+                                                            </div>
+                                                            <!-- /. box -->
+                                                        </div>
+                                                        <div class="col-md-6 no-padding">
+                                                            <div class="box box-solid">
+                                                                <div class="box-header">
+                                                                    <h3 class="box-title">Current Sessions</h3>
+                                                                    <div class="box-tools pull-right">
+                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                                                            <i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.box-header -->
+                                                                <div class="box-body" id="fullview">
+                                                                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12" style="overflow-x:auto">
+                                                                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:smaller" role="grid" aria-describedby="example1_info">
+                                                                                    <thead>
+                                                                                        <tr role="row">
+                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Exercise: activate to sort column descending">Name</th>
+                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="TreatmentDate: activate to sort column descending" style="width:150px">Date</th>
+                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Duration: activate to sort column descending">Duration (hh:mm:ss)</th>
+                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Reps: activate to sort column descending">Reps</th>
+                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Flexion: activate to sort column descending">@ViewBag.flexionString</th>
+                                                                                            @if (ViewBag.EquipmentType == "Shoulder")
+                                                                                            {
+                                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Extension: activate to sort column descending">@ViewBag.flexionString1</th>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Extension: activate to sort column descending">@ViewBag.extensionString</th>
+
+                                                                                            }
+                                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Pain: activate to sort column descending">Pain</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        @if (ViewBag.SessionList != null)
+                                                                                        {
+                                                                                            @foreach (var item in ViewBag.SessionList)
+                                                                                            {
+                                                                                                <tr role="row">
+                                                                                                    <td>
+                                                                                                        @if (Context.Session.GetString("UserType") == "6")
+                                                                                                        {
+                                                                                                            <a href="@Url.Action("ViewProtocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName})">@item.Protocol.ProtocolName</a>
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            <a href="@Url.Action("Protocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName })">@item.Protocol.ProtocolName</a>
+                                                                                                        }
+                                                                                                    </td>
+                                                                                                    <td style="width:150px">
+                                                                                                        @if (item.SessionDate != null)
+                                                                                                        {
+                                                                                                            @item.SessionDate.ToString("dd-MMM-yyyy")
+                                                                                                        }
+                                                                                                    </td>
+                                                                                                    <td>@(item.Duration != null ? TimeSpan.FromMinutes(item.Duration) : "")</td>
+                                                                                                    <td>@(item.Reps != null ? item.Reps : "")</td>
+
+                                                                                                    <td class="flexion">@(item.MaxFlexion != null ? item.MaxFlexion : "")</td>
+
+                                                                                                    @if (ViewBag.EquipmentType != "Shoulder")
+                                                                                                    {
+                                                                                                        <td class="extension">@(item.MaxExtension != null ? item.MaxExtension : "")</td>
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <td class="extension"></td>
+                                                                                                    }
+                                                                                                    <td>@(item.PainCount != null ? item.PainCount : "")</td>
+                                                                                                </tr>
+                                                                                            }
+                                                                                        }
+                                                                                    </tbody>
+
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.box-body -->
+                                                                <div class="box-body" id="mobileview">
+                                                                    @if (ViewBag.SessionList != null)
+                                                                    {
+                                                                        @foreach (var item in ViewBag.SessionList)
+                                                                        {
+                                                                            <div class="col-md-6">
+                                                                                <div class="box box-primary">
+                                                                                    <div class="box-header with-border">
+                                                                                        <div class=" col-md-12 col-xs-12 no-padding">
+                                                                                            <div class="col-md-8 col-xs-8" align="left">
+                                                                                                <h4 class="box-title">
+                                                                                                    @if (Context.Session.GetString("UserType") == "6")
+                                                                                                    {
+                                                                                                        <a href="@Url.Action("ViewProtocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName})">@item.Protocol.ProtocolName</a>
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <a href="@Url.Action("Protocol", "CreatePatient", new { protocolid = item.Protocol.ProtocolId, protocolName = item.Protocol.ProtocolName })">@item.Protocol.ProtocolName</a>
+                                                                                                    }
+
+                                                                                                </h4>
+
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-xs-4" align="right">
+                                                                                                @if (item.SessionDate != null)
+                                                                                                {
+                                                                                                    @item.SessionDate.ToString("dd-MMM-yyyy")
+                                                                                                }
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <!-- /.box-header -->
+                                                                                    <div class="box-body">
+                                                                                        <div class="col-md-12 col-xs-12">
+                                                                                            <div class="col-md-4 col-xs-4" align="left">
+                                                                                                <strong><i class="sorting_asc"></i> Duration (hh:mm:ss)</strong>
+
+                                                                                                <p class="text-muted">@(item.Duration != null ? TimeSpan.FromMinutes(item.Duration) : "")</p>
+                                                                                            </div>
+
+                                                                                            <div class="col-md-4 col-xs-4" align="center">
+                                                                                                <strong><i class="sorting_asc"></i> Reps</strong>
+
+                                                                                                <p class="text-muted">@(item.Reps != null ? item.Reps : "")</p>
+                                                                                            </div>
+                                                                                            <div class="col-md-4 col-xs-4" align="right">
+                                                                                                <span style="font-weight:bold">Pain</span>
+                                                                                                <p class="text-muted">@(item.PainCount != null ? item.PainCount : "")</p>
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-xs-12">
+                                                                                            <div class="col-md-6 col-xs-6" align="left">
+                                                                                                <span style="font-weight:bold">Flexion</span>
+                                                                                                <p class="text-muted">@(item.MaxFlexion != null ? item.MaxFlexion : "")</p>
+                                                                                            </div>
+                                                                                            <div class="col-md-6 col-xs-6" align="right">
+                                                                                                <span style="font-weight:bold">Extension</span>
+                                                                                                @if (ViewBag.EquipmentType != "Shoulder")
+                                                                                                {
+                                                                                                    <p class="text-muted">@(item.MaxExtension != null ? item.MaxExtension : "")</p>
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <p class="text-muted">-</p>
+
+                                                                                                }
+                                                                                            </div>
+
+
+
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!-- /.box-body -->
+
+                                                                                </div>
+
+
+
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        
+
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    }
+
+
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+
+
+

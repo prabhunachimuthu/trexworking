@@ -1,0 +1,78 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using Highsoft.Web.Mvc.Stocks
+@using OneDirect.Helper
+@using OneDirect.ViewModels
+@using Newtonsoft.Json
+
+
+@section styles{
+    <style type="text/css">
+        .btn-group-xs > .btn, .btn-xs {
+            padding: 1px 1px;
+            font-size: 12px;
+            line-height: 1.2;
+            border-radius: 3px;
+            margin-top: 1px;
+        }
+
+        .circle {
+            background-color: slateblue;
+            border-color: white;
+            border-radius: 50%;
+            border-width: 1px;
+            height: 45px;
+            width: 45px;
+            padding-bottom: 0;
+        }
+    </style>
+}
+<style>
+    #label label-primary pull-right {
+        float: right !important;
+    }
+
+    #pull-right {
+        float: right !important;
+    }
+</style>
+<div class="section features" style="padding-top:15px">
+    <div class="container">
+        @*<div class="pages-head">
+                <h3 style="color:white;">Library</h3>
+            </div>*@
+
+
+
+    </div>
+    <div class="footer">
+        <div class="container">
+            <div class="about-us-foot">
+                @*<h6>Cools</h6>*@
+                <p>
+                    We are here to support you. If you need help logging in or using our software,
+                    call 866-957-0550 Monday - Friday 8AM to 5PM.
+                    You can find more information about TREX on our web site at <a href="http://www.trexrehab.com" style="color:blue"> http://www.trexrehab.com</a>
+                </p>
+
+            </div>
+            <div class="copyright">
+                <span>Version - @ConfigVars.NewInstance.version</span>&nbsp;<span>©  @ConfigVars.NewInstance.copyrightmsg All Right Reserved</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+    </script>
+}
+
+
+
+
+

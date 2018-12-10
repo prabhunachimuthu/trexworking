@@ -1,0 +1,229 @@
+﻿@using OneDirect.Helper
+@{
+    @Html.Raw(TempData["msg"])
+}
+
+@{
+    Layout = "";
+}
+@model OneDirect.ViewModels.LoginViewModel
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>One Direct Health Network Administrator Portal</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'
+          name='viewport'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="~/js/manifest.json">
+    <!--cache disable settings-->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <!--base url-->
+    <base href="/" />
+
+    <!-- Bootstrap 3.3.2 -->
+    <link rel="stylesheet" href="~/bootstrap/css/bootstrap.min.css">
+
+    <!-- Font Awesome Icons -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
+          rel="stylesheet" type="text/css" />
+
+    <!-- bootstrap wysihtml5 - text editor -->
+    <link href="~/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet">
+
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link href="~/plugins/iCheck/minimal/blue.css" rel="stylesheet">
+    <!-- Theme style -->
+    <link href="dist/css/AdminLTE.min.css" rel="stylesheet">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <script src="~/Scripts/jquery.min.js"></script>
+    <script src="~/Scripts/jquery.base64.min.js"></script>
+    <script src="~/Scripts/jquery.base64.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+    <script src="https://momentjs.com/downloads/moment-timezone-with-data-2012-2022.js"></script>
+    <link href="~/dist/css/skins/_all-skins.min.css" rel="stylesheet">
+    <link href="~/alertifyjs/css/alertify.css" rel="stylesheet" />
+    <style type="text/css">
+        div.busyLoading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            background-color: lightgray;
+            opacity: .8;
+        }
+
+        img.ajax-loader {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -32px;
+            margin-top: -32px;
+            display: block;
+        }
+
+        .screenMask {
+            margin: 0px;
+            padding: 0px;
+            position: fixed;
+            right: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 300001;
+            opacity: 0.5;
+            filter: alpha(opacity=70);
+            display: none;
+        }
+    </style>
+</head>
+<body class="login-page" style="height:auto">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="login-box">
+            <!-- BEGIN LOGO -->
+            <div class="login-logo">
+                <a href="#" style="cursor:default">
+                    <img src="~/images/inflowlogo240x80.png" height="80" width="240">
+                </a>
+            </div>
+            <div align="center" style="font-size: 17px; margin-top: 10px; margin-bottom: 10px;">Administrator | One Direct </div>
+            <div>
+
+                <!-- END LOGO -->
+                <!-- BEGIN LOGIN -->
+                <div class="login-box-body" style="border-radius:25px;">
+
+                    <div class="form-group">
+                        <label class="control-label visible-ie8 visible-ie9">Username</label>
+
+                        <div class="input-icon">
+                            <i class="fa fa-user"></i>
+                            @Html.HiddenFor(model => model.ruserid)
+                            @Html.HiddenFor(model => model.rtype)
+                            @Html.HiddenFor(model => model.rpage)
+                            @Html.TextBoxFor(model => model.UserId, new { @class = "form-control placeholder-no-fix" })
+                            @Html.ValidationMessageFor(model => model.UserId, null, new { @style = "color:red" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label visible-ie8 visible-ie9">Password</label>
+
+                        <div class="input-icon">
+                            <i class="fa fa-lock"></i>
+                            @Html.TextBoxFor(model => model.Password, new { @class = "form-control placeholder-no-fix", @type = "password" })
+                            @Html.ValidationMessageFor(model => model.Password, null, new { @style = "color:red" })
+                        </div>
+                    </div>
+                    <div class="login-box-msg">
+                        <div>
+                            <a href="#">Forgot password?</a>
+
+                            <button type="submit" style="border-radius:5px;" class="btn green pull-right">
+                                Login <i class="m-icon-swapright m-icon-white">
+                                </i>
+                            </button>
+
+                        </div>
+                        <div id="ErrorMessage" style="font:bold 12px verdana;color:red"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEGIN COPYRIGHT -->
+        </div>
+    }
+    <!-- /.content-wrapper -->
+   
+    <footer class="main-footer" style="margin-left:0px; width:100%; height:60px;bottom:0;">
+        <div class="pull-right hidden-xs">
+            <b>Version</b> @ConfigVars.NewInstance.version
+        </div>
+        <strong>Copyright &copy; @ConfigVars.NewInstance.copyrightmsg </strong> All rights
+        reserved.
+    </footer>
+    <div id="divMask" class="screenMask">
+        <p style="position: fixed;left:50%;top:50%;">
+            <img src="~/images/loader.gif" alt="Loading..." style="z-index:400000;" />
+        </p>
+    </div>
+    <div class="screenMask" id="mask" style="display:none"></div>
+    <div id="divpopup" class="col-md-6" style="border-radius:5px;border:1px solid black;display:none;position:fixed;top:25%;left:25%;z-index:300003;background-color:#ece8e8" align="center">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>You or someone has already logged in from another system. </label>
+            </div>
+        </div>
+        <div class="col-md-12 no-padding">
+            <div class="col-md-6 no-pad-left">
+                <div class="form-group">
+                    <a href="@Url.Action("Signout", "Login", new {id="Forced Logout", userid = ViewBag.UserId })" class="btn btn-success" onclick="$('#divpopup').hide();">Logout from other system and log me in</a>
+                </div>
+            </div>
+            <div class="col-md-6 no-pad-left">
+                <div class="form-group">
+                    <a href="@Url.Action("Index","Login")" class="btn btn-success">I will login with different credentials</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ./wrapper -->
+    <!-- jQuery 2.1.3 -->
+    <style type="text/css">
+        td {
+            padding: 10px;
+        }
+    </style>
+
+    <script src="~/alertifyjs/alertify.js"></script>
+    <script src="~/js/helpers.js"></script>
+
+    <script type="text/javascript">
+        var userId = '@(ViewBag.UserId !=null? ViewBag.UserId:"")';
+        var charRegex = /\D+/g;
+        $(document).ready(function () {
+            hideMask();
+            $(window).on('beforeunload', function () {
+                showMask();
+            });
+
+            if (userId != "") {
+                $("#mask").show();
+                $("#divpopup").show();
+
+            }
+
+        });
+
+        function showMask(isDelay) {
+            if (isDelay) {
+                setTimeout(function () {
+                    document.getElementById("divMask").style.display = "block";
+                }, 10);
+            }
+            else {
+                document.getElementById("divMask").style.display = "block";
+            }
+        }
+
+        function hideMask() {
+            document.getElementById("divMask").style.display = "none";
+        }
+
+
+
+    </script>
+    @Html.Raw(TempData["msg"])
+</body>
+</html>

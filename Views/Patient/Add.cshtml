@@ -1,0 +1,146 @@
+﻿
+@{
+
+}
+@model OneDirect.ViewModels.UserViewModel
+<section class="content-header">
+    <h1>
+        Add Patient
+        
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Patient</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+
+@using (Html.BeginForm())
+{
+    <div class="col-md-12" style="padding-top:20px">
+        <!-- Horizontal Form -->
+        <div class="box box-info">
+           
+            <!-- /.box-header -->
+            <!-- form start -->
+
+            <div class="box-body" style="font-size:small">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Name</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Name)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputPassword3" class="control-label">Patient Id</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.UserId, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.UserId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputPassword3" class="control-label">Password</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.Password, new { @class = "form-control", @type = "password" })
+                            @Html.ValidationMessageFor(model => model.Password)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Provider</label>
+
+                        <div>
+                            @if (ViewBag.ddProvider != null)
+                            {
+                                @Html.DropDownListFor(model => model.ProviderId, ViewBag.ddProvider as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ProviderId, "", new { @class = "error" })
+                            }
+                        </div>
+                    </div>
+                </div>
+               
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">E-mail ID</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Email)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Phone</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.Phone, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Phone)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Address</label>
+
+                        <div>
+                            @Html.TextAreaFor(model => model.Address, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Address)
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Submit</button>
+                <a href="/Patient/Index" class="btn btn-warning pull-right">Cancel </a>
+
+
+            </div>
+            <!-- /.box-footer -->
+
+        </div>
+    </div>
+
+}
+
+@section Scripts {
+    <script src="~/Scripts/inputmask.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+            var input = $('#Phone');
+            input.focus();
+            var tmpStr = input.val();
+            input.val('');
+            input.val(tmpStr);
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+            });
+            $('input[name=Phone]').mask("(999) 999-9999")
+        });
+    </script>
+}
+

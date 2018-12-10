@@ -1,0 +1,345 @@
+﻿@{
+
+}
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Helper
+@model OneDirect.ViewModels.NewPatient
+<section class="content-header">
+    <h1>
+
+        @if (ViewBag.Action == "edit")
+        {
+            <span>@ViewBag.PatientName's Details </span>
+        }
+        else
+        {
+            <span>Add Patient</span>
+        }
+
+       
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Patient</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+<div class="col-md-12" style="padding-top:20px">
+    <!-- Horizontal Form -->
+    <div class="box box-info">
+       
+        <!-- /.box-header -->
+        <!-- form start -->
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => Model.PatientId)
+            @Html.HiddenFor(model => Model.PatientLoginId)
+            @Html.HiddenFor(model => Model.Action)
+
+            @Html.HiddenFor(model => Model.Pin)
+            <div class="box-body" style="font-size:small">
+                <div class="col-md-12">
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label">Patient Name<span style="color:red">*</span></label>
+                            <div>
+                               
+                                @Html.TextBoxFor(model => model.PatientName, (ViewBag.Action == "edit" ? (object)new { @class = "form-control ", @placeholder = "Enter your name" } :
+                                new { @class = "form-control ", @placeholder = "Enter your name", autocomplete = "off" }))
+                                @Html.ValidationMessageFor(model => model.PatientName, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label">Patient SS#<span style="color:red">*</span>(Last 4 digits only)</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.Ssn, (ViewBag.Action == "edit" ? (object)new { @class = "form-control", @maxlength = 4, @placeholder = "Enter your SS#", @readonly = "readonly" } :
+                                    new { @class = "form-control", @maxlength = 4, @placeholder = "Enter your SS#", autocomplete = "off" }))
+                                @Html.ValidationMessageFor(model => model.Ssn, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label">Date of Birth<span style="color:red">*</span></label>
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+
+                                @Html.TextBoxFor(model => model.Dob, (ViewBag.Action == "edit" ? (object)new { @class = "form-control", @placeholder = "Enter your date of birth", @readonly = "readonly" } :
+                                    new { @class = "form-control datepicker", @placeholder = "Enter your date of birth", autocomplete = "off" }))
+
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Dob, "", new { @class = "error" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label">Mobile Number<span style="color:red">*</span></label>
+                            <div>
+                                @Html.TextBoxFor(model => model.PhoneNumber, (ViewBag.Action == "edit" ? (object)new { @class = "form-control", @placeholder = "Enter your mobile number", @readonly = "readonly" } :
+                                    new { @class = "form-control", @placeholder = "Enter your mobile number", autocomplete = "off" }))
+                                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (Context.Session.GetString("UserType") == ConstantsVar.Admin.ToString() || Context.Session.GetString("UserType") == ConstantsVar.Support.ToString())
+                {
+                    <div class="col-md-12">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Provider</label>
+                                <div>
+                                    @Html.DropDownListFor(model => model.ProviderId, ViewBag.Provider as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.ProviderId, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Therapist</label>
+                                <div>
+                                    @Html.DropDownListFor(model => model.TherapistId, ViewBag.Therapist as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.TherapistId, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Patient Administrator</label>
+                                <div>
+                                    @Html.DropDownListFor(model => model.PatientAdminId, ViewBag.PatientAdministrator as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.PatientAdminId, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Address</label>
+                                <div>
+                                    @Html.TextBoxFor(model => model.AddressLine, new { @class = "form-control", @placeholder = "Enter your address", autocomplete = "off" })
+                                    @Html.ValidationMessageFor(model => model.AddressLine, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-12">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">Therapist</label>
+                                <div>
+                                    @Html.HiddenFor(model => Model.ProviderId)
+                                    @Html.DropDownListFor(model => model.TherapistId, ViewBag.Therapist as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.TherapistId, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">Patient Administrator</label>
+                                <div>
+                                    @Html.DropDownListFor(model => model.PatientAdminId, ViewBag.PatientAdministrator as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.PatientAdminId, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">Address</label>
+                                <div>
+                                    @Html.TextBoxFor(model => model.AddressLine, new { @class = "form-control", @placeholder = "Enter your address", autocomplete = "off" })
+                                    @Html.ValidationMessageFor(model => model.AddressLine, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">City</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.City, new { @class = "form-control", @placeholder = "Enter your city", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.City, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">State</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.State, new { @class = "form-control", @maxlength = 2, @placeholder = "Enter your state", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.State, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">Zip code</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.Zip, new { @class = "form-control", @maxlength = 5, @placeholder = "Enter your zipcode", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.Zip, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="EquipmentType" class="control-label">Joint Involved<span style="color:red">*</span></label>
+                            <div>
+                                @if (ViewBag.equipment != null)
+                                {
+                                    @Html.DropDownListFor(model => model.EquipmentType, ViewBag.equipment as IEnumerable<SelectListItem>
+                                     , "Select", (ViewBag.Action == "edit" ? (object)new { @class = "form-control not-active" } : new { @class = "form-control" }))
+                                    @Html.ValidationMessageFor(model => model.EquipmentType, "", new { @class = "error" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="EquipmentType" class="control-label">Side Involved<span style="color:red">*</span></label>
+                            <div>
+                                @if (ViewBag.sides != null)
+                                {
+                                    @Html.DropDownListFor(model => model.Side, ViewBag.sides as IEnumerable<SelectListItem>
+                                     , "Select", (ViewBag.Action == "edit" ? (object)new { @class = "form-control not-active" } : new { @class = "form-control" }))
+                                    @Html.ValidationMessageFor(model => model.Side, "", new { @class = "error" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Surgery Date<span style="color:red">*</span></label>
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                @Html.TextBoxFor(model => model.SurgeryDate, (ViewBag.Action == "edit" ? (object)new { @class = "form-control", @placeholder = "Enter surgery date", @readonly = "readonly" } :
+                                    new { @class = "form-control datepicker", @placeholder = "Enter surgery date", autocomplete = "off" }))
+                            </div>
+                            @Html.ValidationMessageFor(model => model.SurgeryDate, "", new { @class = "error" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                @if (ViewBag.Action == "edit")
+                {
+                    <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Save Changes</button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Next</button>
+                }
+                @if (@Context.Session.GetString("UserType") == ConstantsVar.Admin.ToString())
+                {
+                    @Html.ActionLink("Cancel", "Index", "Patient", new { }, new { @class = "btn btn-warning pull-right" })
+                }
+                else if (@Context.Session.GetString("UserType") == ConstantsVar.PatientAdministrator.ToString())
+                {
+                    @Html.ActionLink("Cancel", "Dashboard", "PatientAdministrator", new { id = @Context.Session.GetString("UserId") }, new { @class = "btn btn-warning pull-right" })
+                }
+                else if (Context.Session.GetString("UserType") == ConstantsVar.Support.ToString())
+                {
+                    @Html.ActionLink("Cancel", "Dashboard", "Support", new { id = @Context.Session.GetString("UserId") }, new { @class = "btn btn-warning pull-right", autocomplete = "off" })
+                }
+                else if (Context.Session.GetString("UserType") == ConstantsVar.Therapist.ToString())
+                {
+                    @Html.ActionLink("Cancel", "Dashboard", "Therapist", new { id = @Context.Session.GetString("UserId") }, new { @class = "btn btn-warning pull-right", autocomplete = "off" })
+                }
+                else if (Context.Session.GetString("UserType") == ConstantsVar.Provider.ToString())
+                {
+                    @Html.ActionLink("Cancel", "Dashboard", "Provider", new { id = @Context.Session.GetString("UserId") }, new { @class = "btn btn-warning pull-right", autocomplete = "off" })
+                }
+                else
+                {
+                    @Html.ActionLink("Cancel", "Dashboard", "Provider", new { id = @Context.Session.GetString("UserId") }, new { @class = "btn btn-warning pull-right" })
+                }
+            </div>
+            <!-- /.box-footer -->
+        }
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/inputmask.js"></script>
+    <script type="text/javascript">
+        $('.datepicker1').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+        $('.datepicker').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+            var input = $('#PhoneNumber');
+            input.focus();
+            var tmpStr = input.val();
+            input.val('');
+            input.val(tmpStr);
+
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+                var today = $.datepicker.formatDate('dd/mm/yy', new Date());
+                var dob_date = $.datepicker.formatDate('dd/mm/yy', new Date($('#Dob').val()));
+                var surgery_date = $.datepicker.formatDate('dd/mm/yy', new Date($('#SurgeryDate').val()));
+                if (new Date(dob_date) > new Date(today)) {
+                    $("span[data-valmsg-for='Dob']").html("<br><span for='RxDays' class='' style='color:red'>Date of birth should not be greater than Today</span>");
+                   
+                    return false;
+                }
+                if (new Date(surgery_date) < new Date(dob_date)) {
+                    $("span[data-valmsg-for='SurgeryDate']").html("<br><span for='RxDays' class='' style='color:red'>Surgery date should be greater than or equal DOB</span>");
+                   
+                    return false;
+                }
+            });
+
+            if ($('[name=Dob]').val().length >= 8) {
+                $('[name=Dob]').val($.datepicker.formatDate('M-dd-yy', new Date($('[name=Dob]').val())));
+            }
+            else {
+                $("#datepicker1").val('');
+            }
+
+            if ($('[name=SurgeryDate]').val().length >= 8) {
+                $('[name=SurgeryDate]').val($.datepicker.formatDate('M-dd-yy', new Date($('[name=SurgeryDate]').val())));
+            }
+            else {
+                $("#datepicker").val('');
+            }
+            $('input[name=PhoneNumber]').on('keyup', function (e) {
+
+            });
+            
+           
+            $('input[name=PhoneNumber]').mask("(999) 999-9999")
+        });
+            
+           
+
+    </script>
+
+}
+
+

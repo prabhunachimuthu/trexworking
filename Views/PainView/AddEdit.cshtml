@@ -1,0 +1,138 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@{
+
+}
+@model OneDirect.ViewModels.SessionPain
+<section class="content-header">
+    <h1>
+        Create Pain Record
+
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">PainView</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+
+@using (Html.BeginForm())
+{
+    <div class="col-md-12" style="padding-top:20px">
+        <!-- Horizontal Form -->
+        <div class="box box-info">
+            @Html.HiddenFor(model => model.PainId)
+            @Html.HiddenFor(model => model.PatientId)
+            @Html.HiddenFor(model => model.RxId)
+            @Html.HiddenFor(model => model.ProtocolId)
+            @Html.HiddenFor(model => model.SessionId)
+            @Html.HiddenFor(model => model.date)
+            @Html.HiddenFor(model => model.time)
+            @Html.HiddenFor(model => model.returnView)
+            <div class="box-body" style="font-size:small">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Exercise Type</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.Protocoltype, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Protocoltype)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Angle</label>
+                        <div>
+                            @Html.TextBoxFor(model => model.Angle, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Angle)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputPassword3" class="control-label">Repeat Number</label>
+                        <div>
+                            @Html.TextBoxFor(model => model.RepeatNumber, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.RepeatNumber)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputPassword3" class="control-label">Pain Level</label>
+                        <div>
+                            @Html.TextBoxFor(model => model.PainLevel, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.PainLevel)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputPassword3" class="control-label">Flexion Repeat Number</label>
+                        <div>
+                            @Html.TextBoxFor(model => model.FlexionRepNumber, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.FlexionRepNumber)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputPassword3" class="control-label">Extension Repeat Number</label>
+                        <div>
+                            @Html.TextBoxFor(model => model.ExtensionRepNumber, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.ExtensionRepNumber)
+                        </div>
+                    </div>
+                </div>
+                @*<div class="col-md-6">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="control-label">Date and Time</label>
+
+                            <div>
+                                @Html.TextBoxFor(model =>model.DateTime, new { @class = "form-control datepicker" })
+                                @Html.ValidationMessageFor(model => model.DateTime)
+                            </div>
+                        </div>
+                    </div>*@
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Submit</button>
+                @*<a href="/Support/Index" class="btn btn-warning pull-right">Cancel</a>*@
+
+            </div>
+            <!-- /.box-footer -->
+
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+            });
+        });
+    </script>
+}
+
+
+
+
+

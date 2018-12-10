@@ -1,0 +1,387 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Models;
+@using OneDirect.ViewModels;
+@using OneDirect.Helper;
+@{
+
+}
+
+<section class="content-header">
+    <h1>
+        Audit Trail
+
+    </h1>
+
+    <ol class="breadcrumb">
+        <li><a href="~/Patient"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Audit Trail</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+<section class="content" style="padding-top: 20px;">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                   
+                </div>
+
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+
+                                <div class="nav-tabs-custom" style="margin-bottom:0px !important;">
+                                    <ul class="nav nav-tabs">
+                                       
+
+                                        <li class="@(ViewBag.page == "Session" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_1" data-value="@Url.Action("Index", "SessionAuditTrail", new { id = "Session" })" data-toggle="tab">User Sessions</a>
+                                        </li>
+                                        <li class="@(ViewBag.page == "Activity" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_2" data-value="@Url.Action("Index", "SessionAuditTrail", new { id = "Activity" })" data-toggle="tab">Data Modifications</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane @(ViewBag.page == "Session" ? "active" : "")" id="tab_1">
+                                            <div class="box-body no-padding">
+                                                <div class="content col-sm-12 no-padding">
+                                                    <div class="col-sm-12" style="overflow-x:auto">
+                                                        <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                                            <thead>
+                                                                <tr role="row">
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending">Name</th>
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Type: activate to sort column descending">Type</th>
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Session ID: activate to sort column descending">Session ID</th>
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Session Type: activate to sort column descending">Session Type</th>
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Status activate to sort column descending">Status</th>
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Linked Session: activate to sort column descending">Linked Session</th>
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Start Time: activate to sort column descending">Start Time</th>
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="End Time: activate to sort column descending">End Time</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                               
+
+                                                            </tbody>
+
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane @(ViewBag.page == "Activity" ? "active" : "")" id="tab_2">
+                                            @if (ViewBag.Activity != null && (ViewBag.Activity as IList<UserActivityLog>).Count > 0)
+                                            {
+                                                <div class="col-md-12" style="padding-bottom:10px;padding-right:10px;">
+                                                    <div class="dropdown pull-right">
+                                                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                                                            @ViewBag.SelectedUser
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+
+                                                            @foreach (UserActivityLog p in (ViewBag.Activity1 as IList<UserActivityLog>).GroupBy(x => x.UserId).Select(g => g.First()).ToList())
+                                                          
+                                                            {
+                                                                <li><a href="@Url.Action("Index", "SessionAuditTrail", new { @id="Activity",userid = p.UserId })"> @p.UserName </a></li>
+                                                            }
+                                                            <li><a href="@Url.Action("Index", "SessionAuditTrail", new {  @id="Activity"})"> All </a></li>
+
+                                                        </ul>
+
+                                                    </div>
+
+
+                                                </div>
+                                            }
+                                            <div class="box-body no-padding">
+                                                <div class="content col-sm-12 no-padding">
+
+                                                    <div class="col-sm-12" style="overflow-x:auto">
+                                                        <table id="example2" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example2_info">
+                                                            <thead>
+                                                                <tr role="row">
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Type: activate to sort column descending">Name</th>
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Type: activate to sort column descending">Type</th>
+                                                                   
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Type: activate to sort column descending">Change Type</th>
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="End Time: activate to sort column descending">Record Type</th>
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Session ID: activate to sort column descending">Session ID</th>
+
+                                                                    
+                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Session ID: activate to sort column descending">Start DateTime</th>
+                                                                    <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions : activate to sort column descending">
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @if (ViewBag.Activity != null && (ViewBag.Activity as IList<UserActivityLog>).Count > 0)
+                                                                {
+                                                                    @foreach (UserActivityLog item in (ViewBag.Activity as IList<UserActivityLog>))
+                                                                    {
+                                                                        <tr>
+                                                                            <td> @item.UserName </td>
+                                                                            <td> @Utilities.getUserType(item.UserType.ToString()) </td>
+                                                                          
+                                                                            <td>
+                                                                                @item.RecordChangeType
+                                                                            </td>
+                                                                            <td> @item.RecordType </td>
+                                                                            <td style="white-space:nowrap"> @item.SessionId </td>
+                                                                           
+                                                                            <td style="white-space:nowrap">@(Convert.ToDateTime(Utilities.ConverTimetoBrowserTimeZone(item.StartTimeStamp, Context.Session.GetString("timezoneid"))).ToString("MMM-dd-yyyy hh:mm:ss tt")) </td>
+
+                                                                            <td>
+                                                                                
+                                                                                <div id="@item.ActivityId" name="activtychange" class="label label-primary" style="cursor:pointer" onclick='showChange("@item.ActivityId")'>View Changes</div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    }
+                                                                }
+
+                                                            </tbody>
+
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div style="position:fixed;top:25%;left:89%;z-index:300005;display:none;" id="divclose">
+    <button type="button" class="btn btn-box-tool" data-widget="remove" onclick="$('#divchange').hide(); $('#divclose').hide();"><i class="fa fa-remove"></i></button>
+</div>
+<div id="divchange" align="center" class="col-md-8" style="border:1px solid black;display:none;position:fixed;top:25%;left:25%;z-index:300003;background-color:#e8e8e8;height:300px;overflow:auto">
+
+</div>
+
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+
+     var tt;
+    $(document).ready(function () {
+        if ($("#example1").length > 0) {
+            var dTable = $('#example1').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "orderMulti": false,
+                "autoWidth": false,
+                "searching": true,
+                "language":
+                {
+                    
+                    "processing": "<div class='overlay custom-loader-background'><i class='fa fa-spinner fa-spin fa-3x fa-fw'></i><span class='sr-only'>Loading...</span></div>"
+                },
+                "ajax": {
+                    "url": "@Url.Action("GetSessionAuditTrail","SessionAuditTrail")",
+                    "type": "POST",
+                    "dataType": "JSON",
+                    "timeout":60000
+                },
+                "columnDefs": [
+                    
+                    { "visible": false},
+                    { "searchable": false },
+                    {
+                        "render": function (data, type, full, meta) {
+                            return "<div style='white-space: nowrap'>" + data + "</div>";
+                        },
+                        "targets":[2,5]
+                    },
+                    {
+                        "render": function (data, type, full, meta) {
+                            return "<div style='white-space: nowrap'>" + data + "</div>";
+                        },
+                        "targets": [6, 7]
+                    }
+
+                ],
+                "order": [[6, 'desc']],
+                "columns": [
+                    { "data": "name" },
+                    { "data": "type" },
+                    { "data": "sessionId"},
+                    { "data": "sessionType" },
+                    { "data": "sessionStatus" },
+                    { "data": "linkedSession" },
+                    { "data": "sessionOpenTime" },
+                    { "data": "sessionClosedTime" }
+                ],
+                "fnDrawCallback": function (settings, json) {
+                    
+                },
+                'stateSave': true,
+                'stateDuration': -1,
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                }]
+            });
+          
+
+
+            $('#example1 tbody').on('click', 'tr.group', function () {
+                var cOrder = dTable.order()[0];
+                if (cOrder[0] === 2 && cOrder[1] === 'asc') {
+                    dTable.order([2, 'desc']).draw();
+                }
+                else {
+                    dTable.order([2, 'asc']).draw();
+                }
+            })
+        }
+    });
+
+    $(document).ready(function () {
+        
+
+        $('#example2').DataTable({
+            'stateSave': true,
+            'stateDuration': -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+           
+        });
+    });
+    function triggerfunction(tab) {
+       
+        window.location = $(tab).find('a').attr("data-value");
+    }
+    function showChange(activityId) {
+        showMask();
+        
+        if (activityId != "") {
+            $.ajax({
+                url: '@Url.Action("ShowChange", "SessionAuditTrail")?activityId=' + activityId,
+                
+                type: 'get',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        console.log("Response");
+                        
+                        if (data.result == "success" && data.log != null) {
+                            var response = "";
+                            console.log(data.log);
+
+                            if (data.log.recordExistingJson != null && data.log.recordExistingJson != "") {
+                                var recordJson = JSON.parse(data.log.recordExistingJson);
+                               
+                                if (data.log.recordType == "Rx" || (data.log.recordType == "Exercise" && data.log.recordChangeType=="Delete")) {
+
+                                    if (recordJson != null && recordJson.length > 0) {
+                                        response = response + "<div class='col-md-6'><span style='font-size:14px;font-weight:bold;padding-left:20px'>Previous Record</span><div class='form-group'>";
+                                        for (var i = 0; i < recordJson.length; i++) {
+                                            response = response + "<table><tbody>";
+                                            var rxJson = recordJson[i];
+                                            for (var key in rxJson) {
+                                                if (rxJson[key] != null && rxJson[key] != "" && typeof (rxJson[key]) != "object") {
+                                                    
+                                                    response = response + "<tr><td style='font-size:13px'>" + key + "</td><td>:</td><td style='font-size:13px'>" + rxJson[key] + "</td></tr>";
+                                                }
+                                            }
+                                            response = response + "</tbody></table>";
+                                        }
+                                        response = response + "</div></div>";
+                                    }
+
+                                }
+                                else {
+                                    if (recordJson != null) {
+                                        response = response + "<div class='col-md-6'><span style='font-size:14px;font-weight:bold;padding-left:20px'>Previous Record</span><div class='form-group'><table><tbody>";
+                                        for (var key in recordJson) {
+                                            if (recordJson[key] != null && recordJson[key] != "" && typeof (recordJson[key]) != "object") {
+                                               
+                                                response = response + "<tr><td style='font-size:13px'>" + key + "</td><td>:</td><td style='font-size:13px'>" + recordJson[key] + "</td></tr>";
+                                            }
+                                        }
+
+                                        response = response + "</tbody></table></div></div>";
+                                    }
+                                }
+                            }
+                            if (data.log.recordJson != null && data.log.recordJson != "") {
+                                var recordJson = JSON.parse(data.log.recordJson);
+                               
+                                if (recordJson != null) {
+                                    if (data.log.recordChangeType != "Edit") {
+                                        if ($("#divchange").hasClass("col-md-8")) {
+                                            $("#divchange").addClass("col-md-6");
+                                            $("#divchange").removeClass("col-md-8");
+                                            $("#divclose").css("left", "72%");
+                                        }
+                                        response = response + "<div class='col-md-12'>";
+                                    }
+                                    else {
+                                        if ($("#divchange").hasClass("col-md-6")) {
+                                            $("#divchange").removeClass("col-md-6");
+                                            $("#divchange").addClass("col-md-8");
+                                            $("#divclose").css("left", "89%");
+                                        }
+                                        response = response + "<div class='col-md-6'>";
+                                    }
+                                    response = response + "<span style='font-size:14px;font-weight:bold;padding-left:20px'>Current Record</span><div class='form-group'>";
+                                    if (data.log.recordType == "Rx" || (data.log.recordType == "Exercise" && data.log.recordChangeType == "Delete")) {
+                                        for (var i = 0; i < recordJson.length; i++) {
+                                            response = response + "<table><tbody>";
+                                            var rxJson = recordJson[i];
+                                            for (var key in rxJson) {
+                                                if (rxJson[key] != null && rxJson[key] != "" && typeof (rxJson[key]) != "object") {
+                                                    
+                                                    response = response + "<tr><td style='font-size:13px'>" + key + "</td><td>:</td><td style='font-size:13px'>" + rxJson[key] + "</td></tr>";
+                                                }
+                                            }
+                                            response = response + "</tbody></table>";
+                                        }
+                                    }
+                                    else {
+                                        response = response + "<table><tbody>";
+                                        for (var key in recordJson) {
+                                            if (recordJson[key] != null && recordJson[key] != "" && typeof (recordJson[key]) != "object") {
+                                               
+                                                response = response + "<tr><td style='font-size:13px'>" + key + "</td><td>:</td><td style='font-size:13px'>" + recordJson[key] + "</td></tr>";
+                                            }
+                                        }
+                                        response = response + "</tbody></table>";
+                                    }
+
+                                    response = response + "</div></div>";
+                                }
+                            }
+
+
+
+                            console.log(response);
+                            $("#divchange").html(response);
+                            $("#divchange").show();
+                            $("#divclose").show();
+                            hideMask();
+                        }
+                    }
+                },
+                error: function (data) {
+                   
+                }
+            });
+        }
+    }
+
+</script>

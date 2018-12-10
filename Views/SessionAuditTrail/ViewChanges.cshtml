@@ -1,0 +1,458 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.ViewModels;
+@using OneDirect.Helper;
+@{
+
+}
+@model OneDirect.ViewModels.PatientReviewReport
+
+<style type="text/css">
+    #divchange::-webkit-scrollbar {
+        width: 0.5em;
+    }
+
+    #divchange::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    #divchange::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+    }
+</style>
+
+<section class="content-header">
+    @if (Model.Patient != null && !string.IsNullOrEmpty(Model.Patient.PatientName))
+    {
+        <h1>
+            @Model.Patient.PatientName&nbsp; Review
+        </h1>
+
+    }
+    else
+    {
+        <h1>
+            Review
+        </h1>
+    }
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">View Review</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content" style="padding-top: 20px;">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+
+                </div>
+
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="box-body no-padding" style="font-size:small">
+                                    <div class="col-sm-12 no-padding">
+                                        <div class="col-md-8  no-padding">
+                                            <div class="col-md-12">
+                                                <span style="font-size:18px"><b>TREX Rehab</b></span>
+                                            </div>
+
+                                            <div class="col-md-12 no-padding">
+                                                <div class="col-md-6">
+                                                    <span><b>Patient Name</b> : @Model.Patient.PatientName</span>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span><b>Evaluation Date</b> :@Model.Patient.EvaluationDate</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-12 no-padding">
+                                                <div class="col-md-6">
+                                                    <span><b>Primary Physician</b> :@Model.Patient.ProviderName</span>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span><b>Evaluator</b> :@Model.Patient.Evaluator</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 no-padding">
+                                                <div class="col-md-6">
+                                                    <span><b>Primary Therapist</b> :@Model.Patient.TherapistName</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 no-padding">
+                                                <div class="col-md-6">
+                                                    <span><b>Primary Administrator</b> :@Model.Patient.PatAdminName</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 no-padding">
+                                                <div class="col-md-6">
+                                                    <span><b>Date of birth</b> :@Model.Patient.DateofBirth</span>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="col-sm-12 no-padding">
+                                                <div class="col-md-12  no-padding">
+                                                    <div class="col-md-12">
+                                                        <span style="font-size:18px"><b>Subjective</b></span>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <span>@Model.Patient.Side&nbsp;@Model.Patient.EquipmentType&nbsp;Surgery on&nbsp;@Model.Patient.SurgeryDate</span>
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+                                            <div class="col-sm-12 no-padding">
+                                                <div class="col-md-12  no-padding">
+                                                    <div class="col-md-12">
+                                                        <span style="font-size:18px"><b>Objective</b></span>
+
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div>
+                                                            <b>Range of Motion</b>
+                                                        </div>
+                                                        <div style="overflow-x:auto">
+                                                            <table id="example1" class="table table-bordered table-striped" style="font-size:small;" role="grid" aria-describedby="example1_info">
+                                                                <thead>
+                                                                    <tr role="row">
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Protocol Name: activate to sort column descending">Exercise</th>
+                                                                        @if (Model.Patient.EquipmentType != "Shoulder")
+                                                                        {
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending">@ViewBag.flexionString Goal</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending">@ViewBag.flexionString Achieved</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending">@ViewBag.extensionString Goal</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending">@ViewBag.extensionString Achieved</th>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending">@ViewBag.flexionString Goal</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending">@ViewBag.flexionString Achieved</th>
+                                                                        }
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending">Pain Level</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @if (Model.ROM != null && Model.ROM.Count > 0)
+                                                                    {
+                                                                        @foreach (var item in Model.ROM)
+                                                                        {
+                                                                            <tr>
+                                                                                <td>@item.Exercise</td>
+                                                                                @if (Model.Patient.EquipmentType != "Shoulder")
+                                                                                {
+                                                                                    <td>@item.GoalFlexion</td>
+                                                                                    <td>@item.FlexionAchieved</td>
+                                                                                    <td>@item.GoalExtension</td>
+                                                                                    <td>@item.ExtensionAchieved</td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td>@item.GoalFlexion</td>
+                                                                                    <td>@item.FlexionAchieved</td>
+                                                                                }
+                                                                                <td>@(!string.IsNullOrEmpty(item.PainLevel) ? item.PainLevel : "0")</td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    @if (Model.ProtocolList != null && Model.ProtocolList.Count > 0)
+                                                    {
+                                                        <div class="col-md-12">
+                                                            <div>
+                                                                <b>
+                                                                    Active Exercises
+                                                                </b>
+                                                            </div>
+                                                            <div style="overflow-x:auto">
+                                                                <table id="example1" class="table table-bordered table-striped" style="font-size:small;" role="grid" aria-describedby="example1_info">
+                                                                    <thead>
+                                                                        <tr role="row">
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Protocol Name: activate to sort column descending">Exercise</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Protocol Name: activate to sort column descending">Type</th>
+                                                                            @if (Model.Patient.EquipmentType != "Shoulder")
+                                                                            {
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending">@ViewBag.flexionString Current</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending">@ViewBag.flexionString Goal</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending">@ViewBag.extensionString Current</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending">@ViewBag.extensionString Goal</th>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending">@ViewBag.flexionString Current</th>
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending">@ViewBag.flexionString Goal</th>
+                                                                            }
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending">Start Date</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending">End Date</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @if (Model.ProtocolList != null && Model.ProtocolList.Count > 0)
+                                                                        {
+                                                                            @foreach (var item in Model.ProtocolList)
+                                                                            {
+                                                                                <tr>
+                                                                                    <td>@item.ProtocolName</td>
+                                                                                    <td>@item.DeviceConfiguration</td>
+                                                                                    @if (Model.Patient.EquipmentType != "Shoulder")
+                                                                                    {
+                                                                                        <td>@item.FlexUpLimit</td>
+                                                                                        <td>@item.StretchUpLimit</td>
+                                                                                        <td>@item.FlexDownLimit</td>
+                                                                                        <td>@item.StretchDownLimit</td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td>@item.FlexUpLimit</td>
+                                                                                        <td>@item.StretchUpLimit</td>
+                                                                                    }
+                                                                                    <td>@(item.StartDate != null ? Convert.ToDateTime(item.StartDate).ToString(string.Format("MM-dd-yyyy")) : "")</td>
+                                                                                    <td>@(item.EndDate != null ? Convert.ToDateTime(item.EndDate).ToString(string.Format("MM-dd-yyyy")) : "")</td>
+                                                                                </tr>
+                                                                            }
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 no-padding">
+                                                <div class="col-md-12 no-padding">
+                                                    <div class="col-md-12">
+                                                        <span style="font-size:18px"><b>Assessment</b></span>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        @Model.Review.AssessmentComment
+
+
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+                                            <div class="col-sm-12 no-padding">
+                                                <div class="col-md-12 no-padding">
+                                                    <div class="col-md-12">
+                                                        <span style="font-size:18px"><b>Plan</b></span>
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        @if (Model.ChangeList != null && Model.ChangeList.Count > 0)
+                                                        {
+                                                            <div><b>Range of Motion change</b></div>
+                                                            @foreach (var item in Model.ChangeList)
+                                                            {
+                                                                @foreach (KeyValuePair<string, string> pair in item.Value)
+                                                                {
+                                                                    @if (!string.IsNullOrEmpty(pair.Value))
+                                                                    {
+                                                                        var lsplit = pair.Value.Split("$");
+                                                                        if (lsplit != null && lsplit.Length > 0)
+                                                                        {
+                                                                            @if (Model.Patient.EquipmentType == "Shoulder")
+                                                                            {
+                                                                                <span>
+                                                                                    @item.Key&nbsp;-&nbsp; @pair.Key changed from @lsplit[0] to @lsplit[1]
+
+                                                                                </span>
+                                                                                <br />
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                <span>
+                                                                                    @pair.Key changed  from @lsplit[0] to @lsplit[1]
+
+                                                                                </span>
+                                                                                <br />
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        @if (Model.ProtocolCurrentList != null && Model.ProtocolCurrentList.Count > 0)
+                                                        {
+                                                            <div class="col-md-12 no-padding">
+                                                                <div>
+                                                                    <b>
+                                                                        Exercises changed
+                                                                    </b>
+                                                                </div>
+                                                                <div style="overflow-x:auto">
+                                                                    <table id="example1" class="table table-bordered table-striped" style="font-size:small;" role="grid" aria-describedby="example1_info">
+                                                                        <thead>
+                                                                            <tr role="row">
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Protocol Name: activate to sort column descending">Exercise</th>
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Protocol Name: activate to sort column descending">Type</th>
+                                                                                @if (Model.Patient.EquipmentType != "Shoulder")
+                                                                                {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending">@ViewBag.flexionString Current</th>
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending">@ViewBag.flexionString Goal</th>
+                                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending">@ViewBag.extensionString Current</th>
+                                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending">@ViewBag.extensionString Goal</th>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending">@ViewBag.flexionString Current</th>
+                                                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending">@ViewBag.flexionString Goal</th>
+                                                                                }
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending">Start Date</th>
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending">End Date</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @if (Model.ProtocolCurrentList != null && Model.ProtocolCurrentList.Count > 0)
+                                                                            {
+                                                                                @foreach (var item in Model.ProtocolCurrentList)
+                                                                                {
+                                                                                    <tr>
+                                                                                        <td>@item.ProtocolName</td>
+                                                                                        <td>@item.DeviceConfiguration</td>
+                                                                                        @if (Model.Patient.EquipmentType != "Shoulder")
+                                                                                        {
+                                                                                            <td>@item.FlexUpLimit</td>
+                                                                                            <td>@item.StretchUpLimit</td>
+                                                                                            <td>@item.FlexDownLimit</td>
+                                                                                            <td>@item.StretchDownLimit</td>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td>@item.FlexUpLimit</td>
+                                                                                            <td>@item.StretchUpLimit</td>
+                                                                                        }
+                                                                                        <td>@(item.StartDate != null ? Convert.ToDateTime(item.StartDate).ToString(string.Format("MM-dd-yyyy")) : "")</td>
+                                                                                        <td>@(item.EndDate != null ? Convert.ToDateTime(item.EndDate).ToString(string.Format("MM-dd-yyyy")) : "")</td>
+                                                                                    </tr>
+                                                                                }
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4" align="center">
+                                            <div class="col-md-12">
+                                                <span style="font-size:18px"><b>Physical therapy Evaluation</b></span>
+
+                                            </div>
+
+                                            <div class="col-md-12 no-padding">
+                                                @if (Model.Patient.EquipmentType == "Shoulder")
+                                                {
+                                                    <img src="~/images/shoulder1.png" />
+                                                }
+                                                else if (Model.Patient.EquipmentType == "Ankle")
+                                                {
+                                                    <img src="~/images/ankle.png" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="~/images/knee.png" />
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer">
+                    <input type="button" id="print" class="btn btn-success pull-right" style="margin-left:10px;" value="Print" />
+                    <a href="@Url.Action("EmailPDF","SessionAuditTrail",new { id=Model.Review.ReviewId})" class="btn btn-success pull-right">Email PDF</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+    });
+    function triggerfunction(tab) {
+
+        window.location = $(tab).find('a').attr("data-value");
+    }
+
+    $('#print').click(function () {
+
+
+        $('#example1_wrapper').printThis(
+            {
+                debug: true,               // show the iframe for debugging
+                importCSS: true,            // import parent page css
+                importStyle: true,         // import style tags
+                printContainer: true,       // print outer container/$.selector
+                loadCSS: "../css/bootstrap_print.css",                // path to additional css file - use an array [] for multiple
+                pageTitle: "",              // add title to print page
+                removeInline: false,        // remove inline styles from print elements
+                removeInlineSelector: "*",  // custom selectors to filter inline styles. removeInline must be true
+                printDelay: 333,            // variable print delay
+                header: null,               // prefix to html
+                footer: null,               // postfix to html
+                base: false,                // preserve the BASE tag or accept a string for the URL
+                formValues: true,           // preserve input/form values
+                canvas: false,              // copy canvas content
+                doctypeString: '...',       // enter a different doctype for older markup
+                removeScripts: false,       // remove script tags from print content
+                copyTagClasses: false,      // copy classes from the html & body tag
+                beforePrintEvent: null,     // function for printEvent in iframe
+                beforePrint: null,          // function called before iframe is filled
+                afterPrint: null            // function called before iframe is removed
+            }
+        );
+
+    });
+    function PrintElem() {
+        Popup($(".content").html());
+    }
+
+    function Popup(data) {
+        var mywindow = window.open('', '_blank', 'width=500,height=500,location=no,left=200px');
+        mywindow.document.write('<html><head><title></title>');
+        mywindow.document.write('<link rel="stylesheet" type="text/css" href="../css/bootstrap_print.css">');
+
+        mywindow.document.write('</head><body> <div class="content-wrapper">');
+        mywindow.document.write(data);
+        mywindow.document.write('</div></body></html>');
+
+        mywindow.print();
+
+
+        return true;
+    }
+
+</script>

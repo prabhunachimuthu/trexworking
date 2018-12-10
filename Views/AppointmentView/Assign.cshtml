@@ -1,0 +1,211 @@
+﻿@using OneDirect.ViewModels
+@{
+
+}
+@model OneDirect.ViewModels.AppointmentView
+<section class="content-header">
+    <h1>
+        Suggest Slots
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Suggest Slots</li>
+    </ol>
+</section>
+
+
+@using (Html.BeginForm())
+{
+    @if (ViewBag.AssignedSlots != null)
+    {
+        List<Slots> slots = (List<Slots>)ViewBag.AssignedSlots;
+
+        <div class="col-xs-12">
+            <div class="box">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12" style="overflow-x:auto;">
+                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Date</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Slots</th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions : activate to sort column descending" style="width: 182px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (slots != null)
+                                        {
+                                            @foreach (var item in slots)
+                                            {
+                                                <tr>
+                                                    <td>@item.SlotDate</td>
+                                                    <td>
+                                                        @if (item.SlotTimes != null && item.SlotTimes.Count > 0)
+                                                        {
+                                                            @for (int i = 0; i < item.SlotTimes.Count; i++)
+                                                            {
+                                                                @if (i + 1 != item.SlotTimes.Count)
+                                                                {
+                                                                    <span>@item.SlotTimes[i].Name ,</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>@item.SlotTimes[i].Name</span>
+                                                                }
+                                                            }
+
+                                                        }
+                                                    </td>
+
+                                                    <td style="white-space: nowrap;">
+                                                        <div>
+                                                            <div style="float:left;margin-right: 1px;">
+                                                                @Html.ActionLink("Edit Slots", "Assign", "Appointment", new { appointmentId = item.AppointmentId, appointmentDate = item.SlotDate }, new { @class = "label label-primary" })
+                                                            </div>
+                                                        </div>
+
+                                                    </td>
+
+                                                </tr>
+                                            }
+                                        }
+
+                                    <tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    @if (slots != null && slots.Count > 0)
+                    {
+                        <a href="/Appointment/Index" class="btn btn-success pull-right">Save </a>
+                        <a href="/Appointment/Index" class="btn btn-warning pull-right" style="margin-right:10px;">Cancel </a>
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+    <div class="col-md-12" style="padding-top:20px">
+        <!-- Horizontal Form -->
+        <div class="box box-info">
+
+            <div class="box-body" style="font-size:small">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Name</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.PatientName, new { @class = "form-control", @readonly = "readonly" })
+                            @Html.ValidationMessageFor(model => model.PatientName)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label> Appointment Date</label>
+
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            @Html.TextBoxFor(model => model.AppointmentDate, (ViewBag.Action != null && ViewBag.Action == "edit" ? (object)new { @class = "form-control", @placeholder = "Enter your date of birth", @readonly = "readonly" } :
+                               new { @class = "form-control datepicker", @placeholder = "Enter your appointment date", autocomplete = "off" }))
+                        </div>
+                        @Html.ValidationMessageFor(model => model.AppointmentDate, "", new { @class = "error" })
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    @for (int i = 0; i < Model.AppointmentSlots.Count; i++)
+                    {
+                        <div class="col-md-3">
+                            <div class="form-group" style="margin-bottom:2px;">
+
+                               
+                                <div>
+                                    @Html.CheckBoxFor(model => model.AppointmentSlots[i].Checked, new { })
+                                    @Html.DisplayFor(model => model.AppointmentSlots[i].Name)
+                                    @Html.HiddenFor(model => model.AppointmentSlots[i].Name)
+                                    @Html.HiddenFor(model => model.AppointmentSlots[i].Id)
+
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+
+                <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Add Slots</button>
+                @if (ViewBag.AssignedSlots == null)
+                {
+                    <a href="/Appointment/Index" class="btn btn-warning pull-right">Cancel </a>
+                }
+
+            </div>
+            <!-- /.box-footer -->
+
+        </div>
+    </div>
+
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        var appointmentId = "@Model.AppointmentId";
+        $('.datepicker').datepicker({ autoclose: true, format: 'dd-M-yyyy', todayHighlight: true, startDate: new Date(), minDate: new Date() }).on("changeDate", function (e) {
+            console.log("Date changed: ", e.target.value);
+            console.log(appointmentId);
+            $('[id $="__Checked"]').removeAttr("disabled");
+            $.get("@Url.Action("getassignedslots","Appointment")?appointmentId=" + appointmentId + "&appointmentDate=" + e.target.value, function (data) {
+                if (data != null && data != "" && data.slots != "" && data.slots.length > 0) {
+                   
+                    for (var i = 0; i < data.slots.length; i++) {
+                        $("#AppointmentSlots_" + data.slots[i] + "__Checked").prop("disabled", "true");
+                    }
+                }
+            });
+        });
+        $('.datepicker').datepicker("setDate", new Date());
+
+      
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            });
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+            });
+
+            $('#example1').DataTable({
+                "stateSave": true,
+                "stateDuration": -1,
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [-1] /* 1st one, start by the right */
+                }]
+            });
+
+
+        });
+    </script>
+
+}
+
+
+
+

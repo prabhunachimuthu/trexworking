@@ -1,0 +1,73 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+
+}
+<link href="~/css/opentok.css" rel="stylesheet" />
+<section class="content-header">
+    <h1></h1>
+    <ol class="breadcrumb">
+        <li><a href="~/Patient"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Video</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content" style="padding-top: 40px;padding-bottom:0px;">
+    <div class="box box-info">
+        <div class="row" style="padding-top: 20px;">
+            <div class="col-md-6">
+                <div class="col-md-12" align="center">
+                    <div id="subscribers" class="subscribersContainer">
+                    </div>
+                </div>
+                <div class="col-md-12" style="padding-top: 20px;" align="center">
+                    <!-- Horizontal Form -->
+
+
+                    <div id="opentok_console" class="opentok_console" align="center">
+                        <div class="videos" id="mypage">
+                            <div id="myCamera" class="publisherContainer"></div>
+                            <div id="links" class="links" align="center">
+                                <!--<div class="header">Doctor Panel</div>-->
+                                <div id="controlpanel">
+                                    <input type="hidden" value="Connect Server" id="connectLink" onclick="javascript: connect()" />
+                                    <input type="button" value="Exit" class="pubbuttonbg" id="disconnectLink" onclick="javascript: disconnect()" style="display: none" />
+                                    <!--<div class="header">Patient Panel</div>-->
+                                    <div id="onlineusers">
+                                        <input id="btn_offline" type="button" class="subbuttonbg" disabled="disabled" value="Patient is offline">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- /.box-body -->
+                    <div id="acceptCallBox">
+                        <div id="acceptCallLabel"></div>
+                        <input type="button" id="callAcceptButton" value="Accept" />
+                        <input type="button" id="callRejectButton" value="Reject" />
+                    </div>
+                    <!-- /.box-footer -->
+
+                </div>
+            </div>
+        </div>
+        </div>
+</section>
+
+
+@section Scripts {
+
+    <script src="https://static.opentok.com/v2/js/opentok.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="~/js/opentok2.2.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var sessionId="@Context.Session.GetString("VideoSessionId")";
+            var token = "@Context.Session.GetString("Token")";
+            var therapistname ="@Context.Session.GetString("UserId")";
+            callmyserver(sessionId, token, therapistname);
+        });
+        show('connectLink');
+    </script>
+
+}

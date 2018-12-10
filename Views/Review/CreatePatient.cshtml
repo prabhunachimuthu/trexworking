@@ -1,0 +1,240 @@
+﻿@{
+
+}
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Helper
+@model OneDirect.ViewModels.NewPatient
+
+<!-- Main content -->
+
+<div class="col-md-12" style="padding-top:20px">
+    <!-- Horizontal Form -->
+    <div class="box box-info">
+      
+        <!-- /.box-header -->
+        <!-- form start -->
+        @using (Html.BeginForm("CreatePatient", "CreatePatient", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => Model.PatientId)
+            @Html.HiddenFor(model => Model.PatientLoginId)
+            @Html.HiddenFor(model => Model.Action)
+
+            @Html.HiddenFor(model => Model.Pin)
+            @Html.HiddenFor(model => Model.returnView)
+            @Html.HiddenFor(model => Model.Actuator)
+            <div class="box-body" style="font-size:small">
+                <div class="col-md-12">
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label">Patient Name<span style="color:red">*</span></label>
+                            <div>
+                                @Html.TextBoxFor(model => model.PatientName, new { @class = "form-control ", @placeholder = "Enter your name" })
+                                @Html.ValidationMessageFor(model => model.PatientName, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label">Patient SS#<span style="color:red">*</span>(Last 4 digits only)</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.Ssn, new { @class = "form-control", @maxlength = 4, @placeholder = "Enter your SS#", @readonly = "readonly" })
+
+                                @Html.ValidationMessageFor(model => model.Ssn, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label">Date of Birth<span style="color:red">*</span></label>
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+
+                                @Html.TextBoxFor(model => model.Dob, new { @class = "form-control", @placeholder = "Enter your date of birth", @readonly = "readonly" })
+
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Dob, "", new { @class = "error" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label">Mobile Number<span style="color:red">*</span></label>
+                            <div>
+                                @Html.TextBoxFor(model => model.PhoneNumber, new { @class = "form-control", @placeholder = "Enter your mobile number", @readonly = "readonly" })
+                                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (Context.Session.GetString("UserType") == ConstantsVar.Admin.ToString() || Context.Session.GetString("UserType") == ConstantsVar.Support.ToString())
+                {
+                    <div class="col-md-12">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Provider</label>
+                                <div>
+                                    @Html.DropDownListFor(model => model.ProviderId, ViewBag.Provider as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.ProviderId, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Therapist</label>
+                                <div>
+                                    @Html.DropDownListFor(model => model.TherapistId, ViewBag.Therapist as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.TherapistId, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Patient Administrator</label>
+                                <div>
+                                    @Html.DropDownListFor(model => model.PatientAdminId, ViewBag.PatientAdministrator as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.PatientAdminId, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Address</label>
+                                <div>
+                                    @Html.TextBoxFor(model => model.AddressLine, new { @class = "form-control", @placeholder = "Enter your address", autocomplete = "off" })
+                                    @Html.ValidationMessageFor(model => model.AddressLine, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-12">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">Therapist</label>
+                                <div>
+                                    @Html.HiddenFor(model => Model.ProviderId)
+                                    @Html.DropDownListFor(model => model.TherapistId, ViewBag.Therapist as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.TherapistId, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">Patient Administrator</label>
+                                <div>
+                                    @Html.DropDownListFor(model => model.PatientAdminId, ViewBag.PatientAdministrator as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.PatientAdminId, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">Address</label>
+                                <div>
+                                    @Html.TextBoxFor(model => model.AddressLine, new { @class = "form-control", @placeholder = "Enter your address", autocomplete = "off" })
+                                    @Html.ValidationMessageFor(model => model.AddressLine, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">City</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.City, new { @class = "form-control", @placeholder = "Enter your city", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.City, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">State</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.State, new { @class = "form-control", @maxlength = 2, @placeholder = "Enter your state", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.State, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">Zip code</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.Zip, new { @class = "form-control", @maxlength = 5, @placeholder = "Enter your zipcode", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.Zip, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="EquipmentType" class="control-label">Joint Involved<span style="color:red">*</span></label>
+                            <div>
+                                @if (ViewBag.equipment != null)
+                                {
+                                    @Html.DropDownListFor(model => model.EquipmentType, ViewBag.equipment as IEnumerable<SelectListItem>
+                                , "Select", new { @class = "form-control not-active" })
+                                    @Html.ValidationMessageFor(model => model.EquipmentType, "", new { @class = "error" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="EquipmentType" class="control-label">Side Involved<span style="color:red">*</span></label>
+                            <div>
+                                @if (ViewBag.sides != null)
+                                {
+                                    @Html.DropDownListFor(model => model.Side, ViewBag.sides as IEnumerable<SelectListItem>
+                                , "Select", new { @class = "form-control not-active" } )
+                                    @Html.ValidationMessageFor(model => model.Side, "", new { @class = "error" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Surgery Date<span style="color:red">*</span></label>
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                @Html.TextBoxFor(model => model.SurgeryDate, new { @class = "form-control", @placeholder = "Enter surgery date", @readonly = "readonly" })
+
+                            </div>
+                            @Html.ValidationMessageFor(model => model.SurgeryDate, "", new { @class = "error" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+
+                <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Save Changes</button>
+
+            </div>
+            <!-- /.box-footer -->
+        }
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $('.datepicker1').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+        $('.datepicker').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+
+       
+        
+    </script>
+
+}

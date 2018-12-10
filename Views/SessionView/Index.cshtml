@@ -1,0 +1,608 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+
+@{
+
+}
+
+<section class="content-header">
+    <h1>
+        @if (@ViewBag.PatientName != null)
+        {
+            @ViewBag.PatientName
+        }
+        else
+        {
+            <span>
+                All
+            </span>
+        }
+        <small>Sessions</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Session</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+<section class="content" style="padding-top: 20px;">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                   
+                </div>
+
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                                @if (ViewBag.EquipmentType != null)
+                                {
+                                    @if (ViewBag.EquipmentType.ToLower() == "shoulder")
+                                    {
+                                        <div class="nav-tabs-custom" style="margin-bottom:0px !important;">
+                                            <ul class="nav nav-tabs">
+                                                <li class="@(ViewBag.actuator=="Forward Flexion" ?"active":"")" onclick="triggerfunction(this)">
+                                                    <a href="#@(ViewBag.etype ==" "?" tab_1":"tab_1")" data-value="@Url.Action("Index", "SessionView", new { id = ViewBag.patientId, Username = ViewBag.PatientName, Etype = ViewBag.EquipmentType, actuator = "Forward Flexion" })" data-toggle="tab">Straight Arm Forward Flexion</a>
+                                                </li>
+                                                <li class="@(ViewBag.actuator=="External Rotation" ?"active":"")" onclick="triggerfunction(this)">
+                                                    <a href="#@(ViewBag.etype ==" "?" tab_2":"tab_2")" data-value="@Url.Action("Index", "SessionView", new { id = ViewBag.patientId, Username = ViewBag.PatientName, Etype = ViewBag.EquipmentType, actuator = "External Rotation" })" data-toggle="tab">External Rotation</a>
+                                                </li>
+                                               
+                                            </ul>
+                                            <div class="tab-content">
+                                                <div class="tab-pane @(ViewBag.actuator=="Forward Flexion" ?"active":"")" id="tab_1">
+                                                    <div class="box-body no-padding">
+                                                        <div class="content col-sm-12 no-padding">
+                                                            
+                                                            <div class="col-sm-12" style="overflow-x:auto">
+                                                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                                                    <thead>
+                                                                        <tr role="row">
+                                                                            @if (@ViewBag.PatientName == null)
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Patient Name</th>
+                                                                            }
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Exercise Name: activate to sort column descending" style="width: 182px;">Exercise Name</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date: activate to sort column descending" style="width: 182px;">Date</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="PainCount activate to sort column descending" style="width: 182px;">Pain Count</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Duration(hh:mm:ss): activate to sort column descending" style="width: 182px;">Duration(hh:mm:ss)</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Reps: activate to sort column descending" style="width: 182px;">Reps</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Flexion Achieved: activate to sort column descending" style="width: 182px;">Flexion Achieved</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Flexion Goal: activate to sort column descending" style="width: 182px;">Flexion Goal</th>
+                                                                            @if (ViewBag.EquipmentType.ToLower() != "shoulder")
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Extension Achieved: activate to sort column descending" style="width: 182px;">Extension Achieved</th>
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Extension Goal: activate to sort column descending" style="width: 182px;">Extension Goal</th>
+                                                                            }
+                                                                            @if (ViewBag.EquipmentType.ToLower() == "shoulder")
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Horizontal Position: activate to sort column descending" style="width: 182px;">Horizontal Position</th>
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Abductor Position: activate to sort column descending" style="width: 182px;">Abductor Position</th>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Hip Position: activate to sort column descending" style="width: 182px;">Hip Position</th>
+                                                                            }
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Type: activate to sort column descending" style="width: 182px;">Type</th>
+                                                                            @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                            {
+                                                                                <th aria-label="" style="width: 182px;"></th>
+                                                                            }
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @if (ViewBag.SessionList != null)
+                                                                        {
+                                                                            @foreach (var item in ViewBag.SessionList)
+                                                                            {
+                                                                                <tr>
+                                                                                    @if (@ViewBag.PatientName == null)
+                                                                                    {
+                                                                                        <td>@item.Name</td>
+                                                                                    }
+                                                                                    <td>@item.ProtocolId</td>
+                                                                                    <td>
+                                                                                        @if (@item.Date != null)
+                                                                                        {@item.Date.ToString("MMM-dd-yyyy")}
+                                                                                    </td>
+
+                                                                                    <td>
+                                                                                        @if (@item.PainCount != null)
+                                                                                        {
+                                                                                            if (@item.PainCount.ToString() != "0")
+                                                                                            {
+                                                                                                @Html.ActionLink((string)item.PainCount.ToString(), "Index", "PainView", new { sessionId = @item.SessionId, date = @item.Date != null ? @item.Date : "", time = @item.Duration != null ? @item.Duration : "" }, new { @style = "color:blue;text-decoration: underline;", @title = "View Pain list" })
+                                                                                            }
+
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <script type="text/javascript">
+                                                            d = Number(@item.Duration);
+                                                            var h = Math.floor(d / 3600);
+                                                            var m = Math.floor(d % 3600 / 60);
+                                                            var s = Math.floor(d % 3600 % 60);
+
+                                                            var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+                                                            var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+                                                            var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+                                                            document.write(hDisplay + mDisplay + sDisplay);
+                                                                                        </script>
+                                                                                    </td>
+                                                                                    <td>@item.Reps of @item.Pro_reps</td>
+                                                                                    <td>
+                                                                                        @if (item.ProtocolEnum == 1 || item.ProtocolEnum == 3)
+                                                                                        {
+                                                                                            @item.FlexionArchieved
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span></span>
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @if (item.ProtocolEnum == 1 || item.ProtocolEnum == 3)
+                                                                                        {
+                                                                                            @item.FlexionGoal
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span></span>
+                                                                                        }
+                                                                                    </td>
+                                                                                    @if (ViewBag.EquipmentType.ToLower() != "shoulder")
+                                                                                    {
+                                                                                        <td>
+                                                                                            @if (item.ProtocolEnum == 2 || item.ProtocolEnum == 3)
+                                                                                            {
+                                                                                                @item.ExtensionArchieved
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span></span>
+                                                                                            }
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @if (item.ProtocolEnum == 2 || item.ProtocolEnum == 3)
+                                                                                            {
+                                                                                                @item.ExtensionGoal
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span></span>
+                                                                                            }
+                                                                                        </td>
+                                                                                    }
+                                                                                    @if (ViewBag.EquipmentType.ToLower() == "shoulder")
+                                                                                    {
+                                                                                        <td>
+                                                                                            <span></span>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <span></span>
+                                                                                        </td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td>
+                                                                                            <span></span>
+                                                                                        </td>
+                                                                                    }
+                                                                                    <td>
+                                                                                        <span>@((item.GuidedMode != null && item.GuidedMode == 1) ? "S" : (item.GuidedMode != null && item.GuidedMode == 2) ? "G" : "")</span>
+                                                                                    </td>
+                                                                                    @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                                    {
+                                                                                        <td>
+                                                                                            @Html.ActionLink("Delete", "Delete", "SessionView", new { sessionId = @item.SessionId, patId = ViewBag.patientId, patName = ViewBag.PatientName, etype = ViewBag.EquipmentType, actuator = ViewBag.actuator }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete? ');" })
+                                                                                        </td>
+                                                                                    }
+                                                                                </tr>
+                                                                            }
+                                                                        }
+
+                                                                    </tbody>
+
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane  @(ViewBag.actuator=="External Rotation" ?"active":"")" id="tab_2">
+                                                    <div class="box-body  no-padding">
+                                                        <div class="content col-sm-12 no-padding" style="width: 100% !important;height: auto !important;">
+                                                            <div class="col-sm-12" style="overflow-x:auto">
+                                                                <table id="example2" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example2_info">
+                                                                    <thead>
+                                                                        <tr role="row">
+                                                                            @if (@ViewBag.PatientName == null)
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Patient Name</th>
+                                                                            }
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Exercise Name: activate to sort column descending" style="width: 182px;">Exercise Name</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date: activate to sort column descending" style="width: 182px;">Date</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="PainCount activate to sort column descending" style="width: 182px;">Pain Count</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Duration(hh:mm:ss): activate to sort column descending" style="width: 182px;">Duration(hh:mm:ss)</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Reps: activate to sort column descending" style="width: 182px;">Reps</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Flexion Achieved: activate to sort column descending" style="width: 182px;">Flexion Achieved</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Flexion Goal: activate to sort column descending" style="width: 182px;">Flexion Goal</th>
+                                                                            @if (ViewBag.EquipmentType.ToLower() != "shoulder")
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Extension Achieved: activate to sort column descending" style="width: 182px;">Extension Achieved</th>
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Extension Goal: activate to sort column descending" style="width: 182px;">Extension Goal</th>
+                                                                            }
+                                                                            @if (ViewBag.EquipmentType.ToLower() == "shoulder")
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Horizontal Position: activate to sort column descending" style="width: 182px;">Horizontal Position</th>
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Abductor Position: activate to sort column descending" style="width: 182px;">Abductor Position</th>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Hip Position: activate to sort column descending" style="width: 182px;">Hip Position</th>
+                                                                            }
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Type: activate to sort column descending" style="width: 182px;">Type</th>
+                                                                            @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                            {
+                                                                                <th aria-label="" style="width: 182px;"></th>
+                                                                            }
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @if (ViewBag.SessionList != null)
+                                                                        {
+                                                                            @foreach (var item in ViewBag.SessionList)
+                                                                            {
+                                                                                <tr>
+                                                                                    @if (@ViewBag.PatientName == null)
+                                                                                    {
+                                                                                        <td>@item.Name</td>
+                                                                                    }
+                                                                                    <td>@item.ProtocolId</td>
+                                                                                    <td>
+                                                                                        @if (@item.Date != null)
+                                                                                        {@item.Date.ToString("MMM-dd-yyyy")}
+                                                                                    </td>
+
+                                                                                    <td>
+                                                                                        @if (@item.PainCount != null)
+                                                                                        {
+                                                                                            if (@item.PainCount.ToString() != "0")
+                                                                                            {
+                                                                                                @Html.ActionLink((string)item.PainCount.ToString(), "Index", "PainView", new { sessionId = @item.SessionId, date = @item.Date != null ? @item.Date : "", time = @item.Duration != null ? @item.Duration : "" }, new { @style = "color:blue;text-decoration: underline;", @title = "View Pain list" })
+                                                                                            }
+
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <script type="text/javascript">
+                                                            d = Number(@item.Duration);
+                                                            var h = Math.floor(d / 3600);
+                                                            var m = Math.floor(d % 3600 / 60);
+                                                            var s = Math.floor(d % 3600 % 60);
+
+                                                            var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+                                                            var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+                                                            var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+                                                            document.write(hDisplay + mDisplay + sDisplay);
+                                                                                        </script>
+                                                                                    </td>
+                                                                                    <td>@item.Reps of @item.Pro_reps</td>
+                                                                                    <td>
+                                                                                        @if (item.ProtocolEnum == 1 || item.ProtocolEnum == 3)
+                                                                                        {
+                                                                                            @item.FlexionArchieved
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span></span>
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @if (item.ProtocolEnum == 1 || item.ProtocolEnum == 3)
+                                                                                        {
+                                                                                            @item.FlexionGoal
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span></span>
+                                                                                        }
+                                                                                    </td>
+                                                                                    @if (ViewBag.EquipmentType.ToLower() != "shoulder")
+                                                                                    {
+                                                                                        <td>
+                                                                                            @if (item.ProtocolEnum == 2 || item.ProtocolEnum == 3)
+                                                                                            {
+                                                                                                @item.ExtensionArchieved
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span></span>
+                                                                                            }
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @if (item.ProtocolEnum == 2 || item.ProtocolEnum == 3)
+                                                                                            {
+                                                                                                @item.ExtensionGoal
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span></span>
+                                                                                            }
+                                                                                        </td>
+                                                                                    }
+                                                                                    @if (ViewBag.EquipmentType.ToLower() == "shoulder")
+                                                                                    {
+                                                                                        <td>
+                                                                                            <span></span>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <span></span>
+                                                                                        </td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td>
+                                                                                            <span></span>
+                                                                                        </td>
+                                                                                    }
+                                                                                    <td>
+                                                                                        <span>@((item.GuidedMode != null && item.GuidedMode == 1) ? "S" : (item.GuidedMode != null && item.GuidedMode == 2) ? "G" : "")</span>
+                                                                                    </td>
+                                                                                    @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                                    {
+                                                                                        <td>
+                                                                                            @Html.ActionLink("Delete", "Delete", "SessionView", new { sessionId = @item.SessionId, patId = ViewBag.patientId, patName = ViewBag.PatientName, etype = ViewBag.EquipmentType, actuator = ViewBag.actuator }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete? ');" })
+                                                                                        </td>
+                                                                                    }
+                                                                                </tr>
+                                                                            }
+                                                                        }
+
+                                                                    </tbody>
+
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="nav-tabs-custom" style="margin-bottom:0px !important;">
+                                            <ul class="nav nav-tabs">
+                                                <li class="active">
+                                                    <a href="active" data-toggle="tab"> Flexion-Extension</a>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <div class="tab-pane active" id="tab_1">
+                                                    <div class="box-body no-padding">
+                                                        <div class="content col-sm-12 no-padding">
+                                                            <div class="col-sm-12" style="overflow-x:auto">
+                                                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                                                    <thead>
+                                                                        <tr role="row">
+                                                                            @if (@ViewBag.PatientName == null)
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Patient Name</th>
+                                                                            }
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Exercise Name: activate to sort column descending" style="width: 182px;">Exercise Name</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date: activate to sort column descending" style="width: 182px;">Date</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="PainCount activate to sort column descending" style="width: 182px;">Pain Count</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Duration(hh:mm:ss): activate to sort column descending" style="width: 182px;">Duration(hh:mm:ss)</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Reps: activate to sort column descending" style="width: 182px;">Reps</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Flexion Achieved: activate to sort column descending" style="width: 182px;">Flexion Achieved</th>
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Flexion Goal: activate to sort column descending" style="width: 182px;">Flexion Goal</th>
+                                                                            @if (ViewBag.EquipmentType.ToLower() != "shoulder")
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Extension Achieved: activate to sort column descending" style="width: 182px;">Extension Achieved</th>
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Extension Goal: activate to sort column descending" style="width: 182px;">Extension Goal</th>
+                                                                            }
+                                                                            @if (ViewBag.EquipmentType.ToLower() == "shoulder")
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Horizontal Position: activate to sort column descending" style="width: 182px;">Horizontal Position</th>
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Abductor Position: activate to sort column descending" style="width: 182px;">Abductor Position</th>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Hip Position: activate to sort column descending" style="width: 182px;">Hip Position</th>
+                                                                            }
+                                                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Type: activate to sort column descending" style="width: 182px;">Type</th>
+                                                                            @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                            {
+                                                                                <th aria-label="" style="width: 182px;"></th>
+                                                                            }
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @if (ViewBag.SessionList != null)
+                                                                        {
+                                                                            @foreach (var item in ViewBag.SessionList)
+                                                                            {
+                                                                                <tr>
+                                                                                    @if (@ViewBag.PatientName == null)
+                                                                                    {
+                                                                                        <td>@item.Name</td>
+                                                                                    }
+                                                                                    <td>@item.ProtocolId</td>
+                                                                                    <td>
+                                                                                        @if (@item.Date != null)
+                                                                                        {@item.Date.ToString("MMM-dd-yyyy")}
+                                                                                    </td>
+
+                                                                                    <td>
+                                                                                        @if (@item.PainCount != null)
+                                                                                        {
+                                                                                            if (@item.PainCount.ToString() != "0")
+                                                                                            {
+                                                                                                @Html.ActionLink((string)item.PainCount.ToString(), "Index", "PainView", new { sessionId = @item.SessionId, date = @item.Date != null ? @item.Date : "", time = @item.Duration != null ? @item.Duration : "" }, new { @style = "color:blue;text-decoration: underline;", @title = "View Pain list" })
+                                                                                            }
+
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <script type="text/javascript">
+                                                            d = Number(@item.Duration);
+                                                            var h = Math.floor(d / 3600);
+                                                            var m = Math.floor(d % 3600 / 60);
+                                                            var s = Math.floor(d % 3600 % 60);
+
+                                                            var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+                                                            var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+                                                            var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+                                                            document.write(hDisplay + mDisplay + sDisplay);
+                                                                                        </script>
+                                                                                    </td>
+                                                                                    <td>@item.Reps of @item.Pro_reps</td>
+                                                                                    <td>
+                                                                                        @if (item.ProtocolEnum == 1 || item.ProtocolEnum == 3)
+                                                                                        {
+                                                                                            @item.FlexionArchieved
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span></span>
+                                                                                        }
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @if (item.ProtocolEnum == 1 || item.ProtocolEnum == 3)
+                                                                                        {
+                                                                                            @item.FlexionGoal
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span></span>
+                                                                                        }
+                                                                                    </td>
+                                                                                    @if (ViewBag.EquipmentType.ToLower() != "shoulder")
+                                                                                    {
+                                                                                        <td>
+                                                                                            @if (item.ProtocolEnum == 2 || item.ProtocolEnum == 3)
+                                                                                            {
+                                                                                                @item.ExtensionArchieved
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span></span>
+                                                                                            }
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @if (item.ProtocolEnum == 2 || item.ProtocolEnum == 3)
+                                                                                            {
+                                                                                                @item.ExtensionGoal
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span></span>
+                                                                                            }
+                                                                                        </td>
+                                                                                    }
+                                                                                    @if (ViewBag.EquipmentType.ToLower() == "shoulder")
+                                                                                    {
+                                                                                        <td>
+                                                                                            <span></span>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <span></span>
+                                                                                        </td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td>
+                                                                                            <span></span>
+                                                                                        </td>
+                                                                                    }
+                                                                                    <td>
+                                                                                        <span>@((item.GuidedMode != null && item.GuidedMode == 1) ? "S" : (item.GuidedMode != null && item.GuidedMode == 2) ? "G" : "")</span>
+                                                                                    </td>
+                                                                                    @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                                    {
+                                                                                        <td>
+                                                                                            @Html.ActionLink("Delete", "Delete", "SessionView", new { sessionId = @item.SessionId, patId = ViewBag.patientId, patName = ViewBag.PatientName, etype = ViewBag.EquipmentType }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete? ');" })
+                                                                                        </td>
+                                                                                    }
+                                                                                </tr>
+                                                                            }
+                                                                        }
+
+                                                                    </tbody>
+
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div>
+
+</div>
+
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example1').DataTable({
+            'aoColumnDefs': [{
+                'bSortable': true,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }],
+            'stateSave': true,
+            'stateDuration': -1
+        });
+        $('#example2').DataTable({
+            'aoColumnDefs': [{
+                'bSortable': true,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }],
+            'stateSave': true,
+            'stateDuration': -1
+        });
+        $("input[type=radio]").change(function () {
+            window.location = $(this).attr("data-actionurl");
+        });
+    });
+    function triggerfunction(tab) {
+       
+        window.location = $(tab).find('a').attr("data-value");
+    }
+    function getPain(session) {
+        var data = {
+            sessionId: session
+
+        }
+        $.ajax({
+            type: 'GET',
+            url: 'api/Pain/GetPainListBySessionId',
+            data: data,
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+</script>

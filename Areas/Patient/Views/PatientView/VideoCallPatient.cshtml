@@ -1,0 +1,100 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+
+}
+<link href="~/css/opentok.css" rel="stylesheet" />
+
+
+<div class="checkout pages section" style="padding-top:15px">
+    <div class="container">
+        <!-- checkout -->
+
+        @*<div class="pages-head" style="padding-bottom:10px;">
+            <h3 style="color:white;">@ViewBag.HeaderName</h3>
+        </div>*@
+        <div class="checkout-content">
+            <div class="row">
+                <div class="col s12" id="videonotset" style="display:none;color:white;">
+                    Please wait for therapist to come online...
+                </div>
+                <div class="col s12" id="videoset" style="display:none" align="center">
+                    <div id="subscribers" class="subscribersContainer1">
+                    </div>
+                    <div id="acceptCallBox">
+                        <!-- Should be initially hidden using CSS -->
+                        <div id="acceptCallLabel"></div>
+                        <input type="button" id="callAcceptButton" value="Accept" />
+                        <input type="button" id="callRejectButton" value="Reject" />
+                    </div>
+                    <div class="col s12" style="padding-top:10px;">
+                        <div id="opentok_console" class="opentok_console" align="left">
+                            <div class="videos" id="mypage" align="center">
+                                <div id="myCamera" class="publisherContainer1"></div>
+                                <input type="hidden" value="Connect Server" id="connectLink" onclick="javascript: connect()" />
+                                <input type="hidden" value="Exit" class="pubbuttonbg" id="disconnectLink" onclick="javascript: disconnect()" style="display: none" />
+                                <div id="onlineusers" style="display: none;">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- end checkout -->
+
+
+    </div>
+</div>
+<!-- Main content -->
+
+
+@section Scripts {
+
+    <script src="https://static.opentok.com/v2/js/opentok.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="~/js/opentokclient.js"></script>
+    <script type="text/javascript">
+        var patientId ='@Context.Session.GetString("PatientId")';
+        var therapistId='@Context.Session.GetString("TherapistId")';
+        $(document).ready(function () {
+            getSessionandToken();
+            window.setInterval(function () {
+                getSessionandToken();
+            }, 10000);
+         @*var sessionId="@Context.Session.GetString("OpenTokSessionId")";
+         var token = "@Context.Session.GetString("Token")";
+         var therapistname = "@ViewBag.TherapistName";
+         callmyserver(sessionId, token, therapistname);*@
+        });
+        function getSessionandToken() {
+            if ($("#videoset").is(':visible') == false) {
+                $.ajax({
+                    url: '@Url.Action("GetSessionIDAndToken", "videocall")?therapistId=' + therapistId + '&patientId=' + patientId,
+                    //data: JSON.stringify(log),
+                    type: 'get',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data != null && data.vTransact != null) {
+                            console.log(data);
+                            $("#videonotset").css("display", "none");
+                            $("#videoset").css("display", "block");
+                            callmyserver(data.vTransact.sessionId, data.vTransact.token, data.patientName);
+                        }
+                        else {
+
+                            $("#videonotset").css("display", "block");
+                            $("#videoset").css("display", "none");
+                        }
+                    },
+                    error: function (data) {
+
+                    }
+                });
+            }
+        }
+    //show('connectLink');
+    </script>
+
+}

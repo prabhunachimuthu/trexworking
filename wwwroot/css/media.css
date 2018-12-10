@@ -1,0 +1,33 @@
+﻿@media only screen and (max-width: 768px) {
+    #reviewtabs {
+        display: none;
+    }
+    #reviewsidebar {
+        display: block;
+    }
+    #fullview {
+        display: none;
+    }
+    #mobileview {
+        display: block;
+    }
+}
+@media only screen and (min-width: 768px) {
+    #reviewtabs {
+        display: block;
+    }
+
+    #reviewsidebar {
+        display: none;
+    }
+    #reviewsidebarmenu {
+        display: none;
+    }
+    #fullview {
+        display: block;
+    }
+
+    #mobileview {
+        display: none;
+    }
+}

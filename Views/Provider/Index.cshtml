@@ -1,0 +1,129 @@
+﻿@using OneDirect.ViewModels;
+@{
+    var count = (ViewBag.userlist != null && (ViewBag.userlist as List<UserListView>).Where(x => x.Count <= 0).ToList().Count > 0) ? 1 : 0;
+}
+
+
+<section class="content-header">
+    <h1>
+        Providers
+        
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="~/Patient"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Provider</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+
+<div class="col-md-2" style="padding-top:20px">
+    <table class="table table-bordered text-center">
+        <td>
+            @Html.ActionLink("Add", "Add", new { }, new { @class = "btn btn-block btn-warning btn-sm" })
+           
+        </td>
+    </table>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+               
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12" style="overflow-x:auto">
+                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Provider Name: activate to sort column descending" style="width: 182px;">Provider Name</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Email: activate to sort column descending" style="width: 182px;">Email</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Provider Id: activate to sort column descending" style="width: 182px;">Provider Id</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">NPI</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Phone</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Address: activate to sort column descending" style="width: 182px;">Address</th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions : activate to sort column descending"></th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions : activate to sort column descending"></th>
+                                            @if (count > 0)
+                                            {
+                                                <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions : activate to sort column descending"></th>
+                                            }
+
+                                          
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (ViewBag.userlist != null)
+                                        {
+
+                                            @foreach (var item in ViewBag.userlist)
+                                            {
+                                                <tr>
+                                                    <td>@item.Name</td>
+                                                    <td>@item.Email</td>
+                                                    <td>@item.UserId</td>
+                                                    <td>@item.Npi</td>
+                                                    <td>
+                                                       
+
+                                                              <script type="text/javascript">
+                                                           s = formatPhoneNumber('@item.Phone');
+                                                           function formatPhoneNumber(s) {
+                                                            var s2 = (""+s).replace(/\D/g,'');
+                                                            var m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
+                                                            return (!m) ? "" : "(" + m[1] + ") " + m[2] + "-" + m[3];
+                                                            }
+                                                           document.writeln(formatPhoneNumber(s));
+                                                        </script>
+                                                                                                    </td>                                       
+
+                                                    <td>@item.Address</td>
+                                                    <td>
+                                                        @Html.ActionLink("Edit", "Profile", new { id = item.UserId }, new { @class = "label label-primary" })
+
+                                                    </td>
+                                                    <td>
+                                                        @Html.ActionLink("Patients", "Index", "Patient", new { id = item.UserId, type = item.Type, name = item.Name }, new { @class = "label label-primary" })
+                                                    </td>
+                                                    @if (count > 0)
+                                                    {
+                                                        <td>
+                                                            @if (item.Count <= 0)
+                                                            {
+                                                                @Html.ActionLink("Delete", "DeleteProvider", "Provider", new { provider = item.UserId }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete Provider " + item.Name + "? ');" })
+                                                            }
+                                                        </td>
+                                                    }
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    var length=@count;
+    $(document).ready(function () {
+        $('#example1').DataTable({
+            "stateSave": true,
+            "stateDuration": -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': (length >0)?[-1, -2,-3]:[-1, -2] /* 1st one, start by the right */
+            }]
+        });
+
+    });
+
+</script>

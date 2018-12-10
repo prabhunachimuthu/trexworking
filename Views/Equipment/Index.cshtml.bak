@@ -1,0 +1,125 @@
+﻿
+@{
+
+}
+@model OneDirect.ViewModels.PatientConfigurationResult
+<section class="content-header">
+    <h1>
+        Equipment List
+      
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="~/Patient"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Equipment</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+               
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12" style="overflow-x:auto">
+                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Patient Name</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist Name: activate to sort column descending" style="width: 182px;">Installer Name</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist Name: activate to sort column descending" style="width: 182px;">Date</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Equipment Type: activate to sort column descending" style="width: 182px;">Controller ID</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date: activate to sort column descending" style="width: 182px;">Char ID</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Address: activate to sort column descending" style="width: 182px;">Description</th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions : activate to sort column descending"></th>
+                                            @if (Model.devicecalibration != null)
+                                            {
+                                                <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions : activate to sort column descending"></th>
+                                            }
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null)
+                                        {
+                                            if (Model.patientconfiguration != null)
+                                            {
+                                                @foreach (var item in Model.patientconfiguration)
+                                                {
+                                                    <tr>
+
+                                                        <td>@item.patientconfiguration.Patient.PatientName</td>
+                                                        <td>@item.InstallerName</td>
+
+                                                        <td>@item.patientconfiguration.Setup.ControllerDateTime.ToString("MMM-dd-yyyy")</td>
+
+                                                        <td>@item.patientconfiguration.Setup.ControllerId</td>
+                                                        <td>@item.patientconfiguration.Setup.ChairId</td>
+                                                        <td>@item.patientconfiguration.Setup.Description</td>
+                                                        <td>
+                                                            @Html.ActionLink("Edit", "AddEdit", "Equipment", new { id = item.patientconfiguration.SetupId }, new { @class = "label label-primary" })
+                                                           
+                                                        </td>
+                                                        @if (Model.devicecalibration != null)
+                                                        {
+                                                        <td></td>
+                                                        }
+
+
+                                                    </tr>
+                                                }
+
+                                            }
+                                            if (Model.devicecalibration != null)
+                                            {
+                                                @foreach (var item in Model.devicecalibration)
+                                                {
+                                                    <tr>
+                                                        <td></td>
+                                                        <td>@item.InstallerName</td>
+
+                                                        <td>@item.devicecalibration.ControllerDateTime.ToString("MMM-dd-yyyy")</td>
+
+                                                        <td>@item.devicecalibration.ControllerId</td>
+                                                        <td>@item.devicecalibration.ChairId</td>
+                                                        <td>@item.devicecalibration.Description</td>
+                                                        <td>
+                                                            @Html.ActionLink("Edit", "AddEdit", "Equipment", new { id = item.devicecalibration.SetupId }, new { @class = "label label-primary" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.ActionLink("Delete", "Delete", "Equipment", new { id = item.devicecalibration.SetupId }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete? ');" })
+                                                        </td>
+
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    <tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example1').DataTable({
+            "stateSave": true,
+            "stateDuration": -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1,-2] /* 1st one, start by the right */
+            }]
+        });
+
+    });
+
+</script>

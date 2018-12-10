@@ -1,0 +1,1353 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using Highsoft.Web.Mvc.Stocks
+@using OneDirect.Helper
+@using OneDirect.ViewModels
+@using Newtonsoft.Json
+@model OneDirect.ViewModels.ReviewModel
+@{
+
+}
+@section styles{
+    <style type="text/css">
+        .btn-group-xs > .btn, .btn-xs {
+            padding: 1px 1px;
+            font-size: 12px;
+            line-height: 1.2;
+            border-radius: 3px;
+            margin-top: 1px;
+        }
+    </style>
+}
+<style>
+    #label label-primary pull-right {
+        float: right !important;
+    }
+
+    #pull-right {
+        float: right !important;
+    }
+</style>
+
+
+<section class="content-header">
+    <h1>
+        @ViewBag.User
+
+    </h1>
+    @*kajal*@
+
+    @if (Context.Session.GetString("UserType") == ConstantsVar.Admin.ToString())
+    {
+        <ol class="breadcrumb">
+            <li><a href="~/Patient"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">@ViewBag.tab</li>
+        </ol>
+
+    }
+    else if (Context.Session.GetString("UserType") == ConstantsVar.PatientAdministrator.ToString())
+    {
+        <ol class="breadcrumb">
+            <li><a href="~/PatientAdministrator/Dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">@ViewBag.tab</li>
+        </ol>
+
+    }
+    else if (Context.Session.GetString("UserType") == ConstantsVar.Provider.ToString())
+    {
+        <ol class="breadcrumb">
+            <li><a href="~/Provider/Dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">@ViewBag.tab</li>
+        </ol>
+
+    }
+    else if (Context.Session.GetString("UserType") == ConstantsVar.Therapist.ToString())
+    {
+        <ol class="breadcrumb">
+            <li><a href="~/Therapist/Dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">@ViewBag.tab</li>
+        </ol>
+
+    }
+    else if (Context.Session.GetString("UserType") == ConstantsVar.Support.ToString())
+    {
+        <ol class="breadcrumb">
+            <li><a href="~/Support/Dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">@ViewBag.tab</li>
+        </ol>
+
+    }
+</section>
+<!-- Main content -->
+<!-- Main content -->
+<section class="content" style="padding-top: 20px;">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+
+
+                </div>
+
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                                <div class="nav-tabs-custom" style="margin-bottom:0px !important;">
+                                    <ul class="nav nav-tabs" id="reviewtabs">
+                                        <li class="@(ViewBag.tab == "Dashboard" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_1" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Dashboard" })" data-toggle="tab">Summary</a>
+                                        </li>
+                                        <li class="@(ViewBag.tab == "Details" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_2" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator =ViewBag.actuator, tab = "Details" })" data-toggle="tab">Details</a>
+                                        </li>
+                                        <li class="@(ViewBag.tab == "Rx" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_3" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Rx" })" data-toggle="tab">Rx</a>
+                                        </li>
+                                        <li class="@(ViewBag.tab == "Exercises" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_4" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Exercises"})" data-toggle="tab">Exercises</a>
+                                        </li>
+                                        <li class="@(ViewBag.tab == "Sessions" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_5" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator =  ViewBag.actuator, tab = "Sessions" })" data-toggle="tab">Sessions</a>
+                                        </li>
+                                        <li class="@(ViewBag.tab == "PatientReviews" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_5" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator =  ViewBag.actuator, tab = "PatientReviews" })" data-toggle="tab">Patient Reviews</a>
+                                        </li>
+                                        @if (Context.Session.GetString("UserType") != "6")
+                                        {
+                                            @if (Context.Session.GetString("UserType") != "0" && Context.Session.GetString("UserType") != "2")
+                                            {
+                                                <li class="@(ViewBag.tab == "History" ? "active" : "")" onclick="triggerfunction(this)">
+                                                    <a href="#tab_6" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "History" })" data-toggle="tab">Appointments</a>
+                                                </li>
+                                            }
+                                            <li class="@(ViewBag.tab == "Messages" ? "active" : "")" onclick="triggerfunction(this)">
+                                                <a href="#tab_7" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Messages" })" data-toggle="tab">Messages</a>
+                                            </li>
+                                        }
+                                        <li class="@(ViewBag.tab == "Library" ? "active" : "")" onclick="triggerfunction(this)">
+                                            <a href="#tab_8" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator =  ViewBag.actuator, tab = "Library" })" data-toggle="tab">Library</a>
+                                        </li>
+
+                                    </ul>
+                                    <div class="tab-content">
+
+                                        @if (ViewBag.tab == "Dashboard")
+                                        {
+                                            <div class="tab-pane @(ViewBag.tab == "Dashboard" ? "active" : "")" id="tab_1">
+                                                @await Html.PartialAsync("Dashboard")
+
+
+                                            </div>
+                                        }
+                                        @if (ViewBag.tab == "Details")
+                                        {
+                                            <div class="tab-pane  @(ViewBag.tab == "Details" ? "active" : "")" id="tab_2">
+                                                @await Html.PartialAsync("CreatePatient", Model.Patient)
+                                            </div>
+                                        }
+                                        @if (ViewBag.tab == "Rx")
+                                        {
+                                            <div class="tab-pane  @(ViewBag.tab == "Rx" ? "active" : "")" id="tab_3">
+                                                @await Html.PartialAsync("PatientRX", Model.Rx)
+                                            </div>
+                                        }
+                                        @if (ViewBag.tab == "Exercises")
+                                        {
+                                            <div class="tab-pane  @(ViewBag.tab == "Exercises" ? "active" : "")" id="tab_4">
+                                                @await Html.PartialAsync("ProtocolList", Model.Exercises)
+
+                                            </div>
+                                        }
+                                        @if (ViewBag.tab == "Sessions")
+                                        {
+                                            <div class="tab-pane  @(ViewBag.tab == "Sessions" ? "active" : "")" id="tab_5">
+                                                @await Html.PartialAsync("Sessions", Model.Sessions)
+                                            </div>
+                                        }
+                                        @if (ViewBag.tab == "PatientReviews")
+                                        {
+                                            <div class="tab-pane  @(ViewBag.tab == "PatientReviews" ? "active" : "")" id="tab_5">
+                                                @await Html.PartialAsync("PatientReviews", Model.PatientReviews)
+                                            </div>
+                                        }
+                                        @if (Context.Session.GetString("UserType") != "6")
+                                        {
+                                            @if (Context.Session.GetString("UserType") != "0" && Context.Session.GetString("UserType") != "2")
+                                            {
+                                                @if (ViewBag.tab == "History")
+                                                {
+                                                    <div class="tab-pane  @(ViewBag.tab == "History" ? "active" : "")" id="tab_6">
+                                                        @await Html.PartialAsync("History")
+                                                    </div>
+                                                }
+                                            }
+                                            @if (ViewBag.tab == "Messages")
+                                            {
+                                                <div class="tab-pane  @(ViewBag.tab == "Messages" ? "active" : "")" id="tab_7">
+                                                    @await Html.PartialAsync("Messages")
+                                                </div>
+                                            }
+                                        }
+                                        @if (ViewBag.tab == "Library")
+                                        {
+                                            <div class="tab-pane  @(ViewBag.tab == "Library" ? "active" : "")" id="tab_5">
+                                                @await Html.PartialAsync("PatientLibrary")
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <aside class="control-sidebar control-sidebar-dark control-sidebar-close" id="reviewsidebarmenu">
+
+        <div class="tab-content">
+            <section class="sidebar">
+                <ul class="sidebar-menu" id="admin">
+
+                    <li class="@(ViewBag.tab == "Dashboard" ? "active" : "")" onclick="triggerfunction(this)">
+                        <a href="#tab_1" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Dashboard" })" data-toggle="tab">Summary</a>
+                    </li>
+                    <li class="@(ViewBag.tab == "Details" ? "active" : "")" onclick="triggerfunction(this)">
+                        <a href="#tab_2" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Details" })" data-toggle="tab">Details</a>
+                    </li>
+                    <li class="@(ViewBag.tab == "Rx" ? "active" : "")" onclick="triggerfunction(this)">
+                        <a href="#tab_3" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Rx" })" data-toggle="tab">Rx</a>
+                    </li>
+                    <li class="@(ViewBag.tab == "Exercises" ? "active" : "")" onclick="triggerfunction(this)">
+                        <a href="#tab_4" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Exercises" })" data-toggle="tab">Exercises</a>
+                    </li>
+                    <li class="@(ViewBag.tab == "Sessions" ? "active" : "")" onclick="triggerfunction(this)">
+                        <a href="#tab_5" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Sessions" })" data-toggle="tab">Sessions</a>
+                    </li>
+                    <li class="@(ViewBag.tab == "PatientReviews" ? "active" : "")" onclick="triggerfunction(this)">
+                        <a href="#tab_5" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "PatientReviews" })" data-toggle="tab">Patient Reviews</a>
+                    </li>
+
+                    @if (Context.Session.GetString("UserType") != "6")
+                    {
+                        @if (Context.Session.GetString("UserType") != "0" && Context.Session.GetString("UserType") != "2")
+                        {
+                            <li class="@(ViewBag.tab == "History" ? "active" : "")" onclick="triggerfunction(this)">
+                                <a href="#tab_6" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "History" })" data-toggle="tab">Appointments</a>
+                            </li>
+                        }
+                        <li class="@(ViewBag.tab == "Messages" ? "active" : "")" onclick="triggerfunction(this)">
+                            <a href="#tab_7" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Messages" })" data-toggle="tab">Messages</a>
+                        </li>
+                    }
+                </ul>
+
+            </section>
+
+        </div>
+    </aside>
+
+</section>
+
+
+@section Scripts {
+
+
+
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+    @*<script type="text/javascript">
+            $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/range.json', function (data) {
+
+                // split the data set into ohlc and volume
+                var ohlc = [],
+                    volume = [],
+                    session = [];
+                dataLength = data.length,
+                    // set the allowed units for data grouping
+                    //groupingUnits = [[
+                    //    'week',                         // unit name
+                    //    [1]                             // allowed multiples
+                    //], [
+                    //    'month',
+                    //    [1, 2, 3, 4, 6]
+                    //]],
+
+                    i = 0;
+
+                for (i; i < dataLength; i += 1) {
+                    ohlc.push([
+                        data[i][0], // the date
+                        data[i][1], // high
+                        data[i][2], // low
+                    ]);
+
+                    volume.push([
+                        data[i][0], // the date
+                        i// the volume
+                    ]);
+                    session.push([
+                        data[i][0], // the date
+                        i// the volume
+                    ]);
+                }
+
+
+                // create the chart
+                Highcharts.stockChart('chartflexion', {
+                    navigator: {
+                        enabled: false
+
+                    },
+                    rangeSelector: {
+                        selected: 2
+                    },
+
+                    title: {
+                        text: ''
+                    },
+
+                    subtitle: {
+                        text: ''
+                    },
+
+                    yAxis: [{
+                        startOnTick: false,
+                        endOnTick: false,
+                        labels: {
+                            align: 'right',
+                            x: -3
+                        },
+                        title: {
+                            text: 'ROM'
+                        },
+                        height: '40%',
+                        lineWidth: 2,
+                        resize: {
+                            enabled: true
+                        }
+                    }, {
+                        labels: {
+                            align: 'right',
+                            x: -3
+                        },
+                        title: {
+                            text: 'Pain'
+                        },
+                        top: '45%',
+                        height: '25%',
+                        offset: 0,
+                        lineWidth: 2
+                    },
+                    {
+                        labels: {
+                            align: 'right',
+                            x: -3
+                        },
+                        title: {
+                            text: 'Session'
+                        },
+                        top: '75%',
+                        height: '25%',
+                        offset: 0,
+                        lineWidth: 2
+                    }
+                    ],
+
+                    tooltip: {
+                        split: true
+                    },
+
+                    //plotOptions: {
+                    //    series: {
+                    //        dataGrouping: {
+                    //            units: groupingUnits
+                    //        }
+                    //    }
+                    //},
+
+                    series: [{
+                        type: 'columnrange',
+                        name: 'ROM',
+                        id: 'aapl',
+                        zIndex: 2,
+                        data: ohlc
+                    }, {
+                        type: 'column',
+                        name: 'Pain',
+                        id: 'pain',
+                        data: volume,
+                        yAxis: 1,
+                        tooltip: {
+                            valueDecimals: 0,
+                        },
+                    },
+                    {
+                        type: 'column',
+                        name: 'Session',
+                        id: 'session',
+                        data: session,
+                        yAxis: 2,
+                        tooltip: {
+                            valueDecimals: 0,
+                        },
+                    },
+                    ]
+                });
+            });
+
+        </script>*@
+    <script type="text/javascript">
+
+       @*function createChartchartflexion() {
+
+           console.log(@Html.Raw(ViewBag.AppleDataFlexionString));
+
+               // create the chart
+           Highcharts.stockChart('divhighstockflexion', {
+
+                   rangeSelector: {
+                       selected: 1
+                   },
+
+                   title: {
+                       text: 'AAPL Historical'
+                   },
+
+                   yAxis: [{
+                       labels: {
+                           align: 'right',
+                           x: -3
+                       },
+                       title: {
+                           text: 'ROM'
+                       },
+                       height: '40%',
+                       lineWidth: 2,
+                       resize: {
+                           enabled: true
+                       }
+                   }, {
+                       labels: {
+                           align: 'right',
+                           x: -3
+                       },
+                       title: {
+                           text: 'Pain'
+                       },
+                       top: '45%',
+                       height: '25%',
+                       offset: 0,
+                       lineWidth: 2
+                       },
+                       //{
+                       //    labels: {
+                       //        align: 'right',
+                       //        x: -3
+                       //    },
+                       //    title: {
+                       //        text: 'Sessions'
+                       //    },
+                       //    top: '75%',
+                       //    height: '25%',
+                       //    offset: 0,
+                       //    lineWidth: 2
+                       //}
+                   ],
+
+                   tooltip: {
+                       split: true
+                   },
+
+                   series: [{
+                       type: 'columnrange',
+                       name: 'Flexion',
+                       turboThreshold:1000,
+                       data: @Html.Raw(ViewBag.AppleDataFlexionString),
+
+                   }, {
+                       type: 'column',
+                       name: 'Pain',
+                       data: @Html.Raw(ViewBag.VolumeDataFlexionString),
+                       yAxis: 1,
+
+                       },
+                       {
+                       type: 'column',
+                       name: 'Sessions',
+                       data: @Html.Raw(ViewBag.VolumeDataFlexionString),
+                       yAxis: 2,
+
+                   }
+                   ]
+               });
+        }*@
+
+        @*var flexion = @Html.Raw(JsonConvert.SerializeObject((ViewBag.AppleDataFlexion as List<ColumnrangeSeriesData>).Select(x => new HighStockModel { x = x.X.ToString(), high = x.High.ToString(), low = x.Low.ToString() }).ToList()));
+        var painflexion = @Html.Raw(JsonConvert.SerializeObject((ViewBag.PainVolumeDataFlexion as List<ColumnSeriesData>).Select(x => new HighStockSeries { x = x.X.ToString(), y = x.Y.ToString() }).ToList()));
+        var sessionflexion = @Html.Raw(JsonConvert.SerializeObject((ViewBag.VolumeDataFlexion as List<ColumnSeriesData>).Select(x => new HighStockSeries { x = x.X.ToString(), y = x.Y.ToString()}).ToList()));
+
+       var extension = @Html.Raw(JsonConvert.SerializeObject((ViewBag.AppleDataExtension as List<ColumnrangeSeriesData>).Select(x => new HighStockModel { x = x.X.ToString(), high = x.High.ToString(), low = x.Low.ToString() }).ToList()));
+       var painextension = @Html.Raw(JsonConvert.SerializeObject((ViewBag.PainVolumeDataExtension as List<ColumnSeriesData>).Select(x => new HighStockSeries { x = x.X.ToString(), y = x.Y.ToString() }).ToList()));
+        var sessionextension = @Html.Raw(JsonConvert.SerializeObject((ViewBag.VolumeDataExtension as List<ColumnSeriesData>).Select(x => new HighStockSeries { x = x.X.ToString(), y = x.Y.ToString()}).ToList()));*@
+
+
+
+
+        $(function () {
+                "use strict";
+
+
+                if ("@ViewBag.tab" == "Dashboard") {
+                    var datavalue = "";
+                    var datavalue1 = "";
+                    var datavalue2 = "";
+                    var datavalue3 = "";
+                    var datavalue4 = ""
+                    var datavalue5 = "";
+
+
+                    var flexion = @Html.Raw(ViewBag.FlexionData);
+                    var extension = @Html.Raw(ViewBag.ExtensionData);
+                    var flexionextension = @Html.Raw(ViewBag.FlexionExtensionData);
+
+                    var rom = [],
+                     pain = [],
+                        session = [],
+                        trom = [],
+                        tpain = [],
+                        tsession = [],
+                     erom = [],
+                     epain = [],
+                     esession = [],
+                     ferom = [],
+                     fepain = [],
+                     fesession = [],
+                        i = 0;
+                    for (i; i < flexion.length; i += 1) {
+                        rom.push([
+                            flexion[i].x, // the date
+                            flexion[i].high, // high
+                            flexion[i].low, // low
+                        ]);
+
+                        pain.push([
+                            flexion[i].x, // the date
+                            flexion[i].pain, // pain
+                        ]);
+                        session.push([
+                            flexion[i].x, // the date
+                            flexion[i].session, // Session
+                        ]);
+
+                        trom.push([
+                            flexion[i].x, // the date
+                            flexion[i].high, // high
+                            flexion[i].low, // low
+                        ]);
+
+                        tpain.push([
+                            flexion[i].x, // the date
+                            flexion[i].pain, // pain
+                        ]);
+                        tsession.push([
+                            flexion[i].x, // the date
+                            flexion[i].session, // Session
+                        ]);
+                    }
+
+                    i = 0;
+                    for (i; i < extension.length; i += 1) {
+                        erom.push([
+                            extension[i].x, // the date
+                            extension[i].high, // high
+                            extension[i].low, // low
+                        ]);
+
+                        epain.push([
+                            extension[i].x, // the date
+                            extension[i].pain, // pain
+                        ]);
+                        esession.push([
+                            extension[i].x, // the date
+                            extension[i].session, // Session
+                        ]);
+                    }
+                    i = 0;
+                    for (i; i < extension.length; i += 1) {
+                        ferom.push([
+                            flexionextension[i].x, // the date
+                            flexionextension[i].high, // high
+                            flexionextension[i].low, // low
+                        ]);
+
+                        fepain.push([
+                            flexionextension[i].x, // the date
+                            flexionextension[i].pain, // pain
+                        ]);
+                        fesession.push([
+                            flexionextension[i].x, // the date
+                            flexionextension[i].session, // Session
+                        ]);
+                    }
+                    console.log(flexion);
+                    console.log(extension);
+                    console.log(flexionextension);
+
+
+                    // create the chart
+                    Highcharts.stockChart('chartflexion', {
+                        navigator: {
+                            enabled: false
+
+                        },
+                        rangeSelector: {
+                            selected: 2
+                        },
+
+                        title: {
+                            text: ''
+                        },
+
+                        subtitle: {
+                            text: ''
+                        },
+
+                        yAxis: [{
+                            startOnTick: false,
+                            endOnTick: false,
+                            labels: {
+                                align: 'right',
+                                x: -3
+                            },
+                            title: {
+                                text: 'ROM'
+                            },
+                            height: '40%',
+                            lineWidth: 2,
+                            resize: {
+                                enabled: true
+                            }
+                        }, {
+                            labels: {
+                                align: 'right',
+                                x: -3
+                            },
+                            title: {
+                                text: 'Pain'
+                            },
+                            top: '45%',
+                            height: '25%',
+                            offset: 0,
+                            lineWidth: 2
+                        },
+                        {
+                            labels: {
+                                align: 'right',
+                                x: -3
+                            },
+                            title: {
+                                text: 'Session'
+                            },
+                            top: '75%',
+                            height: '25%',
+                            offset: 0,
+                            lineWidth: 2
+                        }
+                        ],
+
+                        tooltip: {
+                            split: true
+                        },
+
+                        //plotOptions: {
+                        //    series: {
+                        //        dataGrouping: {
+                        //            units: groupingUnits
+                        //        }
+                        //    }
+                        //},
+
+                        series: [{
+                            type: 'columnrange',
+                            name: 'ROM',
+                            id: 'aapl',
+                            zIndex: 2,
+                            data: rom
+                        }, {
+                            type: 'column',
+                            name: 'Pain',
+                            id: 'pain',
+                                data: pain,
+                            yAxis: 1,
+                            tooltip: {
+                                valueDecimals: 0,
+                                },
+                                zones: [{
+                                    value: 1,
+                                    color: 'red'
+                                }, {
+                                    value: 3,
+                                    color: 'yellow'
+                                }, {
+                                    color: 'green'
+                                }]
+                        },
+                        {
+                            type: 'column',
+                            name: 'Session',
+                            id: 'session',
+                            data: session,
+                            yAxis: 2,
+                            tooltip: {
+                                valueDecimals: 0,
+                            },
+                            zones: [{
+                                value: 1,
+                                color: 'red'
+                            }, {
+                                value: 3,
+                                color: 'yellow'
+                            }, {
+                                color: 'green'
+                            }]
+                        },
+                        ]
+                    });
+
+                    $("input:radio[name='highstockrom']").change(function () {
+                        $("#chkhighstock").prop("checked", false);
+
+                        switch ($(this).attr("id")) {
+                            case 'highstockflexion':
+
+                                Highcharts.charts[0].series[0].setData(trom, true);
+                                Highcharts.charts[0].series[1].setData(tpain, true);
+                                Highcharts.charts[0].series[2].setData(tsession, true);
+                                Highcharts.charts[0].redraw();
+                                break;
+                            case 'highstockextension':
+                                Highcharts.charts[0].series[0].setData(erom, true);
+                                Highcharts.charts[0].series[1].setData(epain, true);
+                                Highcharts.charts[0].series[2].setData(esession, true);
+                                Highcharts.charts[0].redraw();
+
+                                break;
+                            case 'highstockflexionextension':
+                                Highcharts.charts[0].series[0].setData(ferom, false);
+                                Highcharts.charts[0].series[1].setData(fepain, false);
+                                Highcharts.charts[0].series[2].setData(fesession, false);
+                                Highcharts.charts[0].redraw();
+                                break;
+                            default:
+                                $("[data-value=rom]").css("display", "none");
+                                break;
+
+                        }
+                    });
+
+
+
+
+
+                    $("#chkhighstocksession").change(function () {
+
+                        var session = "";
+                        var pain = "";
+                        if ($("#chkhighstocksession").attr("data-value") == "show") {
+                            Highcharts.charts[0].series[2].yAxis.update({
+                                labels: {
+                                    enabled: false
+                                },
+                                title: {
+                                    text: null
+                                },
+
+                            });
+                            Highcharts.charts[0].series[2].hide();
+                            Highcharts.charts[0].series[2].yAxis.axisLine.hide();
+                            if ($("#chkhighstockpain").attr("data-value") == "hide") {
+
+                                Highcharts.charts[0].series[0].yAxis.update({
+                                    height: "100%"
+                                });
+                                Highcharts.charts[0].series[1].yAxis.axisLine.hide();
+                            }
+                            else {
+                                Highcharts.charts[0].series[0].yAxis.update({
+                                    height: "60%"
+                                });
+                                Highcharts.charts[0].series[1].yAxis.update({
+                                    top: "65%",
+                                    height: "35%"
+                                });
+
+                            }
+                            $("#chkhighstocksession").attr("data-value", "hide");
+                        }
+                        else {
+                            Highcharts.charts[0].series[2].yAxis.update({
+                                labels: {
+                                    enabled: true
+                                },
+                                title: {
+                                    text: "Sessions"
+                                },
+
+                            });
+                            Highcharts.charts[0].series[2].show();
+                            Highcharts.charts[0].series[2].yAxis.axisLine.show();
+                            if ($("#chkhighstockpain").attr("data-value") == "hide") {
+
+                                Highcharts.charts[0].series[0].yAxis.update({
+                                    height: "60%"
+                                });
+                                Highcharts.charts[0].series[2].yAxis.update({
+                                    top: "65%",
+                                    height: "35%"
+                                });
+                                Highcharts.charts[0].series[1].yAxis.axisLine.hide();
+                            }
+                            else {
+                                Highcharts.charts[0].series[0].yAxis.update({
+                                    height: "40%"
+                                });
+                                Highcharts.charts[0].series[1].yAxis.update({
+                                    top: "45%",
+                                    height: "25%"
+                                });
+                                Highcharts.charts[0].series[2].yAxis.update({
+                                    top: "75%",
+                                    height: "25%"
+                                });
+
+                            }
+                            $("#chkhighstocksession").attr("data-value", "show");
+                        }
+                    });
+
+
+                    $("#chkhighstockpain").change(function () {
+                        if ($("#chkhighstockpain").attr("data-value") == "show") {
+
+                            Highcharts.charts[0].series[1].yAxis.update({
+                                labels: {
+                                    enabled: false
+                                },
+                                title: {
+                                    text: null
+                                },
+
+                            });
+
+                            Highcharts.charts[0].series[1].hide();
+                            Highcharts.charts[0].series[1].yAxis.axisLine.hide();
+                            if ($("#chkhighstocksession").attr("data-value") == "hide") {
+
+                                $("#chkhighstockpain").attr("data-value", "hide");
+                                Highcharts.charts[0].series[0].yAxis.update({
+                                    height: "100%"
+                                });
+                                Highcharts.charts[0].series[1].yAxis.axisLine.hide();
+                            }
+                            else {
+
+
+                                Highcharts.charts[0].series[0].yAxis.update({
+                                    height: "60%"
+                                });
+                                Highcharts.charts[0].series[2].yAxis.update({
+                                    top: "65%",
+                                    height: "35%"
+                                });
+                                Highcharts.charts[0].series[1].yAxis.axisLine.hide();
+                                $("#chkhighstockpain").attr("data-value", "hide");
+                            }
+                        }
+                        else {
+                            Highcharts.charts[0].series[1].yAxis.update({
+                                labels: {
+                                    enabled: true
+                                },
+                                title: {
+                                    text: "Pain"
+                                },
+                            });
+                            Highcharts.charts[0].series[1].show();
+                            Highcharts.charts[0].series[1].yAxis.axisLine.show();
+                            if ($("#chkhighstocksession").attr("data-value") == "hide") {
+
+                                Highcharts.charts[0].series[0].yAxis.update({
+                                    height: "60%"
+                                });
+                                Highcharts.charts[0].series[1].yAxis.update({
+                                    top: "65%",
+                                    height: "35%"
+                                });
+                                Highcharts.charts[0].series[1].yAxis.axisLine.hide();
+                            }
+                            else {
+                                Highcharts.charts[0].series[0].yAxis.update({
+                                    height: "40%"
+                                });
+                                Highcharts.charts[0].series[1].yAxis.update({
+                                    top: "45%",
+                                    height: "25%"
+                                });
+                                Highcharts.charts[0].series[2].yAxis.update({
+                                    top: "75%",
+                                    height: "25%"
+                                });
+                            }
+                            $("#chkhighstockpain").attr("data-value", "show");
+                        }
+
+                    });
+
+
+                $('#example1').DataTable({
+                    "stateSave": true,
+                    "stateDuration": -1,
+                    "pagingType": "full"
+                });
+
+
+                ////DONUT CHART
+                @*var donut = new Morris.Donut({
+                    element: 'sales-chart',
+                    resize: true,
+                    colors: ["#00a65a", "grey"],
+                    data: [
+                        { label: "Completed %", value: @ViewBag.Usage.PercentageCompleted },
+                        { label: "Pending %", value: @ViewBag.Usage.PercentagePending }
+                    ],
+                    hideHover: 'auto'
+                });*@
+
+            @*var donut = new Morris.Donut({
+                    element: 'sales-chart1',
+                    resize: true,
+                    colors: ["#00a65a", "#f7f74c", "#f56954"],
+                    data: [
+                        { label: "  Low Pain %", value: @ViewBag.Pain.LowPain },
+                        { label: "Medium Pain %", value:  @ViewBag.Pain.MediumPain},
+                        { label: "High Pain %", value: @ViewBag.Pain.HighPain }
+                    ],
+                    hideHover: 'auto'
+                });*@
+
+
+                //LINE randomly generated data
+
+                var first = [], second = []
+                var romdatavalue =@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ROM));
+        var ymax = romdatavalue.ymax;
+        var ymin = romdatavalue.ymin;
+        console.log(romdatavalue);
+
+                if (romdatavalue.ROMFlextion != null && romdatavalue.ROMFlextion.length > 0) {
+                    for (var j = 0; j < romdatavalue.ROMFlextion.length; j++) {
+                        first.push([romdatavalue.ROMFlextion[j].dateValue, romdatavalue.ROMFlextion[j].Flexion]);
+                    }
+                }
+                if (romdatavalue.ROMExtension != null && romdatavalue.ROMExtension.length > 0) {
+                    for (var j = 0; j < romdatavalue.ROMExtension.length; j++) {
+                        second.push([romdatavalue.ROMExtension[j].dateValue, romdatavalue.ROMExtension[j].Extension]);
+                    }
+                }
+                var line_data1 = {
+                    data: first,
+                    color: 'Orange'
+                }
+                var line_data2 = {
+                    data: second,
+                    color: 'Blue'
+                }
+                console.log(line_data1);
+                console.log(line_data2);
+                $.plot('#line-chart-rom', [line_data1, line_data2], {
+                grid: {
+                    hoverable: true,
+                        borderColor: '#f3f3f3',
+                        borderWidth: 1,
+                        tickColor: '#f3f3f3'
+                    },
+                    series: {
+                    shadowSize: 0,
+                        lines: {
+                        show: true
+                        },
+                        points: {
+                        show: false
+                        }
+                },
+                    lines: {
+                    fill: false,
+                        color: ['Orange', 'Blue']
+                    },
+                    yaxis: {
+                    min: ymin, max: ymax,
+                        show: true
+                    },
+                    xaxis: {
+                    show: false
+                    }
+            })
+                //Initialize tooltip on hover
+                $('<div class="tooltip-inner" id="line-chart-rom-tooltip"></div>').css({
+                position: 'absolute',
+                    display: 'none',
+                    opacity: 0.8
+                }).appendTo('body')
+                $('#line-chart-rom').bind('plothover', function (event, pos, item) {
+
+                if (item) {
+                    var x = item.datapoint[0].toFixed(2),
+                        y = item.datapoint[1]
+
+                        $('#line-chart-rom-tooltip').html(x + ' : ' + y)
+                            .css({ top: item.pageY + 5, left: item.pageX - 15 })
+                            .fadeIn(200)
+                    } else {
+                        $('#line-chart-rom-tooltip').hide()
+                    }
+
+            })
+                /* END LINE CHART */
+
+
+
+
+
+
+                /* initialize the calendar
+         -----------------------------------------------------------------*/
+                //Date for the calendar events (dummy data)
+                var date = new Date();
+            var d = date.getDate(),
+                m = date.getMonth(),
+                y = date.getFullYear();
+                $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                        center: 'title',
+                        right: ''
+                    },
+                    buttonText: {
+                    today: 'today',
+                        month: 'month',
+                        week: 'week',
+                        day: 'day'
+                    },
+                    //Random default events
+                    events: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.TreatmentCalendar)),
+
+
+                    editable: true,
+                    droppable: false, // this allows things to be dropped onto the calendar !!!
+                    theme: false,
+                    height: "auto",
+                    fixedWeekCount:false
+
+                    });
+
+                    $("#calendar").parent().css("display", "none");
+            }
+            else if ("@ViewBag.tab" == "Details") {
+                $('.datepicker1').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+                $('.datepicker').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+
+                $(document).ready(function () {
+                    $('.input-validation-error').on('focus', function () {
+                        $(this).parents('.form-group').removeClass('has-error');
+                        $(this).attr('class', 'form-control');
+                        $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+                })
+                    //kajal
+                    $('input[name=PhoneNumber]').mask("(999) 999-9999");
+                    $("button[type=submit]").click(function (e) {
+                    if ($('form').valid() == false) {
+                            $('.field-validation-error').addClass('text-danger');
+                    }
+                    var today = $.datepicker.formatDate('dd/mm/yy', new Date());
+                    var dob_date = $.datepicker.formatDate('dd/mm/yy', new Date($('#Dob').val()));
+                    var surgery_date = $.datepicker.formatDate('dd/mm/yy', new Date($('#SurgeryDate').val()));
+                    if (new Date(dob_date) > new Date(today)) {
+                            $("span[data-valmsg-for='Dob']").html("<br><span for='RxDays' class='' style='color:red'>Date of birth should not be greater than Today</span>");
+
+                        return false;
+                    }
+                    if (new Date(surgery_date) < new Date(dob_date)) {
+                            $("span[data-valmsg-for='SurgeryDate']").html("<br><span for='RxDays' class='' style='color:red'>Surgery date should be greater than or equal DOB</span>");
+
+                        return false;
+                    }
+                });
+
+                if ($('[name="Dob"]').val().length >= 8) {
+                        $('[name="Dob"]').val($.datepicker.formatDate('M-dd-yy', new Date($('[name="Dob"]').val())));
+                }
+                    else {
+                        $("#datepicker1").val('');
+                }
+
+                if ($('[name="SurgeryDate"]').val().length >= 8) {
+                        $('[name="SurgeryDate"]').val($.datepicker.formatDate('M-dd-yy', new Date($('[name="SurgeryDate"]').val())));
+                }
+                    else {
+                        $("#datepicker").val('');
+                }
+            });
+            }
+            else if ("@ViewBag.tab" == "Rx") {
+                $('.datepicker1').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+                $('.datepicker').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+
+                $(document).ready(function () {
+                    $('.input-validation-error').on('focus', function () {
+                        $(this).parents('.form-group').removeClass('has-error');
+                        $(this).attr('class', 'form-control');
+                        $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+                })
+
+                    var etype = $('#etype').val();
+                    var Knee_Flexion_Goal_End = "0";
+                    var Knee_Extension_Goal_End = "0";
+                    if (etype == "Knee") {
+                        Knee_Flexion_Goal_End = '@ViewBag.Knee_Flexion_Goal_End' != null ? '@ViewBag.Knee_Flexion_Goal_End':"";
+                        Knee_Extension_Goal_End = '@ViewBag.Knee_Extension_Goal_End' != null ? '@ViewBag.Knee_Extension_Goal_End':"";
+                    }
+
+
+                if ($('#NewPatientRXList_0__RxStartDate').val().length >= 8) {
+                        $('#NewPatientRXList_0__RxStartDate').val($.datepicker.formatDate('M-dd-yy', new Date($('#NewPatientRXList_0__RxStartDate').val())));
+                }
+                    else {
+                        $("#datepicker1").val('');
+                }
+
+                if ($('#NewPatientRXList_0__RxEndDate').val().length >= 8) {
+                        $('#NewPatientRXList_0__RxEndDate').val($.datepicker.formatDate('M-dd-yy', new Date($('#NewPatientRXList_0__RxEndDate').val())));
+                }
+                    else {
+                        $("#datepicker").val('');
+                }
+                if (etype == "Shoulder") {
+
+                }
+                    $("button[type=submit]").click(function (e) {
+                    if ($('form').valid() == false) {
+                            $('.field-validation-error').addClass('text-danger');
+                    }
+                    var surgery_date = $.datepicker.formatDate('M-dd-yy', new Date($('#Surgerydate').val()));// $('#Surgerydate').val();
+
+                    for (var i = 0; i <= 2; i++) {
+
+                        var start_date = $('#NewPatientRXList_' + i + '__RxStartDate').val();
+                        var end_date = $('#NewPatientRXList_' + i + '__RxEndDate').val();
+
+                        var flex_min = parseInt($('#NewPatientRXList_' + i + '__CurrentFlexion').val());
+                        var flex_max = parseInt($('#NewPatientRXList_' + i + '__GoalFlexion').val());
+
+                        if (etype == "Knee") {
+                            var exten_min = parseInt($('#NewPatientRXList_' + i + '__CurrentExtension').val());
+                            var exten_max = parseInt($('#NewPatientRXList_' + i + '__GoalExtension').val());
+
+                            if (new Date(surgery_date) > new Date(start_date)) {
+                                    $("span[data-valmsg-for='NewPatientRXList[" + i + "].RxStartDate']").html("<br><span for='NewPatientRXList[" + i + "].RxStartDate' class='' style='color:red'>Rx Start date should be greater than Surgery date</span>");
+
+                                return false;
+                            }
+                            if (new Date(start_date) > new Date(end_date)) {
+                                    $("span[data-valmsg-for='NewPatientRXList[" + i + "].RxEndDate']").html("<br><span for='NewPatientRXList[" + i + "].RxEndDate' class='' style='color:red'>Rx End date should be greater than Surgery date</span>");
+                                return false;
+                            }
+
+                            if (flex_min < parseInt('@Constants.Knee_Flex_Current_Start') || flex_min > parseInt('@Constants.Knee_Flex_Current_End')) {
+                                    $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentFlexion' class='' style='color:red'>Angle should be greater than or equal to @Constants.Knee_Flex_Current_Start and lesser than or equal to @Constants.Knee_Flex_Current_End </span>");
+                                    $('#NewPatientRXList[' + i + '].CurrentFlexion').focus();
+                                return false;
+                            }
+                            if (flex_max < parseInt('@Constants.Knee_Flex_Goal_Start') || flex_max > parseInt(Knee_Flexion_Goal_End)) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be greater than or equal to @Constants.Knee_Flex_Goal_Start and lesser than or equal to "+Knee_Flexion_Goal_End+"</span>");
+                                    $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                return false;
+                            }
+                            if (flex_max < flex_min) {
+                                    $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be greater than Current angle</span>");
+                                    $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                return false;
+                            }
+                            if (exten_min > parseInt('@Constants.Knee_Ext_Current_Start') || exten_min < parseInt('@Constants.Knee_Ext_Current_End')) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentExtension']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentExtension' class='' style='color:red'>Angle should be lesser than or equal to @Constants.Knee_Ext_Current_Start and greater than or equal to @Constants.Knee_Ext_Current_End</span>");
+                                    $('#NewPatientRXList[' + i + '].CurrentExtension').focus();
+                                return false;
+                            }
+                            if (exten_max > parseInt('@Constants.Knee_Ext_Goal_Start') || exten_max <  parseInt(Knee_Extension_Goal_End)) {
+                                    $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalExtension']").html("<br><span for='#NewPatientRXList[" + i + "].GoalExtension' class='' style='color:red'>Angle should be lesser than or equal to @Constants.Knee_Ext_Goal_Start and greater than or equal to "+Knee_Extension_Goal_End+"</span>");
+                                    $('#NewPatientRXList[' + i + '].GoalExtension').focus();
+                                return false;
+                            }
+                            if (exten_max > exten_min) {
+                                    $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalExtension']").html("<br><span for='#NewPatientRXList[" + i + "].GoalExtension' class='' style='color:red'>Angle should be less than Current angle</span>");
+                                    $('#NewPatientRXList[' + i + '].GoalExtension').focus();
+                                return false;
+                            }
+                        }
+                        else if (etype == "Ankle") {
+                            var exten_min = parseInt($('#NewPatientRXList_' + i + '__CurrentExtension').val());
+                            var exten_max = parseInt($('#NewPatientRXList_' + i + '__GoalExtension').val());
+
+                            if (new Date(surgery_date) > new Date(start_date)) {
+                                    $("span[data-valmsg-for='NewPatientRXList[" + i + "].RxStartDate']").html("<br><span for='NewPatientRXList[" + i + "].RxStartDate' class='' style='color:red'>Rx Start date should be greater than Surgery date</span>");
+                                return false;
+                            }
+                            if (flex_min < parseInt('@Constants.Ankle_Flex_Current_Start') || flex_min > parseInt('@Constants.Ankle_Flex_Current_End')) {
+                                    $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentFlexion' class='' style='color:red'>Angle should be greater than or equal to @Constants.Ankle_Flex_Current_Start and lesser than or equal to @Constants.Ankle_Flex_Current_End </span>");
+                                    $('#NewPatientRXList[' + i + '].CurrentFlexion').focus();
+                                return false;
+                            }
+
+                            if (flex_max < parseInt('@Constants.Ankle_Flex_Goal_Start') || flex_max > parseInt('@Constants.Ankle_Flex_Goal_End')) {
+                                    $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be greater than or equal to @Constants.Ankle_Flex_Goal_Start and lesser than or equal to @Constants.Ankle_Flex_Goal_End</span>");
+                                    $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                return false;
+                            }
+                            if (flex_max < flex_min) {
+                                    $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be greater than Current angle</span>");
+                                    $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                return false;
+                            }
+                            if (exten_min > parseInt('@Constants.Ankle_Ext_Current_Start') || exten_min < parseInt('@Constants.Ankle_Ext_Current_End')) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentExtension']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentExtension' class='' style='color:red'>Angle should be lesser than or equal to @Constants.Ankle_Ext_Current_End and greater than or equal to @Constants.Ankle_Ext_Current_Start</span>");
+                                    $('#NewPatientRXList[' + i + '].CurrentExtension').focus();
+                                return false;
+                            }
+                            if (exten_max > parseInt('@Constants.Ankle_Ext_Goal_Start') || exten_max < parseInt('@Constants.Ankle_Ext_Goal_End')) {
+                                $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalExtension']").html("<br><span for='#NewPatientRXList[" + i + "].GoalExtension' class='' style='color:red'>Angle should be lesser than or equal to @Constants.Ankle_Ext_Goal_End and lesser greater or equal to @Constants.Ankle_Ext_Goal_Start</span>");
+                                    $('#NewPatientRXList[' + i + '].GoalExtension').focus();
+                                return false;
+                            }
+                            if (exten_max > exten_min) {
+                                    $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalExtension']").html("<br><span for='#NewPatientRXList[" + i + "].GoalExtension' class='' style='color:red'>Angle should be less than Current angle</span>");
+                                    $('#NewPatientRXList[' + i + '].GoalExtension').focus();
+                                return false;
+                            }
+                        }
+                        else {
+
+                            var protocol_name = $('#NewPatientRXList_' + i + '__ProtocolName').val();
+                            if (protocol_name == "Forward Flexion") {
+                                if (new Date(surgery_date) > new Date(start_date)) {
+                                        $("span[data-valmsg-for='NewPatientRXList[" + i + "].RxStartDate']").html("<br><span for='NewPatientRXList[" + i + "].RxStartDate' class='' style='color:red'>Rx Start date should be greater than Surgery date</span>");
+                                    return false;
+                                }
+                                if (new Date(start_date) > new Date(end_date)) {
+                                        $("span[data-valmsg-for='NewPatientRXList[" + i + "].RxEndDate']").html("<br><span for='NewPatientRXList[" + i + "].RxEndDate' class='' style='color:red'>Rx End date should be greater than Surgery date</span>");
+                                    return false;
+                                }
+                                if (flex_min < parseInt('@Constants.Sh_Flex_Current') || flex_min > parseInt('@Constants.Sh_Flex_Goal')) {
+                                        $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentFlexion' class='' style='color:red'>Angle should be greater than @Constants.Sh_Flex_Current</span>");
+                                        $('#NewPatientRXList[' + i + '].CurrentFlexion').focus();
+                                    return false;
+                                }
+                                if (flex_max > parseInt('@Constants.Sh_Flex_Goal')) {
+                                        $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be less than or equal to @Constants.Sh_Flex_Goal</span>");
+                                        $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                    return false;
+                                }
+                                if (flex_max < flex_min) {
+                                        $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be greater than Current angle</span>");
+                                        $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                    return false;
+                                }
+                            }
+                            if (protocol_name == "External Rotation") {
+
+                                if (flex_min < parseInt('@Constants.Sh_ExRot_Current') || flex_min > parseInt('@Constants.Sh_ExRot_Goal')) {
+                                        $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentFlexion' class='' style='color:red'>Angle should be greater than @Constants.Sh_ExRot_Current</span>");
+                                        $('#NewPatientRXList[' + i + '].CurrentFlexion').focus();
+                                    return false;
+                                }
+                                if (flex_max > parseInt('@Constants.Sh_ExRot_Goal') || flex_max < flex_min) {
+                                        $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be less than or equal to @Constants.Sh_ExRot_Goal</span>");
+                                        $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                    return false;
+                                }
+                            }
+                            if (protocol_name == "Abduction") {
+
+                                if (flex_min < parseInt('@Constants.Sh_Abd_Current') || flex_min > parseInt('@Constants.Sh_Abd_Goal')) {
+                                        $("span[data-valmsg-for='NewPatientRXList[" + i + "].CurrentFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].CurrentFlexion' class='' style='color:red'>Angle should be greater than  @Constants.Sh_Abd_Current</span>");
+                                        $('#NewPatientRXList[' + i + '].CurrentFlexion').focus();
+                                    return false;
+                                }
+                                if (flex_max > parseInt('@Constants.Sh_Abd_Goal') || flex_max < flex_min) {
+                                        $("span[data-valmsg-for='NewPatientRXList[" + i + "].GoalFlexion']").html("<br><span for='#NewPatientRXList[" + i + "].GoalFlexion' class='' style='color:red'>Angle should be less than or equal to  @Constants.Sh_Abd_Goal</span>");
+                                        $('#NewPatientRXList[' + i + '].GoalFlexion').focus();
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+
+            }
+            else if ("@ViewBag.tab" == "History") {
+                $('#example1').dataTable({
+                "language": {
+                    "emptyTable": "No appointments requested"
+                    },
+                    "stateSave": true,
+                    "stateDuration": -1,
+                    'aoColumnDefs': [{
+                        'bSortable': false,
+                        'aTargets': [-1] /* 1st one, start by the right */
+                    }]
+                });
+            }
+            else if ("@ViewBag.tab" == "Library") {
+                $('#example1').dataTable({
+                "language": {
+                    "emptyTable": "No Library assigned"
+                    },
+                    "stateSave": true,
+                    "stateDuration": -1,
+                    'aoColumnDefs': [{
+                        'bSortable': false,
+                        'aTargets': [-1] /* 1st one, start by the right */
+                    }]
+                });
+            }
+
+        });
+
+
+
+        function bindChart()
+        {
+
+        }
+
+        function triggerfunction(tab) {
+
+            window.location = $(tab).find('a').attr("data-value");
+        }
+
+
+    </script>
+
+
+}
+
+
+
+
+

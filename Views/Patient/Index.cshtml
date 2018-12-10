@@ -1,0 +1,287 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Helper
+@{
+    Func<int, string> getcolor = (progress) =>
+    {
+        if (progress < 33)
+            return "background-color:red;font-weight:bold;font-size:14px";
+        else if (progress >= 33 && progress <= 65)
+            return "background-color:green;font-weight:bold;font-size:14px";
+        else
+            return "background-color:#e6e600;font-weight:bold;font-size:14px";
+    };
+
+    Func<int, string> getcolorRx = (progress) =>
+    {
+        if (progress < 34)
+            return "background-color:red;font-weight:bold;font-size:14px";
+        else if (progress >= 34 && progress <= 65)
+            return "background-color: #e6e600;font-weight:bold;font-size:14px";
+        else
+            return "background-color:green;font-weight:bold;font-size:14px";
+    };
+
+    Func<int, string> getcolorPain = (progress) =>
+    {
+        if (progress < 3)
+            return "background-color:green;font-weight:bold;font-size:14px";
+        else if (progress >= 3 && progress <= 6)
+            return "background-color:#e6e600;font-weight:bold;font-size:14px";
+        else
+            return "background-color:red;font-weight:bold;font-size:14px";
+    };
+    Func<decimal, string> getcolorUsage = (usage) =>
+    {
+        if (usage < 33)
+            return "background-color:red;font-weight:bold;font-size:14px";
+        else if (usage >= 33 && usage <= 65)
+            return "background-color:#e6e600;font-weight:bold;font-size:14px";
+        else
+            return "background-color:green;font-weight:bold;font-size:14px";
+    };
+
+    Func<DateTime?, string> getcolorLastUse = (lDateTime) =>
+    {
+        if (lDateTime == null)
+        {
+            return "";
+        }
+        else
+        {
+            lDateTime = Convert.ToDateTime(lDateTime);
+            if ((DateTime.Now - lDateTime.Value).Days < 3)
+                return "background-color:green;font-weight:bold;";
+            else if (((DateTime.Now - lDateTime.Value).Days > 3) && ((DateTime.Now - lDateTime.Value).Days < 6))
+                return "background-color:#e6e600;font-weight:bold;";
+            else
+                return "background-color:red;font-weight:bold;";
+        }
+    };
+}
+
+@model IEnumerable<OneDirect.ViewModels.DashboardView>
+
+<style>
+    .container_circle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .circle {
+        border-color: white;
+        border-radius: 50%;
+        border-width: 1px;
+        height: 35px;
+        width: 35px;
+        color: white;
+        padding-top: 6px;
+        padding-left: 5px;
+        font-size: large;
+    }
+</style>
+
+<section class="content-header">
+
+    @if (ViewBag.Name != null)
+    {
+        <h1>
+            <span>Patients of </span>@ViewBag.Name
+        </h1>
+    }
+    else
+    {
+        <h1>
+            <span>Patients</span>
+        </h1>
+    }
+
+    <ol class="breadcrumb">
+        <li><a href="~/Patient"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Patients</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+
+<div class="col-md-2" style="padding-top:20px">
+    <table class="table table-bordered text-center">
+        <td>
+            @if (@Context.Session.GetString("UserType") != "2" && @Context.Session.GetString("UserType") != "3")
+            {
+                @Html.ActionLink("Create Patient", "CreatePatient", "CreatePatient", new { }, new { @class = "btn btn-block btn-warning btn-sm" })
+            }
+        </td>
+    </table>
+</div>
+
+<section class="content">
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+
+                <!-- /.box-header -->
+                <div class="box-body">
+
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12" style="overflow-x:auto">
+                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 182px;"></th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 182px;"></th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 182px;"></th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date of Surgery: activate to sort column descending" style="width: 182px;"></th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;"></th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="2" aria-sort="ascending" aria-label="Rx End Date: activate to sort column descending" style="width: 182px;" align="center">Progress</th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Last Use Date: activate to sort column descending" style="width: 182px;"></th>
+
+                                        </tr>
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 182px;">Name</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 182px;">Rx%</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 182px;">Last Use</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date of Surgery: activate to sort column descending" style="width: 182px;">Pain</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Usage</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rx End Date: activate to sort column descending" style="width: 182px;">Flex%</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Last Use Date: activate to sort column descending" style="width: 182px;">Ext%</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Last Use Date: activate to sort column descending" style="width: 182px;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null && Model.Count() > 0)
+                                        {
+                                            @foreach (var item in Model)
+                                            {
+                                        <tr role="row" id="redirect" onclick="DashboardRedirect('@item.PatientRx.PatientId','@item.TotalSession');">
+                                            <td>
+                                                @*@if (item.TotalSession > 0)
+            {
+
+                <a href="@Url.Action("Index", "Review", new { id = item.PatientRx.PatientId, Username = item.PatientRx.Patient.PatientName, EquipmentType = item.PatientRx.EquipmentType, actuator = item.PatientRx.DeviceConfiguration,tab="Dashboard" })">@item.PatientRx.Patient.PatientName</a>
+            }
+            else
+            {
+                <span>@item.PatientRx.Patient.PatientName</span>
+            }*@
+                                                <span>@item.PatientRx.Patient.PatientName</span>
+                                            </td>
+
+                                            <td align="center">
+                                                <div class="circle" style="@getcolorRx(item.percentage)">
+                                                    @item.percentage
+                                                </div>
+                                            </td>
+                                            <td align="center">
+
+                                                <div class="circle" style="@getcolorLastUse(item.LastUse)">
+                                                    @if (item.LastUse != null)
+                                                    {
+                                                        @((DateTime.Now - Convert.ToDateTime(item.LastUse.Value)).Days)
+                                                    }
+                                                    @*else
+                {
+                    <span>-</span>
+
+                }*@
+                                                </div>
+                                            </td>
+                                            <td align="center">
+                                                <div class="circle" style="@getcolorPain(item.MaxPain)">
+                                                    @item.MaxPain
+                                                </div>
+                                            </td>
+
+                                            <td align="center">
+                                                @if (item.TotalSession > 0 && item.PatientRx.RxDaysPerweek > 0 && item.PatientRx.RxSessionsPerWeek > 0)
+                                                {
+                                                    <div class="circle" style="@getcolorUsage(Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100))">
+                                                        @(Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100))
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="circle" style="@getcolorUsage(0)">
+                                                        0
+                                                    </div>
+                                                }
+                                            </td>
+
+                                            @if (item.Progress != null)
+                                            {
+                                                if (item.PatientRx.EquipmentType.ToLower() == "shoulder")
+                                                {
+                                                    <td align="center">
+                                                        <div class="circle" style="@getcolor(item.Progress.Forward)">@item.Progress.Forward</div>
+                                                    </td>
+                                                    <td align="center">
+                                                        <div class="circle" style="@getcolor(item.Progress.Rotation)"> @item.Progress.Rotation</div>
+                                                    </td>
+
+                                                }
+                                                else if (item.PatientRx.EquipmentType.ToLower() == "ankle")
+                                                {
+                                                    <td align="center">
+                                                        <div class="circle" style="@getcolor(item.Progress.Flexexion)"> @item.Progress.Flexexion</div>
+                                                    </td>
+                                                    <td align="center">
+                                                        <div class="circle" style="@getcolor(item.Progress.Extension)"> @item.Progress.Extension</div>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+
+                                                    <td align="center">
+                                                        <div class="circle" style="@getcolor(item.Progress.Flexexion)"> @item.Progress.Flexexion</div>
+                                                    </td>
+                                                    <td align="center">
+                                                        <div class="circle" style="@getcolor(item.Progress.Extension)"> @item.Progress.Extension</div>
+                                                    </td>
+
+                                                }
+                                            }
+                                            <td align="center">
+                                                <div style="margin-top:5px;">
+                                                    @Html.ActionLink("Delete", "Delete", "Provider", new { patid = item.PatientRx.PatientId }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete patient " + item.PatientRx.Patient.PatientName + "? ');" })
+                                                </div>
+                                            </td>
+                                        </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+
+
+</section>
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example1').DataTable({
+
+            "stateSave": true,
+            "stateDuration": -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1, -2] /* 1st one, start by the right */
+            }]
+        });
+
+    });
+      function DashboardRedirect(id,session) {
+         window.location.href = '@Url.Action("DashboardView","Therapist")?id=' + id;
+    }
+</script>

@@ -1,0 +1,863 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@{
+
+}
+@model IEnumerable<OneDirect.ViewModels.NewProtocol>
+<!-- Main content -->
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+
+                </div>
+
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @if (ViewBag.EquipmentType == "Shoulder")
+                                {
+                                    <div class="nav-tabs-custom" style="margin-bottom:0px !important;">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active">
+                                                <a href="active #tab_11" data-toggle="tab">@ViewBag.flexionString</a>
+                                            </li>
+                                            <li>
+                                                <a href="#tab_12" data-toggle="tab">@ViewBag.flexionString1</a>
+                                            </li>
+
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="tab_11">
+                                                <div class="box-body no-padding">
+                                                    <div class="content col-sm-12 no-padding">
+                                                        <div align="right">
+                                                            @if (Model != null && Model.Count() > 0 && Model.Where(x => x.ExcerciseEnum == "Forward Flexion").ToList().Count > 0)
+                                                            {
+                                                                @foreach (var item in Model.Where(x => x.ExcerciseEnum == "Forward Flexion").ToList())
+                                                                {
+                                                                    @if (item.ExcerciseEnum == "Forward Flexion")
+                                                                    {
+                                                                        @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                        {
+                                                                            if (ViewBag.VisibleAddButton == true)
+                                                                            {
+                                                                                @Html.ActionLink("Add", "Protocol", "CreatePatient", new { RXID = item.RxId, returnView = "Review" }, new { @class = "btn btn-warning btn-sm", @style = "margin-top:10px;margin-bottom:10px;" })
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                            {
+                                                                                <input type="button" class="btn btn-default btn-sm" style="margin-top:10px;margin-bottom:10px;" value="Add" />
+                                                                                <span style="color:red">Patient is not configured</span>
+                                                                            }
+
+                                                                        }
+                                                                        break;
+                                                                    }
+
+                                                                }
+                                                            }
+                                                            else if (ViewBag.VisibleAddButton == true)
+                                                            {
+                                                                @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                {
+                                                                    if (ViewBag.VisibleAddButton == true)
+                                                                    {
+                                                                        @Html.ActionLink("Add", "Protocol", "CreatePatient", new { RXID = ViewBag.RxId, returnView = "Review" }, new { @class = "btn btn-warning btn-sm", @style = "margin-top:10px;margin-bottom:10px;" })
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+
+                                                                @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                {
+                                                                    <input type="button" class="btn btn-default btn-sm" style="margin-top:10px;margin-bottom:10px;" value="Add" />
+                                                                    <span style="color:red">Patient is not configured</span>
+                                                                }
+
+                                                            }
+                                                        </div>
+                                                        <div style="overflow-x:auto" id="fullview">
+                                                            <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small;" role="grid" aria-describedby="example1_info">
+                                                                <thead>
+                                                                    <tr role="row">
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Protocol Name: activate to sort column descending" style="width: 182px;">Exercise Name</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending" style="width: 182px;">Exercise Type</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending" style="width: 182px;">Flexion Current</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Flexion Goal</th>
+
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Rest Time</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Start Date</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">End Date</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Duration</th>
+                                                                        @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4")
+                                                                        {
+                                                                            <th class="" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions: activate to sort column descending" style="width: 182px;">Action</th>
+                                                                        }
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @if (Model != null)
+                                                                    {
+                                                                        @foreach (var item in Model.Where(x => x.ExcerciseEnum == "Forward Flexion").ToList())
+                                                                        {
+                                                                            @if (item.ExcerciseEnum == "Forward Flexion")
+                                                                            {
+                                                                                <tr>
+
+                                                                                    <td>@item.ProtocolName</td>
+                                                                                    <td>@item.ExcerciseName</td>
+                                                                                    <td>@item.FlexUpLimit</td>
+                                                                                    <td>@item.StretchUpLimit</td>
+
+                                                                                    <td>@item.RestTime&nbsp;sec(s)</td>
+                                                                                    <td>@(item.StartDate != null ? Convert.ToDateTime(item.StartDate).ToString(string.Format("MMM-dd-yyyy")) : "")</td>
+                                                                                    <td>@(item.EndDate != null ? Convert.ToDateTime(item.EndDate).ToString(string.Format("MMM-dd-yyyy")) : "")</td>
+                                                                                    <td>@item.Time&nbsp;minute(s)</td>
+                                                                                    @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                                    {
+                                                                                        <td>
+                                                                                            @Html.ActionLink("Edit", "Protocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+
+                                                                                            @if (item.SessionCount == 0)
+                                                                                            {
+                                                                                                @Html.ActionLink("Delete", "Delete", "CreatePatient", new { proId = item.ProtocolId, patId = item.PatientId, patName = @ViewBag.PatientName, eType = item.EquipmentType, returnView = "Review" }, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('" + (item.SessionCount == 0 ? "Are you sure you wish to delete protocol" + item.ProtocolName + "?" : " ") + "');" })
+                                                                                            }
+                                                                                        </td>
+                                                                                    }
+                                                                                    else if (@Context.Session.GetString("UserType") == "6")
+                                                                                    {
+                                                                                        <td>
+                                                                                            @Html.ActionLink("Details", "ViewProtocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+                                                                                        </td>
+                                                                                    }
+
+
+                                                                                </tr>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <tr>
+                                                                            <td colspan="10">No records Found!</td>
+                                                                        </tr>
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <div class="row" id="mobileview">
+                                                            <div class="col-md-12 col-xs-12 no-padding">
+
+                                                                @if (Model != null)
+                                                                {
+                                                                    @foreach (var item in Model.Where(x => x.ExcerciseEnum == "Forward Flexion").ToList())
+                                                                    {
+                                                                        @if (item.ExcerciseEnum == "Forward Flexion")
+                                                                        {
+                                                                            <div class="col-md-6 no-padding">
+                                                                                <div class="box box-primary">
+                                                                                    <div class="box-header with-border" data-name="PatientName">
+
+                                                                                        <div class="col-xs-12 col-md-12 no-padding">
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                                <strong><span>Exercise Name:</span></strong>
+                                                                                                <p class="text-muted">@item.ProtocolName</p>
+                                                                                            </div>
+
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                                <strong><span>Exercise Type:</span></strong>
+                                                                                                <p class="text-muted">@item.ExcerciseName</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-xs-12 col-md-12 no-padding">
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                                <strong><span>Flexion Current:</span></strong>
+                                                                                                <p class="text-muted">
+                                                                                                    @if (item.FlexUpLimit != null)
+                                                                                                    {
+                                                                                                        @item.FlexUpLimit
+
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <span>-</span>
+
+                                                                                                    }
+
+
+                                                                                                </p>
+                                                                                            </div>
+
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                                <strong><span>Flexion Goal:</span></strong>
+                                                                                                <p class="text-muted">
+                                                                                                    @if (item.StretchUpLimit != null)
+                                                                                                    {
+                                                                                                        @item.StretchUpLimit
+
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <span>-</span>
+
+                                                                                                    }
+
+                                                                                                </p>
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                        <div class="col-xs-12 col-md-12 no-padding">
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                                <strong><span>Start Date:</span></strong>
+                                                                                                <p class="text-muted">@(item.StartDate != null ? Convert.ToDateTime(item.StartDate).ToString(string.Format("MMM-dd-yyyy")) : "")</p>
+                                                                                            </div>
+
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                                <strong><span>End Date:</span></strong>
+                                                                                                <p class="text-muted">@(item.EndDate != null ? Convert.ToDateTime(item.EndDate).ToString(string.Format("MMM-dd-yyyy")) : "")</p>
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                        <div class="col-xs-12 col-md-12 no-padding" align="left">
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                                <strong><span>Rest Time:</span></strong>
+                                                                                                <p class="text-muted">@item.RestTime&nbsp;sec(s)</p>
+                                                                                            </div>
+
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                                <strong><span>Duration:</span></strong>
+                                                                                                <p class="text-muted">@item.Time&nbsp;minute(s)</p>
+                                                                                            </div>
+
+                                                                                        </div>
+
+                                                                                        @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4")
+                                                                                        {
+
+                                                                                            <div class="col-xs-12 col-md-12 no-padding">
+
+                                                                                                @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                                                {
+                                                                                                    <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                                        @Html.ActionLink("Edit", "Protocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+                                                                                                    </div>
+                                                                                                    <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                                        @if (item.SessionCount == 0)
+                                                                                                        {
+                                                                                                            @Html.ActionLink("Delete", "Delete", "CreatePatient", new { proId = item.ProtocolId, patId = item.PatientId, patName = @ViewBag.PatientName, eType = item.EquipmentType, returnView = "Review" }, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('" + (item.SessionCount == 0 ? "Are you sure you wish to delete protocol" + item.ProtocolName + "?" : " ") + "');" })
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                }
+                                                                                                else if (@Context.Session.GetString("UserType") == "6")
+                                                                                                {
+                                                                                                    <div class="col-xs-12 col-md-12 no-pad-left" align="center">
+                                                                                                        @Html.ActionLink("Details", "ViewProtocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+                                                                                                    </div>
+                                                                                                }
+
+                                                                                            </div>
+
+
+
+
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </div>
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane" id="tab_12">
+                                                <div class="box-body  no-padding">
+                                                    <div class="content col-sm-12 no-padding" style="width: 100% !important;height: auto !important;">
+                                                        <div align="right">
+                                                            @if (Model != null && Model.Count() > 0 && Model.Where(x => x.ExcerciseEnum == "External Rotation").ToList().Count > 0)
+                                                            {
+                                                                @foreach (var item in Model.Where(x => x.ExcerciseEnum == "External Rotation").ToList())
+                                                                {
+                                                                    @if (item.ExcerciseEnum == "External Rotation")
+                                                                    {
+                                                                        @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                        {
+                                                                            if (ViewBag.VisibleAddButton == true)
+                                                                            {
+                                                                                @Html.ActionLink("Add", "Protocol", "CreatePatient", new { RXID = item.RxId, returnView = "Review" }, new { @class = "btn btn-warning btn-sm", @style = "margin-top:10px;margin-bottom:10px;" })
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                            {
+                                                                                <input type="button" class="btn btn-default btn-sm" style="margin-top:10px;margin-bottom:10px;" value="Add" />
+                                                                                <span style="color:red">Patient is not configured</span>
+                                                                            }
+
+                                                                        }
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                            else if (ViewBag.VisibleAddButtonExt == true)
+                                                            {
+                                                                @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                {
+                                                                    if (ViewBag.VisibleAddButton == true)
+                                                                    {
+                                                                        @Html.ActionLink("Add", "Protocol", "CreatePatient", new { RXID = ViewBag.RxId, returnView = "Review" }, new { @class = "btn btn-warning btn-sm", @style = "margin-top:10px;margin-bottom:10px;" })
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+
+                                                                @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                {
+                                                                    <input type="button" class="btn btn-default btn-sm" style="margin-top:10px;margin-bottom:10px;" value="Add" />
+                                                                    <span style="color:red">Patient is not configured</span>
+                                                                }
+
+                                                            }
+                                                        </div>
+                                                        <div style="overflow-x:auto" id="fullview">
+                                                            <table id="example2" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                                                <thead>
+                                                                    <tr role="row">
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Protocol Name: activate to sort column descending" style="width: 182px;">Exercise Name</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending" style="width: 182px;">Exercise Type</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending" style="width: 182px;">Flexion Current</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Flexion Goal</th>
+
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Rest Time</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Start Date</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">End Date</th>
+                                                                        <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Duration</th>
+                                                                        @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4")
+                                                                        {
+                                                                            <th class="" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions: activate to sort column descending" style="width: 182px;">Action</th>
+                                                                        }
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @if (Model != null)
+                                                                    {
+                                                                        @foreach (var item in Model.Where(x => x.ExcerciseEnum == "External Rotation").ToList())
+                                                                        {
+                                                                            @if (item.ExcerciseEnum == "External Rotation")
+                                                                            {
+                                                                                <tr>
+
+                                                                                    <td>@item.ProtocolName</td>
+                                                                                    <td>@item.ExcerciseName</td>
+                                                                                    <td>@item.FlexUpLimit</td>
+                                                                                    <td>@item.StretchUpLimit</td>
+
+                                                                                    <td>@item.RestTime&nbsp;sec(s)</td>
+                                                                                    <td>@(item.StartDate != null ? Convert.ToDateTime(item.StartDate).ToString(string.Format("MMM-dd-yyyy")) : "")</td>
+                                                                                    <td>@(item.EndDate != null ? Convert.ToDateTime(item.EndDate).ToString(string.Format("MMM-dd-yyyy")) : "")</td>
+                                                                                    <td>@item.Time&nbsp;minute(s)</td>
+                                                                                    @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                                    {
+                                                                                        <td>
+                                                                                            @Html.ActionLink("Edit", "Protocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+
+                                                                                            @if (item.SessionCount == 0)
+                                                                                            {
+                                                                                                @Html.ActionLink("Delete", "Delete", "CreatePatient", new { proId = item.ProtocolId, patId = item.PatientId, patName = @ViewBag.PatientName, eType = item.EquipmentType, returnView = "Review" }, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('" + (item.SessionCount == 0 ? "Are you sure you wish to delete protocol - " + item.ProtocolName + "?" : " ") + "');" })
+                                                                                            }
+                                                                                        </td>
+                                                                                    }
+                                                                                    else if (@Context.Session.GetString("UserType") == "6")
+                                                                                    {
+                                                                                        <td>
+                                                                                            @Html.ActionLink("Details", "ViewProtocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+                                                                                        </td>
+
+                                                                                    }
+
+
+                                                                                </tr>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <tr>
+                                                                            <td colspan="10">No records Found!</td>
+                                                                        </tr>
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <div class="row" id="mobileview">
+                                                            <div class="col-md-12 col-xs-12 no-padding">
+
+                                                                @if (Model != null)
+                                                                {
+                                                                    @foreach (var item in Model.Where(x => x.ExcerciseEnum == "External Rotation").ToList())
+                                                                    {
+                                                                        @if (item.ExcerciseEnum == "External Rotation")
+                                                                        {
+                                                                            <div class="col-md-6 no-padding">
+                                                                                <div class="box box-primary">
+                                                                                    <div class="box-header with-border">
+
+                                                                                        <div class="col-xs-12 col-md-12 no-padding">
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                                <strong><span>Exercise Name:</span></strong>
+                                                                                                <p class="text-muted">@item.ProtocolName</p>
+                                                                                            </div>
+
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                                <strong><span>Exercise Type:</span></strong>
+                                                                                                <p class="text-muted">@item.ExcerciseName</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-xs-12 col-md-12 no-padding">
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                                <strong><span>Flexion Current:</span></strong>
+                                                                                                <p class="text-muted">
+                                                                                                    @if (item.FlexUpLimit != null)
+                                                                                                    {
+                                                                                                        @item.FlexUpLimit
+
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <span>-</span>
+
+                                                                                                    }
+                                                                                                </p>
+                                                                                            </div>
+
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                                <strong><span>Flexion Goal:</span></strong>
+                                                                                                <p class="text-muted">
+                                                                                                    @if (item.StretchUpLimit != null)
+                                                                                                    {
+                                                                                                        @item.StretchUpLimit
+
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <span>-</span>
+
+                                                                                                    }
+
+
+                                                                                                </p>
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                        <div class="col-xs-12 col-md-12 no-padding">
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                                <strong><span>Start Date:</span></strong>
+                                                                                                <p class="text-muted">@(item.StartDate != null ? Convert.ToDateTime(item.StartDate).ToString(string.Format("MMM-dd-yyyy")) : "")</p>
+                                                                                            </div>
+
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                                <strong><span>End Date:</span></strong>
+                                                                                                <p class="text-muted">@(item.EndDate != null ? Convert.ToDateTime(item.EndDate).ToString(string.Format("MMM-dd-yyyy")) : "")</p>
+                                                                                            </div>
+
+                                                                                        </div>
+                                                                                        <div class="col-xs-12 col-md-12 no-padding">
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                                <strong><span>Rest Time:</span></strong>
+                                                                                                <p class="text-muted">@item.RestTime&nbsp;sec(s)</p>
+                                                                                            </div>
+
+                                                                                            <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                                <strong><span>Duration:</span></strong>
+                                                                                                <p class="text-muted">@item.Time&nbsp;minute(s)</p>
+                                                                                            </div>
+
+                                                                                        </div>
+
+                                                                                        @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4")
+                                                                                        {
+
+                                                                                            <div class="col-xs-12 col-md-12 no-padding">
+
+                                                                                                @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                                                {
+                                                                                                    <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                                        @Html.ActionLink("Edit", "Protocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+                                                                                                    </div>
+                                                                                                    <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                                        @if (item.SessionCount == 0)
+                                                                                                        {
+                                                                                                            @Html.ActionLink("Delete", "Delete", "CreatePatient", new { proId = item.ProtocolId, patId = item.PatientId, patName = @ViewBag.PatientName, eType = item.EquipmentType, returnView = "Review" }, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('" + (item.SessionCount == 0 ? "Are you sure you wish to delete protocol" + item.ProtocolName + "?" : " ") + "');" })
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                }
+                                                                                                else if (@Context.Session.GetString("UserType") == "6")
+                                                                                                {
+                                                                                                    <div class="col-xs-12 col-md-12 no-pad-left" align="center">
+                                                                                                        @Html.ActionLink("Details", "ViewProtocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+                                                                                                    </div>
+                                                                                                }
+
+                                                                                            </div>
+
+
+
+
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </div>
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="">
+                                        <div class="box-body  no-padding">
+                                            <div class="content col-sm-12 no-padding" style="width: 100% !important;height: auto !important;">
+
+                                                <div align="right">
+
+                                                    @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                    {
+                                                        if (ViewBag.VisibleAddButton == true)
+                                                        {
+                                                            @Html.ActionLink("Add", "Protocol", "CreatePatient", new { RXID = ViewBag.RxId, returnView = "Review" }, new { @class = "btn btn-warning btn-sm", @style = "margin-top:10px;margin-bottom:10px;" })
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                        {
+                                                            <input type="button" class="btn btn-default btn-sm" style="margin-top:10px;margin-bottom:10px;" value="Add" />
+                                                            <span style="color:red">Patient is not configured</span>
+                                                        }
+
+                                                    }
+                                                </div>
+                                                <div style="overflow-x:auto" id="fullview">
+                                                    <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                                        <thead>
+                                                            <tr role="row">
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Exercise Name: activate to sort column descending" style="width: 160px;">Exercise Name</th>
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending" style="width: 160px;">Exercise Type</th>
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending" style="width: 160px;">@ViewBag.flexionString Current</th>
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 160px;">@ViewBag.flexionString Goal</th>
+
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending" style="width: 160px;">@ViewBag.extensionString Current</th>
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 160px;">@ViewBag.extensionString Goal</th>
+
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending">Rest Time</th>
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 160px;">Start Date</th>
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 160px;">End Date</th>
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending">Duration</th>
+                                                                @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4")
+                                                                {
+                                                                    <th class="" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions: activate to sort column descending" style="width: 182px;">Action</th>
+                                                                }
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (Model != null)
+                                                            {
+                                                                @foreach (var item in Model)
+                                                                {
+                                                                    <tr>
+
+                                                                        <td>@item.ProtocolName</td>
+                                                                        <td>@item.ExcerciseName</td>
+                                                                        <td>@item.FlexUpLimit</td>
+                                                                        <td>@item.StretchUpLimit</td>
+                                                                        @*@if (item.ExcerciseName == "Flexion" || item.ExcerciseName == "Flexion-Extension")
+                                                                            {
+                                                                                <td>@item.FlexUpLimit</td>
+                                                                                <td>@item.StretchUpLimit</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                                <td></td>
+
+                                                                            }*@
+                                                                        <td>@item.FlexDownLimit</td>
+                                                                        <td>@item.StretchDownLimit</td>
+                                                                        @*@if (item.ExcerciseName == "Extension" || item.ExcerciseName == "Flexion-Extension")
+                                                                            {
+                                                                                <td>@item.FlexDownLimit</td>
+                                                                                <td>@item.StretchDownLimit</td>
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td></td>
+                                                                                <td></td>
+
+                                                                            }*@
+
+                                                                        <td><div style="width:53px; word-break: break-word;">@item.RestTime sec(s)</div></td>
+                                                                        <td>@(item.StartDate != null ? Convert.ToDateTime(item.StartDate).ToString(string.Format("MMM-dd-yyyy")) : "")</td>
+                                                                        <td>@(item.EndDate != null ? Convert.ToDateTime(item.EndDate).ToString(string.Format("MMM-dd-yyyy")) : "")</td>
+                                                                        <td><div style="width:53px; word-break: break-word;">@item.Time min(s)</div></td>
+                                                                        @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                        {
+                                                                            <td>
+                                                                                @Html.ActionLink("Edit", "Protocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+
+                                                                                @if (item.SessionCount == 0)
+                                                                                {
+                                                                                    @Html.ActionLink("Delete", "Delete", "CreatePatient", new { proId = item.ProtocolId, patId = item.PatientId, patName = @ViewBag.PatientName, eType = item.EquipmentType, returnView = "Review" }, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('" + (item.SessionCount == 0 ? "Are you sure you wish to delete protocol - " + item.ProtocolName + "?" : " ") + "');" })
+                                                                                }
+                                                                            </td>
+                                                                        }
+                                                                        else if (@Context.Session.GetString("UserType") == "6")
+                                                                        {
+
+                                                                            <td>
+                                                                                @Html.ActionLink("Details", "ViewProtocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+                                                                            </td>
+                                                                        }
+
+
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="13">No records Found!</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="row" id="mobileview">
+                                                    <div class="col-md-12 col-xs-12 no-padding">
+
+                                                        @if (Model != null)
+                                                        {
+                                                            @foreach (var item in Model)
+                                                            {
+                                                                <div class="col-md-6 no-padding">
+                                                                    <div class="box box-primary">
+                                                                        <div class="box-header with-border">
+
+                                                                            <div class="col-xs-12 col-md-12 no-padding">
+                                                                                <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                    <strong><span>Exercise Name:</span></strong>
+                                                                                    <p class="text-muted">@item.ProtocolName</p>
+                                                                                </div>
+
+                                                                                <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                    <strong><span>Exercise Type:</span></strong>
+                                                                                    <p class="text-muted">@item.ExcerciseName</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xs-12 col-md-12 no-padding">
+                                                                                <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                    <strong><span>@ViewBag.flexionString Current:</span></strong>
+                                                                                    <p class="text-muted">
+                                                                                        @if (item.FlexUpLimit != null)
+                                                                                        {
+                                                                                            @item.FlexUpLimit
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span>-</span>
+
+                                                                                        }
+
+                                                                                    </p>
+                                                                                </div>
+
+                                                                                <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                    <strong><span>@ViewBag.flexionString Goal:</span></strong>
+                                                                                    <p class="text-muted">
+                                                                                        @if (item.StretchUpLimit != null)
+                                                                                        {
+                                                                                            @item.StretchUpLimit
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span>-</span>
+
+                                                                                        }
+
+                                                                                    </p>
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <div class="col-xs-12 col-md-12 no-padding">
+                                                                                <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                    <strong><span>@ViewBag.extensionString Current:</span></strong>
+                                                                                    <p class="text-muted">
+                                                                                        @if (item.FlexDownLimit != null)
+                                                                                        {
+                                                                                            @item.FlexDownLimit
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span>-</span>
+
+                                                                                        }
+
+                                                                                    </p>
+                                                                                </div>
+
+                                                                                <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                    <strong><span>@ViewBag.extensionString Goal:</span></strong>
+                                                                                    <p class="text-muted">
+                                                                                        @if (item.StretchDownLimit != null)
+                                                                                        {
+                                                                                            @item.StretchDownLimit
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span>-</span>
+
+                                                                                        }
+                                                                                    </p>
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <div class="col-xs-12 col-md-12 no-padding">
+                                                                                <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                    <strong><span>Start Date:</span></strong>
+                                                                                    <p class="text-muted">@(item.StartDate != null ? Convert.ToDateTime(item.StartDate).ToString(string.Format("MMM-dd-yyyy")) : "")</p>
+                                                                                </div>
+
+                                                                                <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                    <strong><span>End Date:</span></strong>
+                                                                                    <p class="text-muted">@(item.EndDate != null ? Convert.ToDateTime(item.EndDate).ToString(string.Format("MMM-dd-yyyy")) : "")</p>
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <div class="col-xs-12 col-md-12 no-padding">
+                                                                                <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                    <strong><span>Rest Time:</span></strong>
+                                                                                    <p class="text-muted">@item.RestTime&nbsp;sec(s)</p>
+                                                                                </div>
+
+                                                                                <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                    <strong><span>Duration:</span></strong>
+                                                                                    <p class="text-muted">@item.Time&nbsp;minute(s)</p>
+                                                                                </div>
+
+                                                                            </div>
+
+                                                                            @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4")
+                                                                            {
+
+                                                                                <div class="col-xs-12 col-md-12 no-padding">
+
+                                                                                    @if (@Context.Session.GetString("UserType") != "1" && @Context.Session.GetString("UserType") != "4" && @Context.Session.GetString("UserType") != "6")
+                                                                                    {
+                                                                                        <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                                                                            @Html.ActionLink("Edit", "Protocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+                                                                                        </div>
+                                                                                        <div class="col-xs-6 col-md-6 no-pad-left" align="left">
+                                                                                            @if (item.SessionCount == 0)
+                                                                                            {
+                                                                                                @Html.ActionLink("Delete", "Delete", "CreatePatient", new { proId = item.ProtocolId, patId = item.PatientId, patName = @ViewBag.PatientName, eType = item.EquipmentType, returnView = "Review" }, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('" + (item.SessionCount == 0 ? "Are you sure you wish to delete protocol" + item.ProtocolName + "?" : " ") + "');" })
+                                                                                            }
+                                                                                        </div>
+                                                                                    }
+                                                                                    else if (@Context.Session.GetString("UserType") == "6")
+                                                                                    {
+
+                                                                                        <div class="col-xs-12 col-md-12 no-pad-left" align="center">
+                                                                                            @Html.ActionLink("Details", "ViewProtocol", "CreatePatient", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName, ExeName = item.ExcerciseName, returnView = "Review" }, new { @class = "btn btn-primary btn-xs" })
+                                                                                        </div>
+                                                                                    }
+
+                                                                                </div>
+
+
+
+
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#example1').DataTable({
+
+            "stateSave": true,
+            "stateDuration": -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+        });
+        $('#example2').DataTable({
+            "stateSave": true,
+            "stateDuration": -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+        });
+        $('#example3').DataTable({
+            "stateSave": true,
+            "stateDuration": -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+        });
+
+
+    });
+
+</script>

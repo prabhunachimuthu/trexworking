@@ -1,0 +1,222 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using System;
+@using System.Globalization;
+@model IEnumerable<OneDirect.ViewModels.DashboardView>
+@{
+
+    Func<int, string>
+        getcolor = (progress) =>
+        {
+            if (progress == 0)
+                return "";
+            else if (progress < 50)
+                return "background-color:red;font-weight:bold;";
+            else if (progress > 70)
+                return "background-color:green;font-weight:bold;";
+            else
+                return "background-color:yellow;font-weight:bold;";
+        };
+}
+<section class="content-header" style="padding-bottom:20px">
+    <h1>
+        Patients
+
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="~/Support/Dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Support</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<!-- Main content -->
+
+<div class="col-md-2" style="padding-top:20px">
+    <table class="table table-bordered text-center">
+        <td>
+            @if (@Context.Session.GetString("UserType") != "2" && @Context.Session.GetString("UserType") != "3")
+            {
+                @Html.ActionLink("Create Patient", "CreatePatient", "CreatePatient", new { }, new { @class = "btn btn-block btn-warning btn-sm" })
+            }
+        </td>
+    </table>
+</div>
+
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12" style="overflow-x:auto">
+                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 182px;">Name</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 182px;">ID</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 182px;">Doctor</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date of Surgery: activate to sort column descending" style="width: 182px;">Date of Surgery</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Joint</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rx End Date: activate to sort column descending" style="width: 182px;">Rx Start</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rx End Date: activate to sort column descending" style="width: 182px;">Rx End</th>
+
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Last Use Date: activate to sort column descending" style="width: 182px;">Last Use</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="1st Use Date: activate to sort column descending" style="width: 182px;">Max Pain</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="% Usage: activate to sort column descending" style="width: 182px;">% Usage</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Current Range : activate to sort column descending" style="width: 182px;">Progress</th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions : activate to sort column descending" style="width: 182px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null && Model.Count() > 0)
+                                        {
+                                            @foreach (var item in Model)
+                                            {
+                                                <tr role="row">
+                                                    <td>
+                                                        @if (item.TotalSession > 0)
+                                                        {
+
+                                                            <a href="@Url.Action("Index", "Review", new { id = item.PatientRx.PatientId, Username = item.PatientRx.Patient.PatientName, EquipmentType = item.PatientRx.EquipmentType, actuator = item.PatientRx.DeviceConfiguration,tab="Dashboard" })">@item.PatientRx.Patient.PatientName</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@item.PatientRx.Patient.PatientName</span>
+                                                        }
+                                                    </td>
+                                                    <td>@item.PatientRx.Patient.PatientLoginId</td>
+                                                    <td>@item.PatientRx.Provider.Name</td>
+                                                    <td>@(item.PatientRx.Patient.SurgeryDate != null ? Convert.ToDateTime(item.PatientRx.Patient.SurgeryDate).ToString("MMM-dd-yyyy") : "")</td>
+                                                    <td>@item.PatientRx.EquipmentType</td>
+                                                    <td>@(item.PatientRx.RxStartDate.HasValue ? Convert.ToDateTime(item.PatientRx.RxStartDate).ToString("MMM-dd-yyyy") : "")</td>
+                                                    <td>@(item.PatientRx.RxEndDate.HasValue ? Convert.ToDateTime(item.PatientRx.RxEndDate).ToString("MMM-dd-yyyy") : "")</td>
+
+                                                    <td>@(item.LastUse.HasValue ? Convert.ToDateTime(item.LastUse).ToString("MMM-dd-yyyy") : "")</td>
+                                                    <td>
+                                                        @if (item.MaxPain > 0)
+                                                        {
+                                                            @item.MaxPain
+                                                        }
+                                                        else
+                                                        {
+                                                            <span></span>@*<span>-</span>*@
+                                                        }
+                                                    </td>
+
+                                                    <td>
+                                                        @if (item.TotalSession > 0 && item.PatientRx.RxDaysPerweek > 0 && item.PatientRx.RxSessionsPerWeek > 0)
+                                                        {
+                                                            @(Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100))
+                                                            <span>%</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span></span>@*<span>-</span>*@
+                                                        }
+                                                    </td>
+                                                    <td style="width:150px">
+                                                        @if (item.Progress != null)
+                                                        {
+                                                            if (item.PatientRx.EquipmentType.ToLower() == "shoulder")
+                                                            {
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.shoulderflexionString </span>
+                                                                    <span class="progress-number"><b>@item.Progress.Forward%</b></span>
+                                                                    <div class="progress sm" style="display:@(item.Progress.Forward>0?"block":"block")">
+                                                                        <div class="progress-bar" style="width:@item.Progress.Forward%;@getcolor(item.Progress.Forward)"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.shoulderflexionString1</span>
+                                                                    <span class="progress-number"><b>@item.Progress.Rotation%</b></span>
+                                                                    <div class="progress sm" style="display:@(item.Progress.Rotation>0?"block":"block")">
+                                                                        <div class="progress-bar" style="width: @item.Progress.Rotation%;@getcolor(item.Progress.Rotation)"></div>
+                                                                    </div>
+                                                                </div>
+                                                                @*<div class="progress-group">
+                                                                        <span class="progress-text">Abduction</span>
+                                                                        <span class="progress-number"><b>@item.Progress.Abduction%</b></span>
+                                                                        <div class="progress sm" style="display:@(item.Progress.Abduction>0?"block":"block")">
+                                                                            <div class="progress-bar" style="width: @item.Progress.Abduction%;@getcolor(item.Progress.Abduction)"></div>
+                                                                        </div>
+                                                                    </div>*@
+                                                            }
+                                                            else if (item.PatientRx.EquipmentType.ToLower() == "ankle")
+                                                            {
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.ankleflexionString </span>
+                                                                    <span class="progress-number"><b>@item.Progress.Flexexion%</b></span>
+                                                                    <div class="progress sm" style="display:@(item.Progress.Flexexion>0?"block":"block")">
+                                                                        <div class="progress-bar" style="width: @item.Progress.Flexexion%;@getcolor(item.Progress.Flexexion)"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.ankleextensionString</span>
+                                                                    <span class="progress-number"><b>@item.Progress.Extension%</b></span>
+                                                                    <div class="progress sm" style="display:@(item.Progress.Extension>0?"block":"block")">
+                                                                        <div class="progress-bar" style="width: @item.Progress.Extension%;@getcolor(item.Progress.Extension)"></div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.kneeflexionString </span>
+                                                                    <span class="progress-number"><b>@item.Progress.Flexexion%</b></span>
+                                                                    <div class="progress sm" style="display:@(item.Progress.Flexexion>0?"block":"block")">
+                                                                        <div class="progress-bar" style="width: @item.Progress.Flexexion%;@getcolor(item.Progress.Flexexion)"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.kneeextensionString</span>
+                                                                    <span class="progress-number"><b>@item.Progress.Extension%</b></span>
+                                                                    <div class="progress sm" style="display:@(item.Progress.Extension>0?"block":"block")">
+                                                                        <div class="progress-bar" style="width: @item.Progress.Extension%;@getcolor(item.Progress.Extension)"></div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </td>
+                                                    <td style="white-space: nowrap;">
+
+                                                        <div>
+                                                            @Html.ActionLink("Review", "Index", "Review", new { id = item.PatientRx.PatientId, Username = item.PatientRx.Patient.PatientName, EquipmentType = item.PatientRx.EquipmentType, actuator = item.PatientRx.DeviceConfiguration, tab = "Dashboard" }, new { @class = "label label-primary" })
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#example1').DataTable({
+            "stateSave": true,
+            "stateDuration": -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+        });
+
+    });
+
+</script>

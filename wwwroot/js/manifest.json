@@ -1,0 +1,24 @@
+{
+  "short_name": "Trex",
+  "name": "Trex OneDirect",
+  "icons": [
+    {
+      "src": "/images/logo_small_192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/images/logo_small_512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  //"permissions": [
+  //  "desktopCapture"
+  //],
+  "start_url": "/",
+  "background_color": "",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": ""
+}

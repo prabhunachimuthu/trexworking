@@ -1,0 +1,172 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@{
+
+}
+
+<section class="content-header">
+    <h1>
+        @if (@ViewBag.PatientName != null)
+        {
+            @ViewBag.PatientName
+        }
+
+        <small>Exercises</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Exercises</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+
+<div class="col-md-2">
+
+    @if (@Context.Session.GetString("UserType") != "3")
+    {
+        
+        <a href="/Patient/Index" class="btn btn-warning btn-sm">Back </a>
+    }
+   
+
+    @if (@Context.Session.GetString("UserType") != "3")
+    {
+        @Html.ActionLink("Add Exercise", "Add", new { id = ViewBag.patientId }, new { @class = "btn btn-warning btn-sm", @style = "margin-top:10px;margin-bottom:10px;" })
+       
+    }
+    else if (@Context.Session.GetString("UserType") == "3")
+    {
+        @Html.ActionLink("Add Exercise", "Add", new { id = ViewBag.patientId, equipmentid = ViewBag.EquipmentType, rxid = ViewBag.RxId }, new { @class = "btn btn-warning btn-sm", @style = "margin-top:10px;margin-bottom:10px;" })
+        
+    }
+
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                                       
+
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12" style="overflow-x:auto">
+                                @if (@Context.Session.GetString("UserType") != "3")
+                                {
+                                    <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                        <thead>
+                                            <tr role="row">
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Exercise Name: activate to sort column descending" style="width: 182px;">Exercise Name</th>
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient: activate to sort column descending" style="width: 182px;">Patient</th>
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Therapist: activate to sort column descending" style="width: 182px;">Therapist</th>
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Level</th>
+                                                <th class="" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions: activate to sort column descending" style="width: 182px;">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (ViewBag.ProtocolList != null)
+                                            {
+                                                @foreach (var item in ViewBag.ProtocolList)
+                                                {
+                                                    <tr>
+                                                        <td><a href="@Url.Action("Profile", "ProtocolView", new { id = item.ProtocolId })">@item.ProtocolName</a></td>
+                                                        <td>@item.PatientId</td>
+                                                        <td>@item.TherapistId</td>
+                                                        <td>@item.Level</td>
+                                                        <td>
+                                                           
+                                                            @Html.ActionLink("Sessions", "Index", "SessionView", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName }, new { @class = "label label-primary" })
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                           
+                                        </tbody>
+
+                                    </table>
+                                }
+                                else
+                                {
+                                    <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                        <thead>
+                                            <tr role="row">
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Exercise Name: activate to sort column descending" style="width: 182px;">Exercise Name</th>
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date Created: activate to sort column descending" style="width: 182px;">Date Created</th>
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Sessions / Day: activate to sort column descending" style="width: 182px;">Completed Sessions</th>
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Flex Limit: activate to sort column descending" style="width: 182px;">Configured ROM</th>
+                                                
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Active: activate to sort column descending" style="width: 182px;">Active</th>
+                                                <th class="" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions: activate to sort column descending" style="width: 182px;">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (ViewBag.ProtocolList != null)
+                                            {
+                                                @foreach (var item in ViewBag.ProtocolList)
+                                                {
+                                                    <tr>
+                                                        <td><a href="@Url.Action("Profile", "ProtocolView", new { id = item.ProtocolId })">@item.ProtocolName</a></td>
+                                                        <td>
+                                                            @if (item.Time != null)
+                                                            {@item.Time.ToString("dd/MMM/yyyy")}
+                                                        </td>
+                                                        <td>
+                                                            @if (item.Session != null)
+                                                            {
+                                                                <a class="label label-primary" href="@Url.Action("Index", "SessionView", new { protocolid = item.ProtocolId, protocolName = item.ProtocolName })">@item.Session.Count</a>
+                                                            }
+                                                        </td>
+                                                        
+                                                        <td>@item.StretchDownLimit to @item.StretchUpLimit</td>
+                                                        
+                                                        <td>
+                                                            <div class="checkbox">
+                                                                <label>
+                                                                    <input type="checkbox" checked>
+                                                                </label>
+                                                            </div>
+                                                           
+                                                        </td>
+                                                        <td>
+                                                            @Html.ActionLink("Delete", "Delete", "ProtocolView", new { id = item.ProtocolId }, new { @class = "label label-primary" })
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                           
+                                        </tbody>
+
+                                    </table>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#example1').DataTable({
+            "stateSave": true,
+            "stateDuration": -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+        });
+
+    });
+
+</script>

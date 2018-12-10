@@ -1,0 +1,160 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Helper
+@using OneDirect.Models
+@using OneDirect.ViewModels
+@using Newtonsoft.Json
+@{
+
+}
+<!-- Main content -->
+<!-- Main content -->
+<section class="content" style="padding-top: 20px;">
+
+    <div class="row" id="mobileview">
+        <div class="col-md-12 col-xs-12 no-padding">
+
+            @if (ViewBag.Library != null)
+            {
+                List<Library> lview = (List<Library>)ViewBag.Library;
+                var i = 0;
+                @foreach (var item in lview.OrderByDescending(x => x.Limb))
+                {
+                    <div class="col-md-6 no-padding">
+                        <div class="box box-primary">
+                            <div class="box-header with-border" data-name="PatientName">
+
+                                <div class="col-xs-12 col-md-12 no-padding">
+                                    <div class="col-xs-4 col-md-4 no-pad-left" align="left">
+                                        <strong><span>Limb:</span></strong>
+                                        <p class="text-muted"> @item.Limb</p>
+                                    </div>
+                                    <div class="col-xs-4 col-md-4 no-pad-left" align="center">
+                                        <strong><span>Exercise</span></strong>
+                                        <p class="text-muted">@item.Exercise</p>
+                                    </div>
+                                    <div class="col-xs-4 col-md-4 no-pad-left" align="right">
+                                        <strong><span>Actions</span></strong>
+                                        <p class="text-muted">@Html.ActionLink("Deactivate", "Deactivate", "PatientLibrary", new { id = item.Id, patId = ViewBag.Id, eType = ViewBag.EquipmentType, actuator = ViewBag.actuator, returnView = "Review" }, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('Are you sure want to deactivate the library?')" })</p>
+                                    </div>
+                                </div>
+
+                                @*<div class="col-xs-12 col-md-12 no-padding">
+                                    <div class="col-xs-12 col-md-12 no-pad-left" align="left">
+                                        <strong><span>Exercise</span></strong>
+                                        <p class="text-muted">@item.Exercise</p>
+                                    </div>
+                                    <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                        <strong><span>Side:</span></strong>
+                                        <p class="text-muted">@item.Side</p>
+                                    </div>
+                                </div>*@
+                                <div class="col-xs-12 col-md-12 no-padding" align="left">
+                                    <strong><span>Url</span></strong>
+                                    <p class="text-muted"><a href="@item.Url" target="_blank">@item.Url</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+
+    </div>
+
+
+
+
+    <div class="row" id="fullview">
+        <!-- /.col -->
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header">
+
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="content col-sm-12 no-padding" style="width: 100% !important;height: auto !important;">
+
+
+                            @if (ViewBag.Library != null || ViewBag.PatientLibrary != null)
+                            {
+                                <div class="box" style="border-top:none;box-shadow:none">
+
+                                    <div class="box-body">
+
+                                        <div id="example1_wrapper" class="col-md-12 dataTables_wrapper form-inline dt-bootstrap" style="clear:both">
+                                            <div class="row">
+                                                <div class="col-sm-12" style="overflow-x:auto;">
+                                                    <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                                        <thead>
+                                                            <tr role="row">
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Limb</th>
+                                                                @*<th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Side</th>*@
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Exercise </th>
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Url</th>
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (ViewBag.Library != null)
+                                                            {
+                                                                List<Library> lview = (List<Library>)ViewBag.Library;
+                                                                var i = 0;
+                                                                @if (lview.Count > 0)
+                                                                {
+                                                                    @foreach (var item in lview.OrderByDescending(x => x.Limb))
+                                                                    {
+                                                                        <tr>
+                                                                            <td>
+                                                                                @item.Limb
+                                                                            </td>
+                                                                            @*<td>@item.Side</td>*@
+                                                                            <td>@item.Exercise</td>
+                                                                            <td style="white-space:nowrap"><a href="@item.Url" target="_blank">@item.Url</a></td>
+                                                                            <td>@Html.ActionLink("Deactivate", "Deactivate", "LibraryView", new { id = item.Id, patId = ViewBag.Id, equipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, returnView = "Review" }, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('Are you sure want to deactivate the library?')" })</td>
+                                                                        </tr>
+                                                                    }
+                                                                }
+                                                            }
+                                                            @if (ViewBag.PatientLibrary != null)
+                                                            {
+                                                                List<PatientLibrary> lview = (List<PatientLibrary>)ViewBag.PatientLibrary;
+                                                                var i = 0;
+                                                                @if (lview.Count > 0)
+                                                                {
+                                                                    @foreach (var item in lview.OrderByDescending(x => x.Limb))
+                                                                    {
+                                                                        <tr>
+                                                                            <td>
+                                                                                @item.Limb
+                                                                            </td>
+                                                                            @*<td>@item.Side</td>*@
+                                                                            <td>@item.Exercise</td>
+                                                                            <td style="white-space:nowrap"><a href="@item.Url" target="_blank">@item.Url</a></td>
+                                                                            <td>@Html.ActionLink("Activate", "Deactivate", "LibraryView", new { id = item.LibraryId, patId = ViewBag.Id, equipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, returnView = "Review", patientlibraryid= item.Id}, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('Are you sure want to activate the library?')" })</td>
+                                                                        </tr>
+                                                                    }
+                                                                }
+                                                            }
+<tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /. box -->
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>

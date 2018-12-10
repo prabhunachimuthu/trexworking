@@ -1,0 +1,351 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using Highsoft.Web.Mvc.Stocks
+@using OneDirect.Helper
+@using OneDirect.ViewModels
+@using Newtonsoft.Json
+
+@model OneDirect.ViewModels.DashboardView
+@{
+
+    Func<int, string> getcolor = (progress) =>
+    {
+        if (progress == 0)
+            return "";
+        else if (progress < 50)
+            return "background-color:red;font-weight:bold;";
+        else if (progress > 70)
+            return "background-color:green;font-weight:bold;";
+        else
+            return "background-color:yellow;font-weight:bold;";
+    };
+}
+@section styles{
+    <style type="text/css">
+        .btn-group-xs > .btn, .btn-xs {
+            padding: 1px 1px;
+            font-size: 12px;
+            line-height: 1.2;
+            border-radius: 3px;
+            margin-top: 1px;
+        }
+
+        .circle {
+            background-color: slateblue;
+            border-color: white;
+            border-radius: 50%;
+            border-width: 1px;
+            height: 45px;
+            width: 45px;
+            padding-bottom: 0;
+        }
+    </style>
+}
+<style>
+    #label label-primary pull-right {
+        float: right !important;
+    }
+
+    #pull-right {
+        float: right !important;
+    }
+</style>
+
+
+<!-- Main content -->
+<!-- Main content -->
+<section class="content" style="padding-top: 20px;">
+    <div class="row">
+        <div class="col-md-6" id="chartrom">
+            <div class="box box-primary" style="border-color:#ecf0f5;background-color:#ecf0f5">
+                <div class="box-header with-border" data-name="PatientName" style="border:5px solid #3c8dbc;background-color:white;border-radius:10px;">
+                    <div style="border-radius:10px;">
+                        <div class=" col-md-12 col-xs-12 no-padding">
+                            <div class="col-md-12 col-xs-12" align="center">
+                                <h4 class="box-title">
+
+                                    <strong><span style="color:deepskyblue"> Prescription</span></strong>
+
+
+                                </h4>
+                            </div>
+                            <div class="col-md-12 col-xs-12">
+                                <div class="col-md-4 col-xs-4">
+                                    <strong><i class="sorting_asc"></i> Rx Start:</strong>
+
+                                    <p class="text-muted" style="font-size:large;color:steelblue;">@(Model.PatientRx.RxStartDate.HasValue ? Convert.ToDateTime(Model.PatientRx.RxStartDate).ToString("MM/dd/yy") : "")</p>
+                                </div>
+                                <div class="col-md-4 col-xs-4" align="center">
+                                    <div class="circle" style="font-weight:bold;color:white;padding-top:14px;padding-left:6px;font-size:medium">
+                                        @Model.percentage%
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-4 col-xs-4" align="right">
+                                    <div>
+                                        <strong><i class="sorting_asc"></i> Rx End:</strong>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-muted" id="date-color" style="font-size:large;color:steelblue;">
+                                            @(Model.PatientRx.RxEndDate.HasValue ? Convert.ToDateTime(Model.PatientRx.RxEndDate).ToString("MM/dd/yy") : "")
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="col-md-12 col-xs-12" id="dateprogress">
+                                <div class="col-md-2 col-xs-2"><strong style="font-size:medium;">0%</strong></div>
+                                <div class="col-md-8 col-xs-8 no-padding">
+                                    <div class="progress sm" id="progressbar" style="border-radius:8px;border-color:black;border-width:2px;">
+                                        <div class="progress-bar" style="width:@Model.percentage%;@getcolor(Model.percentage)"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-2" align="right">
+                                    <strong style="font-size:medium;margin-left:0px">100%</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- /.box-header -->
+                <div class="box-body" style="border:5px solid #3c8dbc;background-color:white;border-radius:10px;">
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+
+                            <h3 class="box-title">Range of Motion</h3>
+
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="box-body no-padding">
+
+                            <div class="chart" id="line-chart-rom" style="margin-top:20px;margin-bottom:38px;min-height:150px; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+
+            </div>
+
+
+
+        </div>
+
+        <div class="col-md-6" id="chartcalendar">
+            <div class="box box-primary" style="border:5px solid #3c8dbc;background-color:white;border-radius:10px;">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Treatment Calendar</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body no-padding">
+                    <!-- THE CALENDAR -->
+                    <div id="calendar" class="fc fc-ltr fc-unthemed">
+
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /. box -->
+        </div>
+
+        @*<div class="col-md-6">
+                <div class="col-md-4 col-xs-4 no-padding" align="center" style="border:5px solid #3c8dbc;border-top-left-radius:5px;border-bottom-left-radius:5px;">
+                    <a class="btn btn-flat">
+                        <i class="fa  fa-video-camera"></i><p>Video Call</p>
+                    </a>
+                </div>
+                <div class="col-md-4 col-xs-4 no-padding" align="center"  style="border:5px solid #3c8dbc;background-color:white;">
+                    <a class="btn btn-flat">
+                        <i class="fa fa-bar-chart"></i><p>Progress</p>
+                    </a>
+                </div>
+
+                <div class="col-md-4 col-xs-4 no-padding" align="center"  style="border:5px solid #3c8dbc;border-top-right-radius:5px;border-bottom-right-radius:5px">
+                    <a class="btn btn-flat">
+                        <i class="fa  fa-folder"></i><p>Library</p>
+                    </a>
+                </div>
+
+            </div>*@
+    </div>
+
+
+</section>
+
+
+@section Scripts {
+
+
+
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+    <script type="text/javascript">
+
+
+        $(function () {
+            "use strict";
+
+            var height = $(window).height() - $(".main-footer").height() - $(".main-header").height();
+            //$(".content-wrapper").css("min-height", "0px");
+            //$(".content").css("min-height", "0px");
+            //$(".content-wrapper").css("height", height+"px");
+            //$(".content").css("height", (height-30) + "px");
+            console.log(height);
+            //var chartheight = height - 120;
+            //console.log("window height:" + $(window).height());
+            //console.log("footer height:" + $(".main-footer").height());
+            //console.log("header height:" + $(".main-header").height());
+            $("#line-chart-rom").css("height", (height/2) + "px");
+            //$("#chartcalendar").css("height", ($(".content").height() - 120) + "px");
+            //$('#calendar').fullCalendar('option', 'height', ($(".content").height() - 100));
+            //$("#chartcalendar").css("height", (chartheight-20) + "px");
+
+                //LINE randomly generated data
+
+                var first = [], second = []
+                var romdatavalue =@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ROM));
+        var ymax = romdatavalue.ymax;
+        var ymin = romdatavalue.ymin;
+        console.log(romdatavalue);
+
+                if (romdatavalue.ROMFlextion != null && romdatavalue.ROMFlextion.length > 0) {
+                    for (var j = 0; j < romdatavalue.ROMFlextion.length; j++) {
+                        first.push([romdatavalue.ROMFlextion[j].dateValue, romdatavalue.ROMFlextion[j].Flexion]);
+                    }
+                }
+                if (romdatavalue.ROMExtension != null && romdatavalue.ROMExtension.length > 0) {
+                    for (var j = 0; j < romdatavalue.ROMExtension.length; j++) {
+                        second.push([romdatavalue.ROMExtension[j].dateValue, romdatavalue.ROMExtension[j].Extension]);
+                    }
+                }
+                var line_data1 = {
+                    data: first,
+                    color: 'Orange'
+                }
+                var line_data2 = {
+                    data: second,
+                    color: 'Blue'
+                }
+                console.log(line_data1);
+                console.log(line_data2);
+                $.plot('#line-chart-rom', [line_data1, line_data2], {
+                grid: {
+                    hoverable: true,
+                        borderColor: '#f3f3f3',
+                        borderWidth: 1,
+                        tickColor: '#f3f3f3'
+                    },
+                    series: {
+                    shadowSize: 0,
+                        lines: {
+                        show: true
+                        },
+                        points: {
+                        show: false
+                        }
+                },
+                    lines: {
+                    fill: false,
+                        color: ['Orange', 'Blue']
+                    },
+                    yaxis: {
+                    min: ymin, max: ymax,
+                        show: true
+                    },
+                    xaxis: {
+                    show: false
+                    }
+
+            })
+                //Initialize tooltip on hover
+                $('<div class="tooltip-inner" id="line-chart-rom-tooltip"></div>').css({
+                position: 'absolute',
+                    display: 'none',
+                    opacity: 0.8
+                }).appendTo('body')
+                $('#line-chart-rom').bind('plothover', function (event, pos, item) {
+
+                if (item) {
+                    var x = item.datapoint[0].toFixed(2),
+                        y = item.datapoint[1]
+
+                        $('#line-chart-rom-tooltip').html(x + ' : ' + y)
+                            .css({ top: item.pageY + 5, left: item.pageX - 15 })
+                            .fadeIn(200)
+                    } else {
+                        $('#line-chart-rom-tooltip').hide()
+                    }
+
+            })
+                /* END LINE CHART */
+
+
+                /* initialize the calendar
+         -----------------------------------------------------------------*/
+                //Date for the calendar events (dummy data)
+                var date = new Date();
+            var d = date.getDate(),
+                m = date.getMonth(),
+                y = date.getFullYear();
+                $('#calendar').fullCalendar({
+                    header: {
+                    left: 'prev,next today',
+                        center: 'title',
+                        right: ''
+                    },
+                    buttonText: {
+                    today: 'today',
+                        month: 'month',
+                        week: 'week',
+                        day: 'day'
+                    },
+                    //Random default events
+                    events: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.TreatmentCalendar)),
+
+
+                    editable: true,
+                    droppable: false, // this allows things to be dropped onto the calendar !!!
+                    theme: false,
+                    height: "parent",
+                    aspectRation:2,
+                    fixedWeekCount: false,
+
+
+                });
+
+            $("#chartcalendar").css("display", "none");
+
+
+        });
+
+        function triggerfunction(tab) {
+
+            window.location = $(tab).find('a').attr("data-value");
+        }
+
+
+    </script>
+
+
+}
+
+
+
+
+

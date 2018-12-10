@@ -1,0 +1,1060 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Helper
+@using OneDirect.Extensions;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>One Direct Health Network</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="~/js/manifest.json">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="~/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="~/plugins/datepicker/bootstrap-datepicker.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="~/plugins/datatables/dataTables.bootstrap.css">
+
+    <!-- fullCalendar -->
+    <link rel="stylesheet" href="~/plugins/fullcalendar/fullcalendar.css">
+    <link rel="stylesheet" href="~/plugins/fullcalendar/fullcalendar.print.css" media="print">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/AdminLTE.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="~/dist/css/skins/_all-skins.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="~/plugins/iCheck/all.css">
+    <!-- Morris chart -->
+    <link rel="stylesheet" href="~/plugins/morris/morris.css">
+
+    <!-- jvectormap -->
+
+    <link rel="stylesheet" href="~/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
+    <!-- bootstrap wysihtml5 - text editor -->
+    <link rel="stylesheet" href="~/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+    <link href="~/alertifyjs/css/alertify.css" rel="stylesheet" />
+    <!-- Google Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link href="~/css/media.css" rel="stylesheet" />
+    <style type="text/css">
+
+
+        .not-active {
+            pointer-events: none;
+            opacity: 0.6;
+            cursor: not-allowed;
+            color: gray;
+            text-decoration: none;
+        }
+
+        .screenMask {
+            margin: 0px;
+            padding: 0px;
+            position: fixed;
+            right: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 300001;
+            opacity: 0.5;
+            filter: alpha(opacity=70);
+            display: none;
+        }
+
+        .status-alert {
+            width: 10px;
+            height: 10px;
+            padding-left: 10px;
+            margin: 4px;
+            border-radius: 5px;
+        }
+
+        .vsee_presence_available {
+            background-color: green;
+        }
+
+        .vsee_presence_offline {
+            background-color: red;
+        }
+
+        .vsee_presence_idle {
+            background-color: green;
+        }
+
+        .vsee_presence_inacall,
+        .vsee_presence_busy {
+            background-color: orange;
+        }
+
+        .vsee_presence_loading,
+        .vsee_presence_unknown {
+            background-color: grey;
+        }
+
+        input[type="search"]::-webkit-search-cancel-button {
+            -webkit-appearance: searchfield-cancel-button;
+            cursor: pointer;
+        }
+    </style>
+
+    @RenderSection("styles", required: false)
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        @if (Context.Session.GetString("UserType") != ConstantsVar.Patient.ToString())
+        {
+            <header class="main-header" id="mobileview">
+                <!-- Logo -->
+                <a href="http://trexrehab.com/" class="logo">
+                    <!-- mini logo for sidebar mini 50x50 pixels -->
+                    <span class="logo-mini"><b>O</b>D</span>
+                    <!-- logo for regular state and mobile devices -->
+                    @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                    <img src="~/images/logo_small.png" height="47" width="150" />
+                </a>    <!-- Header Navbar: style can be found in header.less -->
+
+                <nav class="navbar navbar-static-top">
+                    <!-- Sidebar toggle button-->
+                    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                        <span class="sr-only">Toggle navigation</span>
+                    </a>
+
+                    <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            @if (Context.Session.GetString("UserType") != ConstantsVar.Admin.ToString() && (!string.IsNullOrEmpty(Context.Request.HttpContext.GetCookie("ReviewID")) || !string.IsNullOrEmpty(Context.Session.GetString("ReviewID"))))
+                            {
+                                <li class="dropdown user user-menu reviewtimer">
+                                   
+                                    <a class="dropdown-toggle" data-toggle="dropdown">
+                                        <b> <span style="word-wrap:break-word">Review ON </span>: <span class="m"></span> : <span class="s"></span></b>
+                                    </a>
+                                </li>
+                            }
+
+                            <!-- User Account: style can be found in dropdown.less -->
+                            <li class="dropdown user user-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    @*<img src="~/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">*@
+                                    <span class="hidden-xs">@Context.Session.GetString("UserName")</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="user-footer">
+                                        <div class="pull-right">
+                                            <input type="hidden" class="activityid" value="@(!string.IsNullOrEmpty(Context.Request.HttpContext.GetCookie("ReviewID")) ? Context.Request.HttpContext.GetCookie("ReviewID") : Context.Session.GetString("ReviewID"))" />
+
+                                            <a href="@Url.Action("Signout", "Login", new { id = "Clean Logout" })" class="btn btn-default btn-flat logout">Sign out</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- Control Sidebar Toggle Button -->
+                            @if (ViewBag.page != null && ViewBag.page == "Review")
+                            {
+                                <li id="reviewsidebar">
+                                    <a href="#" data-toggle="control-sidebar"><i class="fa fa-calendar-plus-o"></i></a>
+                                </li>
+
+                            }
+
+                        </ul>
+                    </div>
+
+                </nav>
+            </header>
+        }
+        else
+        {
+            <header id="mobileview" style="background-color:#3e7fa9;min-height:50px;">
+                <div class="col-md-12 col-xs-12" style="vertical-align:middle;padding-top:6px;">
+                    <div class="col-md-4 col-xs-4">
+                        <img src="~/images/logo_small.png" height="32" />
+                    </div>
+                    <div class="col-md-6 col-xs-6" align="center" style="font-size:25px;color:white;font-weight:bold;padding-top:5px;">
+                        <span>@ViewBag.HeaderName</span>
+                    </div>
+                    <div class="col-md-2 col-xs-2" align="right" style="padding-top:10px;">
+                        <a href="javascript:void(0);" style="color:white;" onclick="changechartView();"><i class="fa fa-calendar-plus-o"></i></a>
+                    </div>
+                    @*<div class="col-md-1 col-xs-1" style="padding-top:10px;" align="right">
+                            <div class="dropdown user user-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="hidden-xs" style="color:white;"> <i class="fa fa-sign-out"></i></span>
+                                </a>
+                                <ul class="dropdown-menu pull-right">
+                                    <li class="user-footer">
+                                        <div class="pull-right">
+                                            <a href="@Url.Action("Signout", "Login", new { id = "Clean Logout" })" class="btn btn-default btn-flat" id="logout">Sign out</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>*@
+                </div>
+
+            </header>
+        }
+        <header class="main-header" id="fullview">
+            <!-- Logo -->
+            <a href="http://trexrehab.com/" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini"><b>O</b>D</span>
+                <!-- logo for regular state and mobile devices -->
+                @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                <img src="~/images/logo_small.png" height="47" width="150" />
+            </a>    <!-- Header Navbar: style can be found in header.less -->
+
+            <nav class="navbar navbar-static-top">
+                @if (Context.Session.GetString("UserType") != ConstantsVar.Patient.ToString())
+                {
+                    <!-- Sidebar toggle button-->
+                    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                        <span class="sr-only">Toggle navigation</span>
+                    </a>
+
+                    <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            @if (Context.Session.GetString("UserType") != ConstantsVar.Admin.ToString() && (!string.IsNullOrEmpty(Context.Request.HttpContext.GetCookie("ReviewID")) || !string.IsNullOrEmpty(Context.Session.GetString("ReviewID"))))
+                            {
+                                <li class="dropdown user user-menu reviewtimer">
+                                    <a class="dropdown-toggle" data-toggle="dropdown">
+                                        <b> <span style="word-wrap:break-word">Review ON </span>: <span class="m"></span> : <span class="s"></span></b>
+                                    </a>
+                                </li>
+                            }
+
+                            <!-- User Account: style can be found in dropdown.less -->
+                            <li class="dropdown user user-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    @*<img src="~/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">*@
+                                    <span class="hidden-xs">@Context.Session.GetString("UserName")</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="user-footer">
+                                        <div class="pull-right">
+                                            <input type="hidden" class="activityid" value="@(!string.IsNullOrEmpty(Context.Request.HttpContext.GetCookie("ReviewID")) ? Context.Request.HttpContext.GetCookie("ReviewID") : Context.Session.GetString("ReviewID"))" />
+
+                                            <a href="@Url.Action("Signout", "Login", new { id = "Clean Logout" })" class="btn btn-default btn-flat logout">Sign out</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- Control Sidebar Toggle Button -->
+                            @if (ViewBag.page != null && ViewBag.page == "Review")
+                            {
+                                <li id="reviewsidebar">
+                                    <a href="#" data-toggle="control-sidebar"><i class="fa fa-calendar-plus-o"></i></a>
+                                </li>
+
+                            }
+
+                        </ul>
+                    </div>
+                }
+                else
+                {
+
+                    <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown user user-menu">
+                                <span style="color:white;font-size:30px;font-weight:bold;">@ViewBag.HeaderName</span>
+                            </li>
+                            <!-- User Account: style can be found in dropdown.less -->
+                            <li class="dropdown user user-menu">
+                                <a href="javascript:void(0);" style="color:white;" onclick="changechartView();"><i class="fa fa-calendar-plus-o"></i></a>
+                            </li>
+
+                            @*<li class="dropdown user user-menu">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        <img src="~/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                                        <span class="hidden-xs">@Context.Session.GetString("UserName")</span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="user-footer">
+                                            <div class="pull-right">
+                                                <input type="hidden" class="activityid" value="@(!string.IsNullOrEmpty(Context.Request.HttpContext.GetCookie("ReviewID")) ? Context.Request.HttpContext.GetCookie("ReviewID") : Context.Session.GetString("ReviewID"))" />
+
+                                                <a href="@Url.Action("Signout", "Login", new { id = "Clean Logout" })" class="btn btn-default btn-flat" id="logout">Sign out</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>*@
+
+                        </ul>
+                    </div>
+
+                }
+            </nav>
+        </header>
+
+        @if (Context.Session.GetString("UserType") != ConstantsVar.Patient.ToString())
+        {
+            <!-- Left side column. contains the logo and sidebar -->
+            <aside class="main-sidebar">
+                <!-- sidebar: style can be found in sidebar.less -->
+                <section class="sidebar">
+                    @if (@Context.Session.GetString("UserType") == "0")
+                    {
+                        <ul class="sidebar-menu" id="admin" name="menu">
+
+                            @if (Context.Session.GetString("UserName") == "admin")
+                            {
+                                <li><a href="@Url.Action("Index", "OrganizationAdministrator")"><i class="fa fa-circle-o text-aqua"></i> <span>Org Administrators</span></a></li>
+
+                            }
+                            <li><a href="@Url.Action("Index", "PatientAdministrator")"><i class="fa fa-circle-o text-aqua"></i> <span>Patient Administrators</span></a></li>
+                            <li><a href="@Url.Action("Index", "Patient")"><i class="fa fa-circle-o text-aqua"></i> <span>Patients</span></a></li>
+                            <li><a href="@Url.Action("Index", "Provider")"><i class="fa fa-circle-o text-aqua"></i> <span>Providers </span></a></li>
+                            <li><a href="@Url.Action("Index", "Therapist")"><i class="fa fa-circle-o text-aqua"></i> <span>Therapists </span></a></li>
+                            <li><a href="@Url.Action("Index", "Installer")"><i class="fa fa-circle-o text-aqua"></i> <span>Installers </span></a></li>
+                            <li><a href="@Url.Action("Index", "Support")"><i class="fa fa-circle-o text-aqua"></i> <span>Support Staff </span></a></li>
+
+                            <li><a href="@Url.Action("Index", "Equipment")"><i class="fa fa-circle-o text-aqua"></i> <span>Equipment</span></a></li>
+
+                            <li><a href="@Url.Action("Index", "SessionAuditTrail")"><i class="fa fa-circle-o text-aqua"></i> <span>Audit Trail</span></a></li>
+                            <li><a href="@Url.Action("PatientReview", "SessionAuditTrail")"><i class="fa fa-circle-o text-aqua"></i> <span>Patient Reviews</span></a></li>
+
+
+
+                        </ul>
+                    }
+                    @if (@Context.Session.GetString("UserType") == "1")
+                    {
+                        <ul class="sidebar-menu" id="support" name="menu">
+
+                            <li><a href="@Url.Action("Dashboard", "Support", new { id = @Context.Session.GetString("UserId") })"><i class="fa fa-circle-o text-aqua"></i> <span>Patients </span></a></li>
+                            <li> <a href="@Url.Action("Profile", "Support", new { id = @Context.Session.GetString("UserId") })"><i class="fa fa-circle-o text-aqua"></i> <span>Profile</span></a></li>
+
+                            <li><a href="@Url.Action("Index", "Appointments",new { id="Calendar"})"><i class="fa fa-circle-o text-aqua"></i> <span>Appointments</span></a></li>
+
+                            <li><a href="@Url.Action("Index", "MessageView")"><i class="fa fa-circle-o text-aqua"></i> <span>Patient Messages</span></a></li>
+                            <li><a href="@Url.Action("PatientReview", "SessionAuditTrail")"><i class="fa fa-circle-o text-aqua"></i> <span>Patient Reviews</span></a></li>
+                        </ul>
+                    }
+                    @if (@Context.Session.GetString("UserType") == "2")
+                    {
+                        <ul class="sidebar-menu" id="therapist" name="menu">
+
+                            <li><a href="@Url.Action("Dashboard", "Therapist", new { id = @Context.Session.GetString("UserId") })"><i class="fa fa-circle-o text-aqua"></i> <span>Patients </span></a></li>
+                            <li> <a href="@Url.Action("Profile", "Therapist", new { id = @Context.Session.GetString("UserId") })"><i class="fa fa-circle-o text-aqua"></i> <span>Profile</span></a></li>
+
+                            @*<li><a href="@Url.Action("Index", "Appointments",new { id="Calendar"})"><i class="fa fa-circle-o text-aqua"></i> <span>Appointments</span></a></li>*@
+
+                            <li><a href="@Url.Action("Index", "MessageView")"><i class="fa fa-circle-o text-aqua"></i> <span>Patient Messages</span></a></li>
+                            <li><a href="@Url.Action("PatientReview", "SessionAuditTrail")"><i class="fa fa-circle-o text-aqua"></i> <span>Patient Reviews</span></a></li>
+                        </ul>
+                    }
+                    @if (@Context.Session.GetString("UserType") == "3")
+                    {
+                        <ul class="sidebar-menu" id="provider" name="menu">
+
+                            <li><a href="@Url.Action("Dashboard", "Provider", new { id = @Context.Session.GetString("UserId") })"><i class="fa fa-circle-o text-aqua"></i> <span>Patients </span></a></li>
+                            <li> <a href="@Url.Action("Profile", "Provider", new { id = @Context.Session.GetString("UserId") })"><i class="fa fa-circle-o text-aqua"></i> <span>Profile</span></a></li>
+
+                            <li><a href="@Url.Action("CreatePatient", "CreatePatient")"><i class="fa fa-circle-o text-aqua"></i> <span>New Patient Creation</span></a></li>
+                            <li><a href="@Url.Action("Index", "MessageView")"><i class="fa fa-circle-o text-aqua"></i> <span>Patient Messages</span></a></li>
+                            <li><a href="@Url.Action("PatientReview", "SessionAuditTrail")"><i class="fa fa-circle-o text-aqua"></i> <span>Patient Reviews</span></a></li>
+                        </ul>
+                    }
+                    @if (@Context.Session.GetString("UserType") == "6")
+                    {
+                        <ul class="sidebar-menu" id="patientadmin" name="menu">
+                            <li><a href="@Url.Action("Dashboard", "PatientAdministrator", new { id = @Context.Session.GetString("UserId") })"><i class="fa fa-circle-o text-aqua"></i> <span>Patients </span></a></li>
+                            <li> <a href="@Url.Action("Profile", "PatientAdministrator", new { id = @Context.Session.GetString("UserId") })"><i class="fa fa-circle-o text-aqua"></i> <span>Profile</span></a></li>
+
+                            <li><a href="@Url.Action("PatientReview", "SessionAuditTrail")"><i class="fa fa-circle-o text-aqua"></i> <span>Patient Reviews</span></a></li>
+                            <li><a href="@Url.Action("Index", "LibraryView")"><i class="fa fa-circle-o text-aqua"></i> <span>Library</span></a></li>
+                        </ul>
+                    }
+                </section>
+                <!-- /.sidebar -->
+            </aside>
+        }
+        @if (Context.Session.GetString("UserType") == ConstantsVar.Patient.ToString())
+        {
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper" style="margin-left:0px;">
+                @RenderBody()
+
+
+
+            </div>
+        }
+        else
+        {
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+
+                @RenderBody()
+
+            </div>
+
+        }
+        @if (Context.Session.GetString("UserType") == ConstantsVar.Patient.ToString())
+        {
+
+            <footer class="main-footer" style="margin-left:0px;padding-top:0px;border-top:none">
+
+                <div class="row" style="padding-bottom:10px;background-color:#ecf0f5;">
+                    <div class="col-md-12 no-padding">
+                        <div class="col-md-6">
+                            <div class="col-md-4 col-xs-4 no-padding" align="center" style="border:5px solid #3c8dbc;border-top-left-radius:5px;border-bottom-left-radius:5px;background-color:white;">
+                                <a class="btn btn-flat" href="@Url.Action("VideoCallPatient","Patient")">
+                                    <i class="fa  fa-video-camera"></i><p>Video Call</p>
+                                </a>
+                            </div>
+                            <div class="col-md-4 col-xs-4 no-padding" align="center" style="border:5px solid #3c8dbc;background-color:white;">
+                                <a class="btn btn-flat" href="@Url.Action("Dashboard","Patient",new { id=Context.Session.GetString("UserId")})">
+                                    <i class="fa fa-bar-chart"></i><p>Progress</p>
+                                </a>
+                            </div>
+
+                            <div class="col-md-4 col-xs-4 no-padding" align="center" style="border:5px solid #3c8dbc;border-top-right-radius:5px;border-bottom-right-radius:5px;background-color:white;">
+                                <a class="btn btn-flat">
+                                    <i class="fa  fa-folder"></i><p>Library</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="pull-right hidden-xs">
+                        <b>Version</b> @ConfigVars.NewInstance.version
+                    </div>
+                    <strong>Copyright &copy; @ConfigVars.NewInstance.copyrightmsg </strong> All rights
+                    reserved.
+                </div>
+            </footer>
+        }
+        else
+        {
+            <footer class="main-footer">
+                <div class="pull-right hidden-xs">
+                    <b>Version</b> @ConfigVars.NewInstance.version
+                </div>
+                <strong>Copyright &copy; @ConfigVars.NewInstance.copyrightmsg </strong> All rights
+                reserved.
+            </footer>
+
+        }
+        @*<!-- Control Sidebar -->
+            <aside class="control-sidebar control-sidebar-dark">
+                <!-- Create the tabs -->
+                <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+                    <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+                    <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <!-- Home tab content -->
+                    <div class="tab-pane" id="control-sidebar-home-tab">
+                        <h3 class="control-sidebar-heading">Recent Activity</h3>
+                        <ul class="control-sidebar-menu">
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+
+                                    <div class="menu-info">
+                                        <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+
+                                        <p>Will be 23 on April 24th</p>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <i class="menu-icon fa fa-user bg-yellow"></i>
+
+                                    <div class="menu-info">
+                                        <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+
+                                        <p>New phone +1(800)555-1234</p>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+
+                                    <div class="menu-info">
+                                        <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
+
+                                        <p>nora@example.com</p>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <i class="menu-icon fa fa-file-code-o bg-green"></i>
+
+                                    <div class="menu-info">
+                                        <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
+
+                                        <p>Execution time 5 seconds</p>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- /.control-sidebar-menu -->
+
+                        <h3 class="control-sidebar-heading">Tasks Progress</h3>
+                        <ul class="control-sidebar-menu">
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <h4 class="control-sidebar-subheading">
+                                        Custom Template Design
+                                        <span class="label label-danger pull-right">70%</span>
+                                    </h4>
+
+                                    <div class="progress progress-xxs">
+                                        <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <h4 class="control-sidebar-subheading">
+                                        Update Resume
+                                        <span class="label label-success pull-right">95%</span>
+                                    </h4>
+
+                                    <div class="progress progress-xxs">
+                                        <div class="progress-bar progress-bar-success" style="width: 95%"></div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <h4 class="control-sidebar-subheading">
+                                        Laravel Integration
+                                        <span class="label label-warning pull-right">50%</span>
+                                    </h4>
+
+                                    <div class="progress progress-xxs">
+                                        <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <h4 class="control-sidebar-subheading">
+                                        Back End Framework
+                                        <span class="label label-primary pull-right">68%</span>
+                                    </h4>
+
+                                    <div class="progress progress-xxs">
+                                        <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- /.control-sidebar-menu -->
+
+                    </div>
+                    <!-- /.tab-pane -->
+                    <!-- Stats tab content -->
+                    <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
+                    <!-- /.tab-pane -->
+                    <!-- Settings tab content -->
+                    <div class="tab-pane" id="control-sidebar-settings-tab">
+                        <form method="post">
+                            <h3 class="control-sidebar-heading">General Settings</h3>
+
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Report panel usage
+                                    <input type="checkbox" class="pull-right" checked>
+                                </label>
+
+                                <p>
+                                    Some information about this general settings option
+                                </p>
+                            </div>
+                            <!-- /.form-group -->
+
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Allow mail redirect
+                                    <input type="checkbox" class="pull-right" checked>
+                                </label>
+
+                                <p>
+                                    Other sets of options are available
+                                </p>
+                            </div>
+                            <!-- /.form-group -->
+
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Expose author name in posts
+                                    <input type="checkbox" class="pull-right" checked>
+                                </label>
+
+                                <p>
+                                    Allow the user to show his name in blog posts
+                                </p>
+                            </div>
+                            <!-- /.form-group -->
+
+                            <h3 class="control-sidebar-heading">Chat Settings</h3>
+
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Show me as online
+                                    <input type="checkbox" class="pull-right" checked>
+                                </label>
+                            </div>
+                            <!-- /.form-group -->
+
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Turn off notifications
+                                    <input type="checkbox" class="pull-right">
+                                </label>
+                            </div>
+                            <!-- /.form-group -->
+
+                            <div class="form-group">
+                                <label class="control-sidebar-subheading">
+                                    Delete chat history
+                                    <a href="javascript:void(0)" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
+                                </label>
+                            </div>
+                            <!-- /.form-group -->
+                        </form>
+                    </div>
+                    <!-- /.tab-pane -->
+                </div>
+            </aside>
+            <!-- /.control-sidebar -->*@
+        <!-- Add the sidebar's background. This div must be placed
+        immediately after the control sidebar -->
+        <div class="control-sidebar-bg"></div>
+    </div>
+    <div id="divMask" class="screenMask">
+        <p style="position: fixed;left:50%;top:50%;">
+            <img src="~/images/loader.gif" alt="Loading..." style="z-index:400000;" />
+        </p>
+    </div>
+
+    <div class="screenMask" id="mask" style="display:none"></div>
+    <div id="divpopup" class="col-md-6" style="border:1px solid black;display:none;position:fixed;top:25%;left:25%;z-index:300003;background-color:#e8e8e8">
+
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>Comment</label>
+                <div class="input-group col-md-12">
+                    <input type="hidden" id="hdnlogout" />
+                    <input type="hidden" id="returnurl" />
+                    <textarea id="txtcomment" class="form-control"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+
+                <input type="button" class="btn btn-success" value="Save" onclick="btnUpdateClick();" />
+
+                <input type="button" class="btn btn-success" value="Cancel" onclick="btnCancelClick();" />
+            </div>
+        </div>
+    </div>
+
+
+    <a href="@Url.Action("Signout", "Login", new {id="Expired" })" id="redirecturl" style="display:none"></a>
+    <!-- jQuery 2.2.3 -->
+    <script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button);
+    </script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="~/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <!-- Datatables -->
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables/dataTables.bootstrap.min.js"></script>
+
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <!-- Morris.js charts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="~/plugins/morris/morris.min.js"></script>
+
+    <!-- FLOT CHARTS -->
+    <script src="~/plugins/Flot/jquery.flot.js"></script>
+    <!-- FLOT RESIZE PLUGIN - allows the chart to redraw when the window is resized -->
+    <script src="~/plugins/Flot/jquery.flot.resize.js"></script>
+    <!-- Sparkline -->
+    <script src="~/plugins/sparkline/jquery.sparkline.min.js"></script>
+
+    <!-- jvectormap -->
+    <script src="~/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="~/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <!-- jQuery Knob Chart -->
+    <script src="~/plugins/knob/jquery.knob.js"></script>
+    <!-- daterangepicker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <script src="~/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- datepicker -->
+    <script src="~/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <!-- Bootstrap WYSIHTML5 -->
+
+    <script src="~/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <!-- Slimscroll -->
+    <script src="~/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+
+    <script src="~/plugins/iCheck/icheck.min.js"></script>
+    <!-- FastClick -->
+    <script src="~/plugins/fastclick/fastclick.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/dist/js/app.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+    <script src="https://momentjs.com/downloads/moment-timezone-with-data-2012-2022.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <script src="~/plugins/fullcalendar/fullcalendar.js"></script>
+    <script src="~/alertifyjs/alertify.js"></script>
+    <script src="~/js/helpers.js"></script>
+    <script src="~/js/jquery.backDetect.min.js"></script>
+    <script src="~/js/printThis.js"></script>
+    <script src="~/Scripts/jquery.maskedinput.min.js"></script>
+
+    @RenderSection("scripts", required: false)
+    <script type="text/javascript">
+        "use strict";
+        //if ('serviceWorker' in navigator) {
+        //    navigator.serviceWorker
+        //        .register('/js/service-worker.js')
+        //        .then(function () { console.log("Service Worker Registered"); });
+        //}
+        var charRegex = /\D+/g;
+        var idleTime = 0;
+        var clientTimeout =@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ConfigVars.NewInstance.clienttimeout))
+
+          function activitylogclick() {
+              $("#divpopup").css("display", "block");
+              $("#mask").css("display", "block");
+            };
+
+         var interval = null;
+        $(document).ready(function () {
+
+
+
+            if ($(".reviewtimer").length > 0) {
+                var lstorage = "date" + "@Context.Session.GetString("ReviewID")";
+                var d = localStorage.getItem(lstorage);
+                if (!d) {
+                    d = new Date();
+                    d.setHours(0);
+                    d.setMinutes(0);
+                    d.setSeconds(0, 0);
+                    localStorage.setItem(lstorage, d);
+                }
+                else {
+
+                    d = new Date(d);
+                }
+                interval = setInterval(function () {
+                    $(".m").text(("0" + d.getMinutes()).slice(-2));
+                    $(".s").text(("0" + d.getSeconds()).slice(-2));
+                    //document.getElementsByClassName("m").innerHTML = ("0" + d.getMinutes()).slice(-2);
+                    //document.getElementsByClassName("s").innerHTML = ("0" + d.getSeconds()).slice(-2);
+                    d.setTime(d.getTime() + 1000);
+                    localStorage.setItem(lstorage, d);
+                }, 1000);
+
+            }
+        });
+        $(document).ready(function () {
+
+
+
+            $(window).on('beforeunload', function (e) {
+
+                showMask();
+
+            });
+            $(window).on('unload', function () {
+
+            });
+
+
+
+            var idleInterval = window.setInterval(timerIncrement, 60000);
+            $(this).mousemove(function (e) {
+                idleTime = 0;
+            });
+            $(this).keypress(function (e) {
+                idleTime = 0;
+            });
+            function timerIncrement() {
+                idleTime = idleTime + 1;
+
+                if (idleTime > parseInt(clientTimeout)) { // 20 minutes
+                    window.location = $("#redirecturl").attr("href");
+                }
+            }
+
+            var pathName = window.location.pathname.match(charRegex);
+            if (pathName.toString().split('/').length == 2) {
+                pathName = "/" + pathName.toString().split('/')[1];
+            }
+            //else if (pathName.toString().split('/').length > 2){
+
+            //    pathName = "/" +  pathName.toString().split('/')[1];
+            //}
+            var currentLink;
+            if (pathName != "/") {
+                if (pathName == "/Review") {
+                    pathName = "/Patient";
+
+                }
+                currentLink = $("ul.sidebar-menu a[href*='" + pathName + "']");
+                if (currentLink != undefined && currentLink !=null &&  currentLink.length == 0) {
+                    pathName = "/" + pathName.toString().split('/')[1];
+                    currentLink = $("ul.sidebar-menu a[href='" + pathName + "']");
+                }
+                if (currentLink != undefined && currentLink != null && currentLink.length > 1) {
+                    pathName = "/" + pathName.toString().split('/')[1];
+                    currentLink = $("ul.sidebar-menu a[href='" + pathName + "']");
+                }
+            }
+            else {
+                if ("@Context.Session.GetString("UserType")" != "2") {
+                    currentLink = $("ul.sidebar-menu a[href='/Therapist/Index']");
+                }
+                if ("@Context.Session.GetString("UserType")" == "2") {
+                    currentLink = $("ul.sidebar-menu a[href='/Therapist/Profile']");
+                }
+            }
+
+            if (currentLink) {
+                if (currentLink.find("i").hasClass('text-aqua'))
+                    currentLink.find("i").removeClass("text-aqua");
+                currentLink.find("i").addClass("text-yellow");
+            }
+
+        });
+
+        function showMask(isDelay) {
+
+            if (isDelay) {
+                console.log("if mask");
+                setTimeout(function () {
+                    document.getElementById("divMask").style.display = "block";
+
+                }, 10);
+            }
+            else {
+                console.log("else mask");
+                setTimeout(function () {
+                    document.getElementById("divMask").style.display = "block";
+
+                }, 10);
+            }
+        }
+
+        function hideMask() {
+            document.getElementById("divMask").style.display = "none";
+        }
+
+
+        function btnSaveClick() {
+            btnCancelClick();
+            var log = {
+                ActivityType: "Review",
+                Duration: $('#txtduration').val(),
+                Comment: $('#txtcomment').val(),
+                RecordType: $("#recordType").val()
+            }
+            console.log(log);
+            $.ajax({
+                url: '@Url.Action("insertuseractivity", "useractivitylog")',
+                data: JSON.stringify(log),
+                type: 'post',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        console.log(data);
+                        if (data.result == "success") {
+
+                            btnCancelClick();
+                            window.location.reload();
+                        }
+                    }
+                },
+                error: function (data) {
+
+                }
+            });
+        }
+        function btnCancelClick() {
+            document.getElementById("divpopup").style.display = "none";
+            document.getElementById("mask").style.display = "none";
+        }
+        var pcontroller = '@this.ViewContext.RouteData.Values["controller"].ToString()';
+        console.log(pcontroller);
+
+
+
+
+        function btnUpdateClick() {
+            showMask();
+            btnCancelClick();
+            var log = {
+                assessmentComment: $('#txtcomment').val(),
+            }
+            console.log(log);
+            $.ajax({
+                url: '@Url.Action("updatereviewactivity", "review")',
+                data: JSON.stringify(log),
+                type: 'post',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        console.log(data);
+                        if (data.result == "success") {
+
+                            localStorage.clear();
+
+                            btnCancelClick();
+                            if ($("#hdnlogout").val() == "logout") {
+
+                                window.location.href="@Url.Action("Signout", "Login", new { id = "Clean Logout" })";
+                            }
+                            else {
+
+
+                                window.location.href = $("#returnurl").val();
+                            }
+
+                        }
+                    }
+                },
+                error: function (data) {
+                    showMask();
+                }
+            });
+        }
+
+
+        history.pushState(pcontroller, null, location.href);
+        window.onpopstate = function () {
+
+            if ($(".activityid").val() != undefined && $(".activityid").val() != "") {
+                if (pcontroller == "Review") {
+                    if (confirm('Exit Review mode?')) {
+                        if (confirm('Would you like to leave a comment?')) {
+                            document.getElementById("divpopup").style.display = "block";
+                            document.getElementById("mask").style.display = "block";
+                        }
+                        else {
+                            btnUpdateClick();
+                        }
+                    }
+                    history.pushState(null, null, document.URL);
+                }
+            }
+            else {
+                history.go(-1);
+            }
+        };
+
+        $(document).ready(function () {
+            $(".logout").on("click", function (event) {
+                if ($(".activityid").val() != undefined && $(".activityid").val() != "") {
+                    if (confirm('Exit Review mode?')) {
+                        if (confirm('Would you like to leave a comment?')) {
+                            document.getElementById("divpopup").style.display = "block";
+                            document.getElementById("mask").style.display = "block";
+                            $("#hdnlogout").val("logout");
+                        }
+                        else {
+
+                           btnUpdateClick();
+                           $("#hdnlogout").val("logout");
+                        }
+                    }
+
+                    event.preventDefault();
+
+                }
+            });
+
+            $("ul[name='menu'] li a").on("click", function (event) {
+                if ($(".activityid").val() != undefined && $(".activityid").val() != "") {
+                    $("#returnurl").val($(this).attr("href"));
+                    if (confirm('Exit Review mode?')) {
+                        if (confirm('Would you like to leave a comment?')) {
+                            document.getElementById("divpopup").style.display = "block";
+                            document.getElementById("mask").style.display = "block";
+                        }
+                        else {
+                            btnUpdateClick();
+                        }
+                    }
+                    event.preventDefault();
+
+                }
+            });
+
+            $("ol.breadcrumb li a").on("click", function (event) {
+                if ($(".activityid").val() != undefined && $(".activityid").val() != "") {
+                    $("#returnurl").val($(this).attr("href"));
+                    if (confirm('Exit Review mode?')) {
+                        if (confirm('Would you like to leave a comment?')) {
+                            document.getElementById("divpopup").style.display = "block";
+                            document.getElementById("mask").style.display = "block";
+                        }
+                        else {
+                            btnUpdateClick();
+                        }
+                    }
+                    event.preventDefault();
+
+                }
+            });
+        });
+
+        function changechartView() {
+            if ($("#chartcalendar").is(':visible') == true) {
+
+                $("#chartrom").css("display", "block");
+                $("#chartcalendar").css("display", "none");
+            }
+            else {
+                $("#chartrom").css("display", "none");
+                $("#chartcalendar").css("display", "block");
+
+            }
+
+        }
+
+    </script>
+
+    @Html.Raw(TempData["msg"])
+
+</body>
+</html>

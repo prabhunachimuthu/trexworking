@@ -1,0 +1,465 @@
+﻿
+@{
+
+}
+@model OneDirect.ViewModels.DeviceConfigurationDetails
+<section class="content-header">
+    <h1>
+        Equipment Details
+      
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="~/Patient"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Equipment</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+
+
+<div class="col-md-12" style="padding-top:20px">
+    <!-- Horizontal Form -->
+   
+    <!-- /.box-header -->
+    <!-- form start -->
+    @using (Html.BeginForm())
+            {
+        @Html.HiddenFor(Model => Model.devicecalibration.SetupId)
+        <div class="box box-info">
+            <div class="box-body">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="Description" class="control-label">Description</label>
+
+                        <div>
+                            @Html.TextAreaFor(model => model.devicecalibration.Description, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Description)
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Submit</button>
+                <a href="@Url.Action("Index","Equipment")" class="btn btn-warning pull-right">Cancel</a>
+
+            </div>
+        </div>
+        <div class="box box-info">
+            <div class="box-body" style="font-size:small">
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="ControllerId" class="control-label">Controller ID</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.ControllerId, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.ControllerId, "", new { @class = "error" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="ControllerId" class="control-label">Tablet ID</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.TabletId, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.TabletId, "", new { @class = "error" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="ControllerDateTime" class="control-label">Controller DateTime</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.ControllerDateTime, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.ControllerDateTime)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="MacAddress" class="control-label">Mac Address</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.MacAddress, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.MacAddress)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="ChairId" class="control-label">ChairId</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.ChairId, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.ChairId)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="BoomId1" class="control-label">Boom ID1</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.BoomId1, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.BoomId1)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="BoomId2" class="control-label">Boom ID2</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.BoomId2, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.BoomId2)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="BoomId1" class="control-label">Boom ID3</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.BoomId3, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.BoomId3)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="EquipmentType" class="control-label">Equipment Type</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.EquipmentType, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.EquipmentType)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="DeviceConfiguration" class="control-label">Device Configuration</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.DeviceConfiguration, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.DeviceConfiguration)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="PatientSide" class="control-label">Patient Side</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.PatientSide, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.PatientSide)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator1RetractedAngle" class="control-label">Actuator1 Retracted Angle</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator1RetractedAngle, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator1RetractedAngle)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator1RetractedPulse" class="control-label">Actuator1 Retracted Pulse</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator1RetractedPulse, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator1RetractedPulse)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator1ExtendedAngle" class="control-label">Actuator1 Extended Angle</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator1ExtendedAngle, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator1ExtendedAngle)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator1ExtendedPulse" class="control-label">Actuator1 Extended Pulse</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator1ExtendedPulse, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator1ExtendedPulse)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator1NeutralAngle" class="control-label">Actuator1 Neutral Angle</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator1NeutralAngle, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator1NeutralAngle)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator1NeutralPulse" class="control-label">Actuator1 Neutral Pulse</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator1NeutralPulse, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator1NeutralPulse)
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator2RetractedAngle" class="control-label">Actuator2 Retracted Angle</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator2RetractedAngle, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator2RetractedAngle)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator2RetractedPulse" class="control-label">Actuator2 Retracted Pulse</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator2RetractedPulse, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator2RetractedPulse)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator2ExtendedAngle" class="control-label">Actuator2 Extended Angle</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator2ExtendedAngle, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator2ExtendedAngle)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator2ExtendedPulse" class="control-label">Actuator2 Extended Pulse</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator2ExtendedPulse, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator2ExtendedPulse)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator2NeutralAngle" class="control-label">Actuator2 Neutral Angle</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator2NeutralAngle, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator2NeutralAngle)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator2NeutralPulse" class="control-label">Actuator2 Neutral Pulse</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator2NeutralPulse, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator2NeutralPulse)
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator3RetractedAngle" class="control-label">Actuator3 Retracted Angle</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator3RetractedAngle, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator3RetractedAngle)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator3RetractedPulse" class="control-label">Actuator3 Retracted Pulse</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator3RetractedPulse, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator3RetractedPulse)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator3ExtendedAngle" class="control-label">Actuator3 Extended Angle</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator3ExtendedAngle, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator3ExtendedAngle)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator1ExtendedPulse" class="control-label">Actuator3 Extended Pulse</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator3ExtendedPulse, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator3ExtendedPulse)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator1NeutralAngle" class="control-label">Actuator3 Neutral Angle</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator3NeutralAngle, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator3NeutralAngle)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Actuator1NeutralPulse" class="control-label">Actuator3 Neutral Pulse</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.Actuator3NeutralPulse, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.Actuator3NeutralPulse)
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="InstallerName" class="control-label">Installer Name</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.InstallerName, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.InstallerName)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="InActive" class="control-label">InActive</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.InActive, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.InActive)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="UpdatePending" class="control-label">Update Pending</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.UpdatePending, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.UpdatePending)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="ControllerDateTime" class="control-label">Created Date</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.CreatedDate, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.CreatedDate)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="ControllerDateTime" class="control-label">Updated Date</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.devicecalibration.UpdatedDate, new { @class = "form-control", disabled = "disabled" })
+                            @Html.ValidationMessageFor(model => model.devicecalibration.UpdatedDate)
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <!-- /.box-footer -->
+        </div>
+    }
+
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+            });
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

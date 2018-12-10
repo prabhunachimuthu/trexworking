@@ -1,0 +1,100 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using System;
+@using System.Globalization;
+@model IEnumerable<OneDirect.Models.Messages>
+@{
+
+}
+<style type="text/css">
+    .mask2 {
+        background-color: #000;
+        display: block;
+        height: 100%;
+        left: 0;
+        opacity: .8;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+</style>
+<section class="content-header" style="padding-bottom:20px">
+    <h1>
+        Messages
+        
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Messages</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<!-- Main content -->
+<section class="content">
+   
+</section>
+
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#example1').DataTable({
+            "stateSave": true,
+            "stateDuration": -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+        });
+        $("span[date-value='formatdate']").each(function () {
+
+            $(this).text(toValidDate($(this).text()));
+        })
+    });
+    function sendClick() {
+        if ($('#txtMessage').val() != "") {
+            showMask();
+            var messages = {
+                senderId: $('#hdnProviderId').val(),
+                receiverId: $('#hdnPatientId').val(),
+                subject: "test",
+                bodyText: $('#txtMessage').val(),
+                readStatus: 2,
+                attachment: ""
+            }
+            $.ajax({
+                url: '/api/Message',
+                data: JSON.stringify(messages),
+                type: 'post',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    
+                    location.reload();
+                },
+                error: function (data) {
+                   
+                }
+            });
+        }
+        else
+        {
+
+            alert("Enter reply message");
+        }
+    }
+    function Cancel() {
+        $("#divmask").hide();
+        $("#popup").hide();
+    }
+  
+    function toValidDate(datestring) {
+        var dateFormat = 'DD-MMM-YYYY, h:mm:ss a';
+        var testDateUtc = moment.utc(datestring);
+        var localDate = testDateUtc.local();
+        console.log(localDate.format(dateFormat));
+        return localDate.format(dateFormat);
+    }
+</script>

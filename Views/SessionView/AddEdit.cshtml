@@ -1,0 +1,248 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@{
+
+}
+@model OneDirect.ViewModels.SessionView
+
+<section class="content-header">
+    <h1>
+        <span>Add New Session </span>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Session</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+@using (Html.BeginForm())
+{
+    <div class="col-md-12" style="padding-top:20px">
+        <!-- Horizontal Form -->
+        <div class="box box-info">
+
+            <!-- /.box-header -->
+            <!-- form start -->
+
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.SessionId)
+            @Html.HiddenFor(model => model.EType)
+            @Html.HiddenFor(model => model.Patname)
+            @Html.HiddenFor(model => model.PatientId)
+            @Html.HiddenFor(model => model.EEnum)
+            @Html.HiddenFor(model => model.returnView)
+
+            <div class="box-body" style="font-size:small">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Exercise Type</label>
+                            <div>
+                                @Html.DropDownListFor(model => model.ProtocolId, ViewBag.Protocol as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ProtocolId, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Session Date</label>
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                @Html.TextBoxFor(model => model.SessionDate, new { @class = "form-control datepicker", @placeholder = "Enter Session date", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.SessionDate, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="FlexUpLimit" class="control-label">Duration</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.Duration, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.Duration, "", new { @class = "error" })
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="FlexUpLimit" class="control-label">Reps</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.Reps, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.Reps, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="FlexUpLimit" class="control-label">@ViewBag.flexionString Achieved</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.MaxFlexion, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.MaxFlexion, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="FlexUpLimit" class="control-label">@ViewBag.flexionString Reps</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.FlexionReps, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.FlexionReps, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                @if (Model.EType.ToLower() != "shoulder")
+                {
+                    <div class="col-md-12">
+
+                        <div class="col-md-6">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="FlexUpLimit" class="control-label">@ViewBag.extensionString Achieved</label>
+                                <div>
+                                    @Html.TextBoxFor(model => model.MaxExtension, new { @class = "form-control", autocomplete = "off" })
+                                    @Html.ValidationMessageFor(model => model.MaxExtension, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="FlexUpLimit" class="control-label">@ViewBag.extensionString Reps</label>
+                                <div>
+                                    @Html.TextBoxFor(model => model.ExtensionReps, new { @class = "form-control", autocomplete = "off" })
+                                    @Html.ValidationMessageFor(model => model.ExtensionReps, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    @*<div class="col-md-4">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="FlexUpLimit" class="control-label">Pain Count</label>
+                                <div>
+                                    @Html.TextBoxFor(model => model.PainCount, new { @class = "form-control", autocomplete = "off" })
+                                    @Html.ValidationMessageFor(model => model.PainCount, "", new { @class = "error" })
+                                </div>
+                            </div>
+                        </div>*@
+
+                }
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="FlexUpLimit" class="control-label">Boom1 Position</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.Boom1Position, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.Boom1Position, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="FlexUpLimit" class="control-label">Boom2 Position</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.Boom2Position, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.Boom2Position, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="FlexUpLimit" class="control-label">Range Duration1</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.RangeDuration1, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.RangeDuration1, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="FlexUpLimit" class="control-label">Range Duration2</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.RangeDuration2, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.RangeDuration2, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="FlexUpLimit" class="control-label">Guided Mode</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.GuidedMode, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.GuidedMode, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="FlexUpLimit" class="control-label">Max Pain</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.MaxPain, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(model => model.MaxPain, "", new { @class = "error" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-success pull-right">Submit</button>
+            </div>
+            <!-- /.box-footer -->
+        </div>
+    </div>
+}
+
+@section Scripts {
+
+    <script type="text/javascript">
+        //$('.datepicker1').datepicker({ autoclose: true, format: 'dd-M-yyyy', todayHighlight: true, forceParse: false });
+        $('.datepicker').datepicker({ autoclose: true, format: 'dd-M-yyyy', todayHighlight: true, forceParse: false });
+
+        $(document).ready(function () {
+            if ($('[name="SessionDate"]').val().length >= 8) {
+                $('[name="SessionDate"]').val($.datepicker.formatDate('dd-M-yy', new Date($('[name="SessionDate"]').val())));
+            }
+            else {
+                $("#datepicker").val('');
+            }
+
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+            });
+        });
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

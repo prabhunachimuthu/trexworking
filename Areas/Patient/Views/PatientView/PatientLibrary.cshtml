@@ -1,0 +1,91 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using Highsoft.Web.Mvc.Stocks
+@using OneDirect.Helper
+@using OneDirect.ViewModels
+@using Newtonsoft.Json
+
+@model List<OneDirect.Models.Library>
+
+@section styles{
+    <style type="text/css">
+        .btn-group-xs > .btn, .btn-xs {
+            padding: 1px 1px;
+            font-size: 12px;
+            line-height: 1.2;
+            border-radius: 3px;
+            margin-top: 1px;
+        }
+
+        .circle {
+            background-color: slateblue;
+            border-color: white;
+            border-radius: 50%;
+            border-width: 1px;
+            height: 45px;
+            width: 45px;
+            padding-bottom: 0;
+        }
+    </style>
+}
+<style>
+    #label label-primary pull-right {
+        float: right !important;
+    }
+
+    #pull-right {
+        float: right !important;
+    }
+</style>
+<div class="section features" style="padding-top:15px">
+    <div class="container">
+        @*<div class="pages-head">
+            <h3 style="color:white;">Library</h3>
+        </div>*@
+
+        @if (Model != null && Model.Count > 0)
+        {
+            @for (var i = 0; i < Model.Count; i = i + 2)
+            {
+                <div class="row">
+                    <div class="col s6" onclick="play(@Model[i].Id);">
+                        <div class="content">
+
+                            <i class="fa fa-play"></i>
+                            <h5>@Model[i].Url.Split("/").Last().Split("=").Last()</h5>
+
+
+                        </div>
+                    </div>
+                    @if (i + 1 < Model.Count)
+                    {
+                        <div class="col s6" onclick="play(@Model[i + 1].Id);">
+                            <div class="content">
+                                <i class="fa fa-play"></i>
+                                <h5>@Model[i + 1].Url.Split("/").Last().Split("=").Last()</h5>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+        function play(value) {
+            window.location.href = "@Url.Action("PlayVideo","PatientView")" + "?id=" + value;
+        }
+    </script>
+}
+
+
+
+
+

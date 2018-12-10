@@ -1,0 +1,393 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Helper
+@using OneDirect.Models
+@using OneDirect.ViewModels
+@using Newtonsoft.Json
+@{
+
+}
+@model IEnumerable<OneDirect.ViewModels.AppointmentView>
+<section class="content-header">
+
+    @if (ViewBag.TherapistName != null)
+    {
+        <h1>
+            @if (Context.Session.GetString("UserType") == ConstantsVar.Support.ToString())
+            {
+               
+            }
+            else
+            {
+              
+            }
+            <span>Appointments</span>
+        </h1>
+    }
+    else
+    {
+        <h1>
+            <span>Appointments</span>
+        </h1>
+    }
+
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Appointments</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+
+<div class="col-md-2" style="padding-top:20px">
+    <table class="table table-bordered text-center"></table>
+
+</div>
+<div class="col-md-12" style="padding-bottom:10px;">
+    <div class="dropdown pull-right">
+        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+            @ViewBag.SelectedPatient
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            @foreach (Patient p in ViewBag.Patients)
+            {
+                <li><a href="@Url.Action("Index","Appointment",new { @patId=p.PhoneNumber})">@p.PatientName</a></li>
+            }
+            <li><a href="@Url.Action("Index","Appointment")">All</a></li>
+        </ul>
+    </div>
+
+</div>
+<br />
+<br />
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12" style="overflow-x:auto;">
+                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Patient Name</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Doctor Name</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Date Requested</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Status</th>
+                                            @if (Context.Session.GetString("UserType") != ConstantsVar.Admin.ToString())
+                                            {
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Available Slots</th>
+                                            }
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Scheduled time</th>
+                                            @if (Context.Session.GetString("UserType") == ConstantsVar.Admin.ToString())
+                                            {
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Caller Type</th>
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Caller Name</th>
+                                            }
+                                            @if (Context.Session.GetString("UserType") != ConstantsVar.Admin.ToString())
+                                            {
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Patient Note </th>
+                                            }
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Actions : activate to sort column descending" style="width: 182px;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null)
+                                        {
+                                            var i = 0;
+                                            @foreach (var item in Model.OrderBy(x => x.Status))
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @if (item.TotalSession > 0)
+                                                        {
+                                                            @if (Context.Session.GetString("UserType") != ConstantsVar.Admin.ToString())
+                                                            {
+                                                                @if (!string.IsNullOrEmpty(item.PatientVseeId))
+                                                                {
+                                                                    @if (item.Status <= 2)
+                                                                    {
+                                                                        <div class='status-alert' style="float:left" username='@item.PatientVseeId'></div><span>
+                                                                            <a href="@Url.Action("Patient", "Provider", new { id = item.PatientRx.PatientId, Username = item.PatientName, EquipmentType = item.PatientRx.EquipmentType })">@item.PatientName</a>
+                                                                        </span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a href="@Url.Action("Patient", "Provider", new { id = item.PatientRx.PatientId, Username = item.PatientName, EquipmentType = item.PatientRx.EquipmentType })">@item.PatientName</a>
+
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    @item.PatientName
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="@Url.Action("Patient", "Provider", new { id = item.PatientRx.PatientId, Username = item.PatientName, EquipmentType = item.PatientRx.EquipmentType })">@item.PatientName</a>
+
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            @item.PatientName
+
+                                                        }
+
+                                                    </td>
+                                                    <td>@item.Provider.Name</td>
+                                                    <td>@(item.CreateDate != null ? item.CreateDate.Value.ToString("MM-dd-yyyy") : "")</td>
+                                                    <td>
+                                                        @switch (item.Status)
+                                                        {
+                                                            case 0:
+                                                                <span class="label label-primary">Requested</span>
+                                                                break;
+                                                            case 1: <span class="label label-warning">Slots received</span>
+                                                                break;
+                                                            case 2: <span class="label label-success">Slot accepted</span>
+                                                                break;
+                                                            case 3:<span class="label label-default">Completed</span>
+                                                                break;
+                                                            case 4: <span>Reschedule Requested</span>
+                                                                break;
+                                                            case 5:<span class="label label-danger">Expired</span>
+                                                                break;
+                                                            case 6:<span>Cancelled</span>
+                                                                break;
+                                                            default:<span>Requested</span>
+                                                                break;
+                                                        }
+                                                    </td>
+                                                    @if (Context.Session.GetString("UserType") != ConstantsVar.Admin.ToString())
+                                                    {
+                                                        <td align="center">
+                                                            @switch (item.Status)
+                                                            {
+                                                                case 0:
+                                                                    <span></span>
+                                                                break;
+                                                            case 1: <span>
+
+                                                                @if (!string.IsNullOrEmpty(item.AvailableSlots))
+                                                                {
+                                                                    int m = 0;
+                                                                    List<Slots> AssignedSlots = JsonConvert.DeserializeObject<List<Slots>>(item.AvailableSlots);
+                                                                    @for (int j = 0; j < AssignedSlots.Count; j++)
+                                                                    {
+                                                                        m = m + AssignedSlots[j].SlotTimes.Count;
+                                                                        
+                                                                    }
+
+                                                                    @Html.ActionLink(m.ToString(), "Assign", "Appointment", new { appointmentId = item.AppointmentId, appointmentDate = DateTime.Now.ToString("dd-MMM-yyyy") }, new { @style = "text-decoration:underline", @title = "Edit Slots" })
+
+
+                                                                }
+                                                            </span>
+                                                                    break;
+                                                                default:
+                                                                    <span></span>
+                                                                break;
+                                                            }
+
+
+                                                        </td>
+                                                    }
+                                                    <td style="width:150px;" align="center">
+                                                        @switch (item.Status)
+                                                        {
+                                                            case 0:
+                                                                <span></span>
+                                                            break;
+                                                        case 1:
+                                                                <span></span>
+                                                            break;
+                                                        case 2: <span>@(item.ConfirmedSlot != null ? item.ConfirmedSlot.Value.ToString("MM-dd-yyyy") + " (" + item.SlotTime + ")" : "") </span>
+                                                                break;
+                                                            case 3:<span>@(item.ConfirmedSlot != null ? item.ConfirmedSlot.Value.ToString("MM-dd-yyyy") + " (" + item.SlotTime + ")" : "") </span>
+                                                                break;
+                                                            case 4: <span>@(item.ConfirmedSlot != null ? item.ConfirmedSlot.Value.ToString("MM-dd-yyyy") + " (" + item.SlotTime + ")" : "") </span>
+                                                                break;
+                                                            case 5:<span>@(item.ConfirmedSlot != null ? item.ConfirmedSlot.Value.ToString("MM-dd-yyyy") + " (" + item.SlotTime + ")" : "") </span>
+                                                                break;
+                                                            default:
+                                                                <span></span>
+                                                            break;
+                                                        }
+
+
+                                                    </td>
+                                                    @if (Context.Session.GetString("UserType") == ConstantsVar.Admin.ToString())
+                                                    {
+                                                        <td>@(!string.IsNullOrEmpty(item.AppointmentType) ? (item.AppointmentType == "0" ? "Therapist" : "OneDirect") : "")</td>
+                                                        <td>@(!string.IsNullOrEmpty(item.AppointmentType) ? (item.AppointmentType == "0" ? item.TherapistName : item.SupportName) : "")</td>
+                                                    }
+                                                    @if (Context.Session.GetString("UserType") != ConstantsVar.Admin.ToString())
+                                                    {
+                                                        <td>@item.PatientComment</td>
+                                                    }
+                                                    <td style="white-space: nowrap;">
+                                                        @if (Context.Session.GetString("UserType") != ConstantsVar.Admin.ToString())
+                                                        {
+                                                            <div>
+                                                                @if (item.Status != null && item.Status == 0)
+                                                                {
+                                                                    <div style="float:left;margin-right: 1px;">
+                                                                        @Html.ActionLink("Suggest Slots", "Assign", "Appointment", new { appointmentId = item.AppointmentId, appointmentDate = DateTime.Now.ToString("dd-MMM-yyyy") }, new { @class = "label label-primary" })
+                                                                    </div>
+                                                                }
+                                                               
+
+                                                                @if (!string.IsNullOrEmpty(item.Urikey) && item.ConfirmedSlot.HasValue && !string.IsNullOrEmpty(item.SlotId) && item.Status != null && item.Status == 2)
+                                                                {
+                                                                    <div style="float:left;margin-right: 1px;">
+                                                                        <input type="hidden" value="@item.SlotId" id="slotId_@i" />
+                                                                        <input type="hidden" value="@item.ConfirmedSlot" id="slotdate_@i" />
+                                                                        <input type="hidden" value="@item.Timezone" id="slotzone_@i" />
+                                                                        <input type="hidden" value="@item.Urikey" id="sloturi_@i" />
+                                                                        <a href="@item.Urikey" class="label label-success" id="startcall_@i">Start Call</a>
+                                                                    </div>
+                                                                    <div style="float:left;margin-right: 1px;" id="generateuri_@i">
+                                                                        @Html.ActionLink("Generate URI", "GenerateURI", "Appointment", new { appointmentId = item.AppointmentId }, new { @class = "label label-primary" })
+                                                                    </div>
+                                                                    i++;
+                                                                }
+                                                                else if (item.Status != null && item.Status == 5)
+                                                                {
+                                                                   
+
+                                                                }
+                                                               
+
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div style="float:left;margin-right: 1px;">
+                                                                @Html.ActionLink("Delete", "Delete", "Appointment", new { appointmentId = item.AppointmentId, patId = item.PatientUserId }, new { @class = "label label-primary", onclick = "return confirm('Are you sure want to delete the appointment?');" })
+                                                            </div>
+                                                        }
+                                                    </td>
+
+                                                </tr>
+
+
+                                            }
+                                        }
+
+                                    <tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="https://cdn.pubnub.com/pubnub-3.5.48.min.js"></script>
+<script type="text/javascript" src="https://api.vsee.com/vseepresence/1.0.0/vseepresence.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        Date.prototype.addHours = function (h) {
+            this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+            return this;
+        }
+
+        $('#example1').DataTable({
+            "aoColumnDefs": [{
+                "bSortable": false,
+                "aTargets": [-1] /* 1st one, start by the right */
+            }],
+            "aaSorting": [[3, "desc"]],
+            "order": [[3, "desc"]],
+            "language": {
+                "emptyTable": "No appointments requested"
+            },
+            "stateSave": true,
+            "stateDuration": -1
+        }).on('order.dt', function () {
+           
+            vseePresence = new VSeePresence();
+            $('.status-alert').vsee('presenceClasses');
+            $('.when-not-offline').vsee('showByPresence');
+        })
+        .on('search.dt', function () {
+            
+            vseePresence = new VSeePresence();
+            $('.status-alert').vsee('presenceClasses');
+            $('.when-not-offline').vsee('showByPresence');
+        })
+        .on('page.dt', function () {
+           
+            vseePresence = new VSeePresence();
+            $('.status-alert').vsee('presenceClasses');
+            $('.when-not-offline').vsee('showByPresence');
+        });
+        // Initialize the VSee environment
+        vseePresence = new VSeePresence();
+
+
+        $('.status-alert').vsee('presenceClasses');
+
+        $('.when-not-offline').vsee('showByPresence');
+
+        $('[id^=startcall]').on('click', function () {
+            $(window).unbind('beforeunload');
+        });
+        updateStatus();
+        window.setInterval(function () {
+            updateStatus();
+
+
+        }, 1000);
+    });
+    function updateStatus() {
+        $("[id ^=slotdate_]").each(function (index) {
+
+            var slotTimeStart = new Date(this.value);
+            var slotTimeEnd = new Date(this.value);
+            var slotId = this.id.replace("slotdate", "slotId");
+            var slotZone = this.id.replace("slotdate", "slotzone");
+            var startcallId = this.id.replace("slotdate", "startcall");
+            var sloturiId = this.id.replace("slotdate", "sloturi");
+            var generateuri = this.id.replace("slotdate", "generateuri");
+
+
+
+
+
+            var end = parseInt($("#" + slotId).val()) + parseInt(1);
+            var starttime = slotTimeStart.addHours($("#" + slotId).val());
+            var endtime = slotTimeEnd.addHours(end);
+           
+
+
+            var localTime = new Date();
+            var nowUtc = new Date(localTime.getTime() + (localTime.getTimezoneOffset() * 60000));
+            var appointmentTimelocal = new Date(nowUtc.getTime() + (parseFloat($("#" + slotZone).val()) * 60000));
+            
+
+            if (appointmentTimelocal >= starttime && appointmentTimelocal <= endtime) {
+                $("#" + startcallId).attr("href", $("#" + sloturiId).val());
+                $("#" + startcallId).removeClass("label-default");
+                $("#" + startcallId).addClass("label-success");
+
+            }
+            else if (appointmentTimelocal > endtime) {
+                $("#" + startcallId).attr("href", "");
+                $("#" + startcallId).text("Expired");
+                $("#" + startcallId).css("cursor", "default");
+                $("#" + startcallId).removeClass("label-success");
+                $("#" + startcallId).addClass("label-danger");
+                $("#" + generateuri).css("display", "none");
+            }
+        })
+
+    }
+</script>

@@ -1,0 +1,128 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@{
+
+}
+@model OneDirect.ViewModels.LibraryView
+<section class="content-header">
+    <h1>
+        Create Library Record
+
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">LibraryView</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+@using (Html.BeginForm())
+{
+<div class="col-md-12" style="padding-top:20px">
+    <!-- Horizontal Form -->
+    <div class="box box-info">
+        @Html.HiddenFor(model => model.Id)
+        <div class="box-body" style="font-size:small">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="inputEmail3" class="control-label">Limb</label>
+
+                    <div>
+                        @Html.DropDownListFor(model => model.Limb, ViewBag.Limb as IEnumerable<SelectListItem>
+                            , "Select", new { @class = "form-control", onchange = "dropdownChanged();" })
+                            @Html.ValidationMessageFor(model => model.Limb)
+                    </div>
+                </div>
+            </div>
+
+            @*<div class="col-md-6">
+                <div class="form-group">
+                    <label for="inputEmail3" class="control-label">Side</label>
+                    <div>
+                        @Html.DropDownListFor(model => model.Side,
+                        new List<SelectListItem>
+                            {  new SelectListItem{ Text="Left", Value = "Left" },
+                            new SelectListItem{ Text="Right", Value = "Right" } },"Select", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Side)
+                    </div>
+                </div>
+            </div>*@
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="inputPassword3" class="control-label">Exercise</label>
+                    <div>
+                        @Html.DropDownListFor(model => model.Exercise, ViewBag.Exercise as IEnumerable<SelectListItem>
+                            , "Select", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Exercise)
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="inputPassword3" class="control-label">URL</label>
+                    <div>
+                        @Html.TextBoxFor(model => model.Url, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Url)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+            <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Submit</button>
+            <a href="@Url.Action("Index","LibraryView")" class="btn btn-warning pull-right">Cancel</a>
+
+        </div>
+        <!-- /.box-footer -->
+
+    </div>
+</div>
+}
+
+@section Scripts {
+<script type="text/javascript">
+        var exercise = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ProtocolList));
+        console.log(exercise);
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+            });
+
+        });
+
+        function dropdownChanged() {
+            var returnstring="";
+            var filterString = exercise.filter(function (i) {
+                return i.Limb === $("#Limb").val();
+            });
+            if (filterString != null && filterString.length > 0) {
+                returnstring = '<option value="">Select</option>';
+                for (var i = 0; i < filterString.length; i++) {
+
+                    returnstring += '<option value="' + filterString[i].ExerciseEnum + '">'+ filterString[i].ExerciseEnum + '</option>';
+                }
+                $("#Exercise").html(returnstring);
+                console.log(returnstring);
+
+            }
+
+            //console.log(filter);
+
+        }
+</script>
+}
+
+
+
+
+

@@ -1,0 +1,272 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Models;
+@using OneDirect.Helper;
+@{
+
+}
+@model IEnumerable<OneDirect.Models.PatientReview>
+
+<style type="text/css">
+    #divchange::-webkit-scrollbar {
+        width: 0.5em;
+    }
+
+    #divchange::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    #divchange::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+    }
+</style>
+
+<section class="content-header">
+    <h1>
+        Patient Reviews
+    </h1>
+
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Patient Reviews</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+<section class="content" style="padding-top: 20px;">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                   
+                </div>
+
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="box-body no-padding">
+                                    <div class="content col-sm-12 no-padding">
+                                        <div class="col-sm-12" style="overflow-x:auto">
+                                            <table id="example2" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example2_info">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Type: activate to sort column descending">Patient Name</th>
+                                                        <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Type: activate to sort column descending">Reviewer</th>
+                                                        <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Status activate to sort column descending">Start DateTime</th>
+                                                        <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Linked Session: activate to sort column descending">Duration (hh:mm:ss)</th>
+                                                        <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Type: activate to sort column descending">Count of Changes</th>
+                                                        <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Start Time: activate to sort column descending"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model != null && Model.Count() > 0)
+                                                    {
+                                                        @foreach (PatientReview item in Model)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.PatientName</td>
+                                                                <td>@item.UserName</td>
+                                                                <td style="white-space:nowrap">@(Convert.ToDateTime(Utilities.ConverTimetoBrowserTimeZone(item.StartTimeStamp, Context.Session.GetString("timezoneid"))).ToString("MMM-dd-yyyy hh:mm tt"))</td>
+                                                                <td>
+
+                                                                    <script type="text/javascript">
+                                                                    d = Number(@item.Duration);
+                                                                    function secondsToHms(d) {
+
+
+                                                                        d = Number(d);
+
+                                                                        var h = Math.floor(d / 3600);
+                                                                        var m = Math.floor(d % 3600 / 60);
+                                                                        var s = Math.floor(d % 3600 % 60);
+
+                                                                        return ('0' + h).slice(-2) + ":" + ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);
+                                                                    }
+
+                                                                    document.writeln(secondsToHms(d));
+                                                                    </script>
+
+                                                                </td>
+                                                                <td>@(item.UserActivityLog != null ? item.UserActivityLog.Count() : 0)</td>
+                                                                <td>
+                                                                    @if (item.UserActivityLog != null && item.UserActivityLog.Count() >= 0)
+                                                                    {
+                                                                       
+                                                                        <a href="@Url.Action("ViewChanges","SessionAuditTrail", new { reviewid = item.ReviewId })">View Review</a>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+
+                                                </tbody>
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div style="position:fixed;top:25%;left:89%;z-index:300005;display:none;" id="divclose">
+    <button type="button" class="btn btn-box-tool" data-widget="remove" onclick="$('#divchange').hide(); $('#divclose').hide();"><i class="fa fa-remove"></i></button>
+</div>
+<div id="divchange" align="center" class="col-md-8" style="border:1px solid black;display:none;position:fixed;top:25%;left:25%;z-index:300003;background-color:#e8e8e8;height:300px;overflow:auto">
+
+</div>
+
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#example1').DataTable({
+            'stateSave': true,
+            'stateDuration': -1,
+            "order": [[7, "desc"]]
+        });
+
+        $('#example2').DataTable({
+            'stateSave': true,
+            'stateDuration': -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+           
+        });
+    });
+    function triggerfunction(tab) {
+        
+        window.location = $(tab).find('a').attr("data-value");
+    }
+    function showChange(activityId) {
+        showMask();
+        
+        if (activityId != "") {
+            $.ajax({
+                url: '@Url.Action("ShowChange", "SessionAuditTrail")?activityId=' + activityId,
+              
+                type: 'get',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        console.log("Response");
+                       
+                        if (data.result == "success" && data.log != null) {
+                            var response = "";
+                            console.log(data.log);
+
+                            if (data.log.recordExistingJson != null && data.log.recordExistingJson != "") {
+                                var recordJson = JSON.parse(data.log.recordExistingJson);
+                              
+                                if (data.log.recordType == "Rx") {
+
+                                    if (recordJson != null && recordJson.length >0) {
+                                        response = response + "<div class='col-md-6'><span style='font-size:14px;font-weight:bold;padding-left:20px'>Previous Record</span><div class='form-group'>";
+                                        for (var i = 0; i < recordJson.length;i++) {
+                                            response = response + "<table><tbody>";
+                                            var rxJson = recordJson[i];
+                                            for (var key in rxJson) {
+                                                if (rxJson[key] != null && rxJson[key] != "" && typeof (rxJson[key]) !="object") {
+                                                  
+                                                    response = response + "<tr><td style='font-size:13px'>" + key + "</td><td>:</td><td style='font-size:13px'>" + rxJson[key] + "</td></tr>";
+                                                }
+                                            }
+                                            response = response + "</tbody></table>";
+                                        }
+                                        response = response + "</div></div>";
+                                    }
+
+                                }
+                                else {
+                                    if (recordJson != null) {
+                                        response = response + "<div class='col-md-6'><span style='font-size:14px;font-weight:bold;padding-left:20px'>Previous Record</span><div class='form-group'><table><tbody>";
+                                        for (var key in recordJson) {
+                                            if (recordJson[key] != null && recordJson[key] != "" && typeof (recordJson[key]) != "object") {
+                                                
+                                                response = response + "<tr><td style='font-size:13px'>" + key + "</td><td>:</td><td style='font-size:13px'>" + recordJson[key] + "</td></tr>";
+                                            }
+                                        }
+
+                                        response = response + "</tbody></table></div></div>";
+                                    }
+                                }
+                            }
+                            if (data.log.recordJson != null && data.log.recordJson != "") {
+                                var recordJson = JSON.parse(data.log.recordJson);
+                               
+                                if (recordJson != null) {
+                                    if (data.log.recordChangeType != "Edit") {
+                                        if ($("#divchange").hasClass("col-md-8")) {
+                                            $("#divchange").addClass("col-md-6");
+                                            $("#divchange").removeClass("col-md-8");
+                                            $("#divclose").css("left", "72%");
+                                        }
+                                        response = response + "<div class='col-md-12'>";
+                                    }
+                                    else {
+                                        if ($("#divchange").hasClass("col-md-6")) {
+                                            $("#divchange").removeClass("col-md-6");
+                                            $("#divchange").addClass("col-md-8");
+                                            $("#divclose").css("left", "89%");
+                                        }
+                                        response = response + "<div class='col-md-6'>";
+                                    }
+                                    response = response + "<span style='font-size:14px;font-weight:bold;padding-left:20px'>Current Record</span><div class='form-group'>";
+                                    if (data.log.recordType == "Rx") {
+                                        for (var i = 0; i < recordJson.length; i++) {
+                                            response = response + "<table><tbody>";
+                                            var rxJson = recordJson[i];
+                                            for (var key in rxJson) {
+                                                if (rxJson[key] != null && rxJson[key] != "" && typeof (rxJson[key]) != "object") {
+                                                   
+                                                    response = response + "<tr><td style='font-size:13px'>" + key + "</td><td>:</td><td style='font-size:13px'>" + rxJson[key] + "</td></tr>";
+                                                }
+                                            }
+                                            response = response + "</tbody></table>";
+                                        }
+                                    }
+                                    else {
+                                        response = response + "<table><tbody>";
+                                        for (var key in recordJson) {
+                                            if (recordJson[key] != null && recordJson[key] != "" && typeof (recordJson[key]) != "object") {
+                                               
+                                                response = response + "<tr><td style='font-size:13px'>" + key + "</td><td>:</td><td style='font-size:13px'>" + recordJson[key] + "</td></tr>";
+                                            }
+                                        }
+                                        response = response + "</tbody></table>";
+                                    }
+
+                                    response = response + "</div></div>";
+                                }
+                            }
+
+
+
+                            console.log(response);
+                            $("#divchange").html(response);
+                            $("#divchange").show();
+                            $("#divclose").show();
+                            hideMask();
+                        }
+                    }
+                },
+                error: function (data) {
+                   
+                }
+            });
+        }
+    }
+</script>

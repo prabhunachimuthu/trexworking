@@ -1,0 +1,261 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@{
+
+}
+
+<section class="content-header">
+
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Pain</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<div class="col-md-2" style="padding-top:20px;padding-bottom:10px;">
+
+    @if (@Context.Session.GetString("PatientID") != null && @Context.Session.GetString("PatientID").ToString() != "")
+    {
+        @if (ViewBag.SessionList != null)
+        {
+            @if (!string.IsNullOrEmpty(ViewBag.returnView))
+            {
+                @Html.ActionLink("Back", "Index", "Review", new { id = Context.Session.GetString("PatientID"), Username = Context.Session.GetString("PatientName"), EquipmentType = ViewBag.SessionList.EquipmentType, actuator = ViewBag.SessionList.DeviceConfiguration, returnView = "Review", tab = "Sessions" }, new { @class = "btn btn-block btn-warning btn-sm" })
+            }
+            else
+            {
+                @Html.ActionLink("Back", "Index", "SessionView", new { id = @Context.Session.GetString("PatientID"), Username = @Context.Session.GetString("PatientName"), Etype = @ViewBag.SessionList.EquipmentType }, new { @class = "btn btn-block btn-warning btn-sm" })
+            }
+        }
+        else
+        {
+            @Html.ActionLink("Back", "Index", "SessionView", new { id = @Context.Session.GetString("PatientID"), Username = @Context.Session.GetString("PatientName") }, new { @class = "btn btn-block btn-warning btn-sm" })
+
+        }
+
+    }
+    else
+    {
+        @Html.ActionLink("Back", "Index", "SessionView", new { protocolid = @Context.Session.GetString("ProtocoloId"), protocolName = @Context.Session.GetString("ProtocolName") }, new { @class = "btn btn-block btn-warning btn-sm" })
+
+    }
+
+</div>
+<section class="content" style="padding-top: 40px;">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <!-- /.box-header -->
+                <div class="box-body table-responsive no-padding" style="overflow-x:auto">
+                    <table class="table table-bordered table-striped dataTable" style="font-size:small">
+                        <tr role="row">
+
+                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Patient Name</th>
+
+                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Protocol Name: activate to sort column descending" style="width: 182px;">Exercise Name</th>
+                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date: activate to sort column descending" style="width: 182px;">Date</th>
+                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Pain: activate to sort column descending" style="width: 182px;">PainCount</th>
+                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Duration: activate to sort column descending" style="width: 182px;">Duration(hh:mm:ss)</th>
+                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Reps: activate to sort column descending" style="width: 182px;">Reps</th>
+
+                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Reps: activate to sort column descending" style="width: 182px;">Flexion Archieved</th>
+                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Reps: activate to sort column descending" style="width: 182px;">Flexion Goal</th>
+                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Reps: activate to sort column descending" style="width: 182px;">Extension Archieved</th>
+                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Reps: activate to sort column descending" style="width: 182px;">Extension Goal</th>
+                        </tr>
+
+                        @if (ViewBag.SessionList != null)
+                        {
+                            <tr>
+                                <td>@ViewBag.SessionList.Name</td>
+                                <td>@ViewBag.SessionList.ProtocolId</td>
+                                <td>
+                                    @if (@ViewBag.SessionList.Date != null)
+                                    {@ViewBag.SessionList.Date.ToString("MMM-dd-yyyy")}
+                                </td>
+                                <td>@ViewBag.SessionList.PainCount</td>
+                                <td>
+                                    <script type="text/javascript">
+                                        d = Number(@ViewBag.SessionList.Duration);
+                                        var h = Math.floor(d / 3600);
+                                        var m = Math.floor(d % 3600 / 60);
+                                        var s = Math.floor(d % 3600 % 60);
+
+                                        var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+                                        var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+                                        var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+                                        document.write(hDisplay + mDisplay + sDisplay);
+                                    </script>
+                                </td>
+                                <td>@ViewBag.SessionList.Reps</td>
+                                <td>
+                                    @if (ViewBag.SessionList.ProtocolEnum == 1 || ViewBag.SessionList.ProtocolEnum == 3)
+                                    {
+                                        @ViewBag.SessionList.FlexionArchieved
+                                    }
+                                    else
+                                    {
+                                        <span></span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (ViewBag.SessionList.ProtocolEnum == 1 || ViewBag.SessionList.ProtocolEnum == 3)
+                                    {
+                                        @ViewBag.SessionList.FlexionGoal
+                                    }
+                                    else
+                                    {
+                                        <span></span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (ViewBag.SessionList.ProtocolEnum == 2 || ViewBag.SessionList.ProtocolEnum == 3)
+                                    {
+                                        @ViewBag.SessionList.ExtensionArchieved
+                                    }
+                                    else
+                                    {
+                                        <span></span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (ViewBag.SessionList.ProtocolEnum == 2 || ViewBag.SessionList.ProtocolEnum == 3)
+                                    {
+                                        @ViewBag.SessionList.ExtensionGoal
+                                    }
+                                    else
+                                    {
+                                        <span></span>
+                                    }
+                                </td>
+
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <div class="col-md-12">
+                        <div class="col-md-9">
+                            @using (Html.BeginForm("ImportPains", "PainView",new { id = ViewBag.sessionId, date = ViewBag.date, time = ViewBag.time, patId = Context.Session.GetString("PatientID"), patName = Context.Session.GetString("PatientName"), returnView = "Review" }, FormMethod.Post, null, new { enctype = "multipart/form-data" }))
+                            {
+                                <div class="col-md-12">
+
+                                    <div class="col-md-4">
+                                        <span>Import Pains From CSV</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="file" name="fileInput" id="fileInput" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="showMask();">Submit</button>
+                                    </div>
+
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-3 pull-right">
+                            @Html.ActionLink("Add", "AddEdit", "PainView", new { id = ViewBag.sessionId, date = ViewBag.date, time = ViewBag.time, patId = Context.Session.GetString("PatientID"), patName = Context.Session.GetString("PatientName"), returnView = "Review" }, new { @class = "btn btn-warning btn-sm pull-right", @style = "" })
+                        </div>
+                    </div>
+                   
+                </div>
+                <!-- /.box-header -->
+
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Time: activate to sort column descending" style="width: 182px;">Exercise Type</th>
+                                            @if (@ViewBag.PainLevel == null)
+                                            {
+                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Pain Level: activate to sort column descending" style="width: 182px;">Pain Level</th>
+                                            }
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Angle: activate to sort column descending" style="width: 182px;">Angle</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Repeat Number: activate to sort column descending" style="width: 182px;">Repeat Number</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date: activate to sort column descending" style="width: 182px;">Date and Time</th>
+                                            @if (@Context.Session.GetString("UserType") != "6")
+                                            {
+                                                <th aria-label="" style="width: 182px;"></th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (ViewBag.PainList != null)
+                                        {
+                                            @foreach (var item in ViewBag.PainList)
+                                            {
+                                                <tr>
+                                                    <td>@item.Protocoltype</td>
+                                                    @if (@ViewBag.PainLevel == null)
+                                                    {
+                                                        <td>@item.PainLevel</td>
+                                                    }
+                                                    <td>@item.Angle</td>
+
+                                                    <td>@item.RepeatNumber</td>
+                                                    <td>@Context.Session.GetString("sessionDate")</td>
+                                                    @if (@Context.Session.GetString("UserType") != "6")
+                                                    {
+                                                        @if (!string.IsNullOrEmpty(ViewBag.returnView))
+                                                        {
+                                                            <td style="white-space: nowrap;">
+                                                                @Html.ActionLink("Edit", "AddEdit", "PainView", new { id = ViewBag.sessionId, painId = @item.PainId, date = ViewBag.date, time = ViewBag.time, returnView = "Review" }, new { @class = "label label-primary" })
+                                                                @Html.ActionLink("Delete", "Delete", "painView", new { painId = @item.PainId, sessionId = ViewBag.sessionId, date = ViewBag.date, time = ViewBag.time, patId = Context.Session.GetString("PatientID"), patName = Context.Session.GetString("PatientName"), eType = ViewBag.SessionList.EquipmentType, actuator = ViewBag.SessionList.DeviceConfiguration, returnView = "Review" }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete? ');" })
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="white-space: nowrap;">
+                                                                @Html.ActionLink("Edit", "AddEdit", "PainView", new { id = ViewBag.sessionId, painId = @item.PainId, date = ViewBag.date, time = ViewBag.time, returnView = "Review" }, new { @class = "label label-primary" })
+                                                                @Html.ActionLink("Delete", "Delete", "painView", new { painId = @item.PainId, sessionId = ViewBag.sessionId, date = ViewBag.date, time = ViewBag.time }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete? ');" })
+                                                            </td>
+                                                        }
+
+                                                    }
+                                                </tr>
+                                            }
+                                        }
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</section>
+<div>
+
+</div>
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example1').DataTable({
+            "stateSave": true,
+            "stateDuration": -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }],
+        });
+    });
+
+</script>

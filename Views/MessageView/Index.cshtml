@@ -1,0 +1,304 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using System;
+@using System.Globalization;
+@model IEnumerable<OneDirect.ViewModels.PatientMessageView>
+@{
+    // Layout = null;
+}
+
+<style type="text/css">
+    li::-webkit-scrollbar {
+        width: 0.5em;
+    }
+
+    li::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    li::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+    }
+
+    #tabpanel::-webkit-scrollbar {
+        width: 0.5em;
+    }
+
+    #tabpanel::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    #tabpanel::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+    }
+
+    #chatbox::-webkit-scrollbar {
+        width: 0.5em;
+    }
+
+    #chatbox::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    #chatbox::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+    }
+
+    span {
+        display: inline-block;
+    }
+</style>
+
+<section class="content-header" style="padding-bottom:20px">
+    <h1>
+        Patient Messages
+       
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Patient Messages</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<!-- Main content -->
+<section style="padding-left:0px;padding-top:0px;">
+    <div class="col-xs-12" style="padding-left:0px;">
+        <div class="col-xs-3" style="padding-left:0px;padding-right:0px;border-left:1px solid #2a3a44;background-color:#1b1b1b;">
+            <ul class="sidebar-menu-app" style="padding-left:0px;">
+                <li>
+                    <div class="form-group" style="margin-left:10px;margin-top:20px;margin-right:10px">
+                        <input type="text" name="txtAppSearch" class="form-control" placeholder="Search Patient" style="border-radius:3px;height:30px;" />
+                    </div>
+                    <hr style="margin-top:10px;margin-bottom:10px;" />
+                </li>
+            </ul>
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <ul class="sidebar-menu-app" style="padding-left:0px;">
+                <li class="treeview" style="height:56vmin;overflow-y:auto;white-space:normal">
+                    <ul class="treeview-menu" name="application" style="padding-left:0px;">
+                       
+                        @if (@ViewBag.PatientList != null)
+                        {
+                            @foreach (var item in @ViewBag.PatientList)
+                            {
+                                <li class="@(item.Patient.PatientName == ViewBag.Patient ? "active" : "")" id="@item.Patient.PatientLoginId">
+                                    <a href="@Url.Action("Index", "MessageView", new { patientid = item.Patient.PatientLoginId })" style="padding-left:10px;">
+                                        <i class="fa fa-circle-o"></i><span style="padding-left:3px;width:154px;">
+                                            @item.Patient.PatientName
+                                            @if (item.replyStatus == 0)
+                                            {
+                                                <i class="fa fa-circle text-danger" style="padding-left:3px;" id="status_@item.Patient.PatientLoginId"></i>
+                                            }
+                                        </span>
+
+                                    </a>
+                                    <hr style="margin-top:10px;margin-bottom:10px;" />
+                                </li>
+
+                            }
+
+                        }
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+        <div class="col-xs-9">
+            <div class="box box-primary direct-chat direct-chat-primary">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <!-- Conversations are loaded here -->
+                    <div class="direct-chat-messages" id="chatbox" style="height:63vmin;overflow-y:auto;white-space:normal">
+                        @if (ViewBag.Messages != null)
+                        {
+                            @foreach (var item in ViewBag.Messages)
+                            {
+                                @if (item.SentReceivedFlag == 1)
+                                {
+                                    <div class="direct-chat-msg">
+                                        <div class="direct-chat-info clearfix">
+                                           
+                                            <span class="direct-chat-timestamp pull-right" date-value="formatdate">@(item.Datetime.ToString("MM/dd/yyyy hh:mm:ss tt"))</span>
+                                        </div>
+                                        <div class="direct-chat-text">
+                                            @item.BodyText
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="direct-chat-msg right">
+                                        <div class="direct-chat-info clearfix">
+                                            
+                                            <span class="direct-chat-timestamp pull-left" date-value="formatdate">@(item.Datetime.ToString("MM/dd/yyyy hh:mm:ss tt"))</span>
+                                        </div>
+                                        <div class="direct-chat-text">
+                                            @item.BodyText
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+
+                    </div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer">
+                    <div class="input-group">
+                       
+                        <input type="text" name="message" placeholder="Type Message ..." class="form-control" id="txtMessage">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary btn-flat" onclick="sendClick('@ViewBag.PatientId')">Send</button>
+                        </span>
+                    </div>
+                </div>
+                <!-- /.box-footer-->
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    "use strict";
+    $(document).ready(function () {
+
+        //scroll down to bottom by default
+        var id = '@ViewBag.PatientId';
+        
+
+        var offset = $('.treeview ul li').first().position().top;
+        $('.treeview').scrollTop(Math.abs($('.treeview ul li').first().position().top - $('#' + id).position().top));
+
+        $('#chatbox').scrollTop($('#chatbox').prop("scrollHeight"));
+        $('#example1').DataTable({
+           
+        });
+        $(".formatdate").each(function () {
+
+            $(this).text(toValidDate($(this).text()));
+        })
+
+        $('#txtMessage').keypress(function (e) {
+            if (e.keyCode == 13) {
+                sendClick(id);
+             
+            }
+        });
+
+        $('input[name="txtAppSearch"]').keyup(function () {
+
+            var searchText = $(this).val();
+            searchText = searchText.toLowerCase();
+            var i = 0;
+            $('ul[name=application] > li').each(function () {
+
+                var currentLiText = $(this).text(),
+                    showCurrentLi = currentLiText.toLowerCase().indexOf(searchText) !== -1;
+
+                if (showCurrentLi) {
+                    i++;
+
+                }
+                $(this).toggle(showCurrentLi);
+
+            });
+            if (i == 0) {
+                $('ul[name=application]').append('<li id="norecords"><a><span style="color:red">No Records Found !</span></a></li>')
+
+            }
+            else {
+                if ($('ul[name=application] > li[id=norecords]').length > 0) {
+                    $('ul[name=application] > li[id=norecords]').remove();
+
+                }
+
+            }
+
+        });
+    });
+    function toValidDate(datestring) {
+        var dateFormat = 'DD-MMM-YYYY, h:mm:ss a';
+        var testDateUtc = moment.utc(datestring);
+        var localDate = testDateUtc.local();
+        console.log(localDate.format(dateFormat));
+        return localDate.format(dateFormat);
+    }
+    function sendClick(patientid) {
+        if (patientid != '' && $("#txtMessage").val() != "") {
+            showMask();
+
+           
+            $.ajax({
+                url: '@Url.Action("sendmessage", "messageview")' + "?patientid=" + patientid + "&message=" + encodeURIComponent($("#txtMessage").val()),
+                
+                type: 'post',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                        
+                        console.log(data);
+                        if (data.result == "success" && data.message != null) {
+                            var lhtml = "";
+                            lhtml = lhtml + "<div class='direct-chat-msg'>";
+                            lhtml = lhtml + "<div class='direct-chat-info clearfix'>";
+                            lhtml = lhtml + "<span class='direct-chat-timestamp pull-right' date-value='formatdate'>" + moment(data.message.datetime).format("MM/DD/YYYY hh:mm:ss A") + "</span>";
+                            lhtml = lhtml + "</div>";
+                            lhtml = lhtml + "<div class='direct-chat-text'>" + data.message.bodyText + "</div>";
+                            lhtml = lhtml + "</div>";
+                            $("#chatbox").append(lhtml);
+                            $("#status_" + patientid).hide();
+                            $("#txtMessage").val("");
+                            $('#chatbox').scrollTop($('#chatbox').prop("scrollHeight"));
+                            hideMask();
+                        }
+                    }
+                },
+                error: function (data) {
+                   
+                }
+            });
+        }
+    }
+
+    function getMessages(patientid) {
+        if (patientid != '') {
+            showMask();
+            $.ajax({
+                url: '@Url.Action("getmessages", "messageview")' + "?patientid=" + patientid,
+                type: 'get',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+                      
+                        console.log(data);
+                        if (data.result == "success" && data.message != null) {
+                            var lhtml = "";
+                            lhtml = lhtml + "<div class='direct-chat-msg'>";
+                            lhtml = lhtml + "<div class='direct-chat-info clearfix'>";
+                            lhtml = lhtml + "<span class='direct-chat-timestamp pull-right' date-value='formatdate'>" + moment(data.message.datetime).format("MM/DD/YYYY hh:mm:ss A") + "</span>";
+                            lhtml = lhtml + "</div>";
+                            lhtml = lhtml + "<div class='direct-chat-text'>" + data.message.bodyText + "</div>";
+                            lhtml = lhtml + "</div>";
+                            $("#chatbox").append(lhtml);
+                            $("#txtMessage").val("");
+                            hideMask();
+                        }
+                    }
+                },
+                error: function (data) {
+                    
+                }
+            });
+        }
+    }
+
+</script>

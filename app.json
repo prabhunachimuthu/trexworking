@@ -1,0 +1,13 @@
+{
+  "name": "OnedirectTrex",
+  "description": "Trex deployment using pipeline",
+  "website": "http://www.softtrends.com/",
+  "repository": "https://github.com/prabhunachimuthu/onedirecttrex.git",
+  "logo": "",
+  "keywords": ["aspnet core", "aspnet core mvc"],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku-softtrends/dotnetcore.postgress.buildpack.git"
+    }
+  ]
+}

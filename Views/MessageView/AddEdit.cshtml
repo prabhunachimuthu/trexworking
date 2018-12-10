@@ -1,0 +1,300 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using System;
+@using System.Globalization;
+@{
+    @Html.Raw(TempData["msg"])
+}
+
+
+@model OneDirect.ViewModels.PatientRxView
+<section class="content-header">
+    @if (!string.IsNullOrEmpty(Model.RxId))
+    {
+        <h1>
+            Edit
+            <small>PatientRx</small>
+        </h1>
+    }
+    else
+    {
+        <h1>
+            Add
+            <small>PatientRx</small>
+        </h1>
+
+    }
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">PatientRx</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+
+
+
+<div class="col-md-12" style="padding-top:20px">
+    <!-- Horizontal Form -->
+    <div class="box box-info">
+       
+        <!-- /.box-header -->
+        <!-- form start -->
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.RxId)
+            @Html.HiddenFor(model => model.ProviderId)
+            @Html.HiddenFor(model => model.PatientId)
+            @Html.HiddenFor(model => model.DateCreated)
+            @Html.HiddenFor(model => model.DateModified)
+            <div class="box-body" style="font-size:small">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="TherapistId" class="control-label">Patient Name</label>
+                            <div>
+
+                                @if (ViewBag.Patients != null)
+                                {
+
+                                    @Html.TextBoxFor(model => model.PatientName, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.PatientName, "", new { @class = "error" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="EquipmentType" class="control-label">Surgery Type</label>
+
+                            <div>
+                                @if (ViewBag.equipment != null)
+                                {
+                                    if (!string.IsNullOrEmpty(Model.RxId))
+                                    {
+
+                                        @Html.DropDownListFor(model => model.EquipmentType, ViewBag.equipment as IEnumerable<SelectListItem>
+                                , "Select", new { @class = "form-control", @readonly = "true" })
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(model => model.EquipmentType, ViewBag.equipment as IEnumerable<SelectListItem>
+                                    , "Select", new { @class = "form-control" })
+
+                                    }
+
+                                    @Html.ValidationMessageFor(model => model.EquipmentType, "", new { @class = "error" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="TherapistId" class="control-label">Email</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "error" })
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="TherapistId" class="control-label">Mobile Number</label>
+                            <div>
+                                @if (!string.IsNullOrEmpty(Model.RxId))
+                                {
+
+                                    @Html.TextBoxFor(model => model.Mobile, new { @class = "form-control", @readonly = "true" })
+                                }
+                                else
+                                {
+                                    @Html.TextBoxFor(model => model.Mobile, new { @class = "form-control" })
+                                }
+                                @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "error" })
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                @Html.TextBoxFor(model => model.DateOfBirth, new { @class = "form-control datepicker1" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "error" })
+                            <!-- /.input group -->
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Surgery Date</label>
+
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                @Html.TextBoxFor(model => model.SurgeryDate, new { @class = "form-control datepicker" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.SurgeryDate, "", new { @class = "error" })
+                            <!-- /.input group -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Rx Start Date</label>
+
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                @Html.TextBoxFor(model => model.RxStartDate, new { @class = "form-control datepicker" })
+
+                            </div>
+                            @Html.ValidationMessageFor(model => model.RxStartDate, "", new { @class = "error" })
+                            <!-- /.input group -->
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Rx End Date</label>
+
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                @Html.TextBoxFor(model => model.RxEndDate, new { @class = "form-control datepicker" })
+
+                            </div>
+                            @Html.ValidationMessageFor(model => model.RxEndDate, "", new { @class = "error" })
+                            <!-- /.input group -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="TherapistId" class="control-label">Max ROM Down</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.MaxRomdown, new { @class = "form-control", @type = "number" })
+                                @Html.ValidationMessageFor(model => model.MaxRomdown, "", new { @class = "error" })
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="TherapistId" class="control-label">Max ROM Up</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.MaxRomup, new { @class = "form-control", @type = "number" })
+                                @Html.ValidationMessageFor(model => model.MaxRomup, "", new { @class = "error" })
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="TherapistId" class="control-label">Rx Days Per Week</label>
+                            <div>
+                                @for (int i = 0; i < Model.RxDays.Count; i++)
+                                {
+                                    @Html.HiddenFor(model => model.RxDays[i].id)
+                                    @Html.HiddenFor(model => model.RxDays[i].name)
+                                    @Html.CheckBoxFor(model => model.RxDays[i].isCheck, new { @class = "minimal" })
+                                    <label for="@Model.RxDays[i].id" class="control-label" style="padding-right:5px">@Model.RxDays[i].name</label>
+                                }
+                                @Html.ValidationMessageFor(model => model.RxDays, "", new { @class = "error" })
+                                
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="TherapistId" class="control-label">Rx Sessions Per Week</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.RxSessionsPerWeek, new { @class = "form-control", @type = "number" })
+                                @Html.ValidationMessageFor(model => model.RxSessionsPerWeek, "", new { @class = "error" })
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="TherapistId" class="control-label">Address (optional)</label>
+                            <div>
+                                @Html.TextAreaFor(model => model.Address, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "error" })
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        <!-- /.box-body -->
+            <div class="box-footer">
+                @if (Context.Session.GetString("UserType") != "0")
+                {
+                    <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Submit</button>
+                }
+                @Html.ActionLink("Cancel", "Dashboard", "Provider", new { id = @Context.Session.GetString("UserId") }, new { @class = "btn btn-warning pull-right" })
+
+            </div>
+        <!-- /.box-footer -->
+        }
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $('.datepicker1').datepicker({ autoclose: true, format: 'dd-M-yyyy', todayHighlight: true });
+        $('.datepicker').datepicker({ autoclose: true, format: 'dd-M-yyyy', todayHighlight: true, startDate: new Date() });
+
+        $('input[type="checkbox"].minimal').iCheck({
+            checkboxClass: 'icheckbox_minimal-blue'
+        })
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+            });
+        });
+    </script>
+
+}
+

@@ -1,0 +1,90 @@
+﻿
+.opentok_console {
+    /*margin-left: 5px;
+    width: 524px;
+    height: 272px;*/
+}
+
+.links {
+    /*float: left;*/
+    width: 200px;
+    border: 5px solid #0042a9;
+    border-radius:5px;
+    background-color: #FFFFFF;
+    margin-left:5px;
+}
+
+.videos {
+    /*width: 58px;*/
+}
+
+.publisherContainer1 {
+    height: 180px;
+    width: 200px;
+    /*float: left;*/
+    border: 5px solid #451657;
+    border-radius:5px;
+    background-color: #FFFFFF;
+    margin-left: 5px;
+}
+.publisherContainer {
+    height: 180px;
+    width: 200px;
+    /*float: left;*/
+    border: 5px solid #0042a9;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    margin-left: 5px;
+}
+.subscribersContainer1 {
+    width: 315px;
+    height: 276px;
+    border: 5px solid #451657;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    margin-left: 5px;
+}
+.subscribersContainer {
+    width: 315px;
+    height: 276px;
+    border: 5px solid #0042a9;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    margin-left: 5px;
+}
+#acceptCallBox {
+    display: none;
+    z-index: 2;
+    position: absolute;
+    top: 100px;
+    left: 90px;
+    border: #0042a9 solid 2px;
+    background-color: pink;
+    padding: 15px;
+}
+
+#onlineusers {
+    min-height: 30px;
+}
+
+.header {
+    background-color: pink;
+    font-weight: bold;
+}
+
+.pubbuttonbg {
+    background-color: #FF0066;
+    height: 40px;
+    width: 185px;
+    color: white;
+    margin-top: 5px;
+}
+
+.subbuttonbg {
+    background-color: #FF0066;
+    height: 40px;
+    width: 185px;
+    color: white;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}

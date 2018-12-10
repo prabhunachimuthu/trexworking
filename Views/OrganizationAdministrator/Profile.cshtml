@@ -1,0 +1,182 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Helper
+
+@{
+}
+@model OneDirect.ViewModels.UserViewModel
+<section class="content-header">
+    <h1>
+        @if (ViewBag.Name != null)
+        {
+            <span>@ViewBag.Name's Details </span>
+        }
+        else
+        {
+            <span>Organization Administrators</span>
+        }
+
+    </h1>
+    @*kajal*@
+    @if (Context.Session.GetString("UserType") == ConstantsVar.Admin.ToString())
+    {
+        <ol class="breadcrumb">
+            <li><a href="~/Patient"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Patients</li>
+        </ol>
+
+    }
+    else
+    {
+        <ol class="breadcrumb">
+            <li><a href="~/Patient"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Organization Administrators</li>
+        </ol>
+
+    }
+   
+</section>
+
+<!-- Main content -->
+
+
+
+
+<div class="col-md-12" style="padding-top:20px">
+    <!-- Horizontal Form -->
+    <div class="box box-info">
+
+        <!-- /.box-header -->
+        <!-- form start -->
+        @using (Html.BeginForm())
+        {
+            <div class="box-body" style="font-size:small">
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Name</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Name)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputPassword3" class="control-label">Org Administrator id</label>
+                        <div>
+                            @Html.TextBoxFor(model => model.UserId, new { @class = "form-control", @readonly = true })
+                            @Html.ValidationMessageFor(model => model.UserId)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputPassword3" class="control-label">Password</label>
+                        <div>
+                            @Html.TextBoxFor(model => model.Password, new { @class = "form-control", @type = "password" })
+                            @Html.ValidationMessageFor(model => model.Password)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">E-mail ID</label>
+                        <div>
+                            @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Email)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Phone</label>
+                        <div>
+                            @Html.TextBoxFor(model => model.Phone, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Phone)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">Address</label>
+
+                        <div>
+                            @Html.TextBoxFor(model => model.Address, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Address)
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="control-label">NPI</label>
+                        <div>
+                            
+                            @if (!string.IsNullOrEmpty(Model.Npi))
+                            {
+                                @Html.TextBoxFor(model => model.Npi, new { @class = "form-control", @readonly = true })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(model => model.Npi, new { @class = "form-control" })
+
+                            }
+                            @Html.ValidationMessageFor(model => model.Npi)
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                @if (@Context.Session.GetString("UserType") != "3")
+                {
+                    <button type="submit" class="btn btn-success pull-right" style="margin-left:10px;">Submit</button>
+                }
+                @if (@Context.Session.GetString("UserType") != "2")
+                {
+                    <a href="@Url.Action("Index","OrganizationAdministrator")" class="btn btn-warning pull-right">Cancel</a>
+                }
+
+            </div>
+            <!-- /.box-footer -->
+        }
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/inputmask.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+            var input = $('#Phone');
+            input.focus();
+            var tmpStr = input.val();
+            input.val('');
+            input.val(tmpStr);
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+            });
+            $('input[name=Phone]').on('keyup', function (e) {
+            });
+            $('input[name=Phone]').mask("(999) 999-9999")
+
+
+
+        });
+
+    </script>
+}
+

@@ -1,0 +1,319 @@
+﻿
+@{
+
+}
+<section class="content-header" style="padding-bottom:20px">
+   
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Therapist</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- DONUT CHART -->
+            <div class="box box-danger">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Treatment Progress</h3>
+
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="box-body chart-responsive">
+                    <div class="chart" id="sales-chart" style="height: 300px; position: relative;">
+
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <div class="col-md-6">
+            <!-- DONUT CHART -->
+            <div class="box box-danger">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Treatment Result</h3>
+
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="box-body chart-responsive">
+                    <div class="chart" id="sales-chart1" style="height: 300px; position: relative;">
+
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+
+    </div>
+    <div>
+        <div class="row docs-premium-template">
+            <div class="col-sm-12 col-md-6">
+                <div class="box box-solid" style="display:block" id="equip_0">
+                    <div class="box-body no-padding">
+                        <h4 style="background-color:#00a65a; font-size: 18px; text-align: center; padding: 7px 10px; margin-top: 0;">
+                            PATIENTS
+                        </h4>
+                        <table class="table table-condensed">
+                            <tbody>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th># of Equipment</th>
+                                    <th># of Times Used</th>
+                                </tr>
+                                <tr>
+                                    <td>pat1</td>
+                                    <td>2</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>pat2</td>
+                                    <td>1</td>
+                                    <td>15</td>
+                                </tr>
+                                <tr>
+                                    <td>pat3</td>
+                                    <td>2</td>
+                                    <td>5</td>
+                                </tr>
+                                <tr>
+                                    <td>pat4</td>
+                                    <td>1</td>
+                                    <td>10</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="box box-solid" style="display:none" id="equip_1">
+                    <div class="box-body no-padding">
+                        <h4 style="background-color:#ffff66;font-size: 18px; text-align: center; padding: 7px 10px; margin-top: 0;">
+                            PATIENTS
+                        </h4>
+                        <table class="table table-condensed">
+                            <tbody>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th># of Equipment</th>
+                                    <th># of Times Used</th>
+                                </tr>
+                                <tr>
+                                    <td>pat4</td>
+                                    <td>1</td>
+                                    <td>7</td>
+                                </tr>
+                                <tr>
+                                    <td>pat5</td>
+                                    <td>2</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>pat6</td>
+                                    <td>1</td>
+                                    <td>3</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="box box-solid" style="display:none" id="equip_2">
+                    <div class="box-body no-padding">
+                        <h4 style="background-color:#f56954;font-size: 18px; text-align: center; padding: 7px 10px; margin-top: 0;">
+                            PATIENTS
+                        </h4>
+                        <table class="table table-condensed">
+                            <tbody>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th># of Equipment</th>
+                                    <th># of Times Used</th>
+                                </tr>
+                                <tr>
+                                    <td>pat7</td>
+                                    <td>1</td>
+                                    <td>7</td>
+                                </tr>
+                                <tr>
+                                    <td>pat8</td>
+                                    <td>1</td>
+                                    <td>10</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+
+                <div class="box box-solid" id="pain_0" style="display:none">
+                    <div class="box-body no-padding">
+                        <h4 style="background-color:#00a65a; font-size: 18px; text-align: center; padding: 7px 10px; margin-top: 0;">
+                            PATIENTS
+                        </h4>
+                        <table class="table table-condensed">
+                            <tbody>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th># of Sessions</th>
+                                    <th>Pain Count</th>
+                                </tr>
+                                <tr>
+                                    <td>pat1</td>
+                                    <td>20</td>
+                                    <td>5</td>
+                                </tr>
+                                <tr>
+                                    <td>pat2</td>
+                                    <td>25</td>
+                                    <td>5</td>
+                                </tr>
+                                <tr>
+                                    <td>pat3</td>
+                                    <td>5</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>pat4</td>
+                                    <td>25</td>
+                                    <td>5</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="box box-solid" style="display:none" id="pain_1">
+                    <div class="box-body no-padding">
+                        <h4 style="background-color:#ffff66; font-size: 18px; text-align: center; padding: 7px 10px; margin-top: 0;">
+                            PATIENTS
+                        </h4>
+                        <table class="table table-condensed">
+                            <tbody>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th># of Sessions</th>
+                                    <th>Pain Count</th>
+                                </tr>
+                                <tr>
+                                    <td>pat4</td>
+                                    <td>20</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>pat5</td>
+                                    <td>25</td>
+                                    <td>12</td>
+                                </tr>
+                                <tr>
+                                    <td>pat6</td>
+                                    <td>5</td>
+                                    <td>3</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="box box-solid" style="display:block" id="pain_2">
+                    <div class="box-body no-padding">
+                        <h4 style="background-color:#f56954; font-size: 18px; text-align: center; padding: 7px 10px; margin-top: 0;">
+                            PATIENTS
+                        </h4>
+                        <table class="table table-condensed">
+                            <tbody>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th># of Sessions</th>
+                                    <th>Pain Count</th>
+                                </tr>
+                                <tr>
+                                    <td>pat7</td>
+                                    <td>20</td>
+                                    <td>15</td>
+                                </tr>
+                                <tr>
+                                    <td>pat8</td>
+                                    <td>25</td>
+                                    <td>20</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+        $(function () {
+            "use strict";
+
+
+            //DONUT CHART
+            var donut = new Morris.Donut({
+                element: 'sales-chart',
+                resize: true,
+                colors: ["#00a65a", "#ffff66", "#f56954"],
+                data: [
+                  { label: "More than 75% of Time", value: 49 },
+                  { label: "50 to 75% of Time", value: 39 },
+                  { label: "Less than 50% of Time", value: 12 }
+                ],
+                hideHover: 'auto'
+            }).on('click', function (i, row) {
+               
+                $("div[id*=equip_]").css("display", "none");
+                $("#equip_" + i).css("display", "block");
+              
+            });
+
+
+            var donut = new Morris.Donut({
+                element: 'sales-chart1',
+                resize: true,
+                colors: ["#00a65a", "#ffff66", "#f56954"],
+                data: [
+                  { label: "Less than 25% of Pain", value: 36 },
+                  { label: "Less than 50% of Pain", value: 20 },
+                  { label: "More than 50% of Pain", value: 44 },
+
+                ],
+                hideHover: 'auto'
+            }).on('click', function (i, row) {
+               
+                $("div[id*=pain_]").css("display", "none");
+                $("#pain_" + i).css("display", "block");
+                
+            });
+
+        });
+    </script>
+}
+
+
+
+
+

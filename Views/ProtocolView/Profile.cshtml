@@ -1,0 +1,653 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@{
+}
+@model OneDirect.ViewModels.ProtocolView
+<section class="content-header">
+    <h1>
+        View / Edit
+        <small>Profile</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Therapists</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+
+
+
+<div class="col-md-12" style="padding-top:20px">
+    <!-- Horizontal Form -->
+    <div class="box box-info">
+      
+        <!-- /.box-header -->
+        <!-- form start -->
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            <div class="box-body" style="font-size:small">
+                <div class="col-md-6">
+
+                    <div class="@(Context.Session.GetString("UserType") != "3" ? "col-md-6" : "col-md-12")  no-pad-left">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="ProtocolName" class="control-label">Exercise Name</label>
+
+                            <div>
+                                @Html.TextBoxFor(model => model.ProtocolName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ProtocolName)
+                                @Html.HiddenFor(model => model.PatientId)
+                                @Html.HiddenFor(model => model.ProtocolId)
+                                @Html.HiddenFor(model => model.TherapistId)
+                                @*@Html.HiddenFor(model => model.Level)*@
+                            </div>
+                        </div>
+                    </div>
+                    @if (Context.Session.GetString("UserType") != "3")
+                    {
+                        <div class="col-md-6 no-pad-right">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="TherapistId" class="control-label">Therapist</label>
+                                <div>
+
+                                    @if (ViewBag.Therapists != null)
+                                    {
+                                        @if (Context.Session.GetString("UserType") == "2")
+                                        {
+                                            @Html.DropDownListFor(model => model.TherapistId, ViewBag.Therapists as IEnumerable<SelectListItem>, "Select", new { @class = "form-control not-active" })
+                                            @Html.ValidationMessageFor(model => model.TherapistId, "", new { @class = "error" })
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownListFor(model => model.TherapistId, ViewBag.Therapists as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.TherapistId, "", new { @class = "error" })
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="col-md-12 no-padding">
+                        <div class="col-md-6 no-pad-left">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="EquipmentType" class="control-label">Equipment Type</label>
+
+                                <div>
+                                    @if (ViewBag.equipment != null)
+                                    {
+                                        @Html.DropDownListFor(model => model.EquipmentType, ViewBag.equipment as IEnumerable<SelectListItem>, "Select", new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.EquipmentType, "", new { @class = "error" })
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="col-md-6 no-pad-left">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="Reps" class="control-label">Session Repeat</label>
+
+                                <div>
+                                    @Html.TextBoxFor(model => model.Reps, new { @class = "form-control", @type = "number" })
+                                    @Html.ValidationMessageFor(model => model.Reps)
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12 no-padding">
+                        <div class="box box-default" style="margin-bottom:2px;margin-top:2px;">
+                            <div class="box-header with-border" style="padding:1px;">
+                                <h4>Range of Motion</h4>
+                            </div>
+                            <div class="box-body" style="padding:1px;">
+                                <div class="col-md-4 no-pad-left">
+                                    <div class="form-group" style="margin-bottom:2px;">
+                                        @if (Model.EquipmentType > 0)
+                                        {
+                                            switch (Model.EquipmentType)
+                                            {
+                                                case 1:
+                                                    <label for="MaxUpLimit" class="control-label">Plantaflexion</label>
+                                                    break;
+                                                case 2:
+                                                    <label for="MaxUpLimit" class="control-label">Flexion</label>
+                                                    break;
+                                                case 3:
+                                                    if (Model.Actuator == 1 || Model.Actuator == 2)
+                                                    {
+                                                        <label for="MaxUpLimit" class="control-label">Flexion</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label for="MaxUpLimit" class="control-label">Internal</label>
+                                                    }
+                                                    break;
+                                                default:
+                                                    <label for="MaxUpLimit" class="control-label">Flexion</label>
+                                                    break;
+
+                                            }
+
+                                        }
+
+
+                                        <div>
+                                            @Html.TextBoxFor(model => model.MaxUpLimit, new { @class = "form-control", @type = "number" })
+                                            @Html.ValidationMessageFor(model => model.MaxUpLimit)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 no-pad-left">
+                                    <div class="form-group" style="margin-bottom:2px;">
+                                        @if (Model.EquipmentType > 0)
+                                        {
+                                            switch (Model.EquipmentType)
+                                            {
+                                                case 1:
+                                                    <label for="MaxDownLimit" class="control-label">Dorxyflexion</label>
+                                                    break;
+                                                case 2:
+                                                    <label for="MaxDownLimit" class="control-label">Extension</label>
+                                                    break;
+                                                case 3:
+                                                    if (Model.Actuator == 1 || Model.Actuator == 2)
+                                                    {
+                                                        <label for="MaxDownLimit" class="control-label">Stretch</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label for="MaxDownLimit" class="control-label">External</label>
+                                                    }
+                                                    break;
+                                                default:
+                                                    <label for="MaxDownLimit" class="control-label">Extension</label>
+                                                    break;
+
+                                            }
+
+                                        }
+
+
+                                        <div>
+                                            @Html.TextBoxFor(model => model.MaxDownLimit, new { @class = "form-control", @type = "number" })
+                                            @Html.ValidationMessageFor(model => model.MaxDownLimit)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 no-pad-left">
+                                    <div class="form-group" style="margin-bottom:2px;">
+                                        <label for="RestPosition" class="control-label">Rest Position</label>
+
+                                        <div>
+                                            @Html.TextBoxFor(model => model.RestPosition, new { @class = "form-control", @type = "number" })
+                                            @Html.ValidationMessageFor(model => model.RestPosition)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+                <div class="col-md-6">
+                    <div class="" style="height:230px;border:1px solid black;">
+                        <canvas id="demoCanvas" width="340" height="230"> canvas</canvas>
+                    </div>
+
+
+                </div>
+                <div class="col-md-12">
+                    <div class="box box-default" style="margin-bottom:2px;margin-top:2px;">
+                        <div class="box-header with-border" style="padding:1px;">
+                            @if (Model.EquipmentType > 0)
+                            {
+                                switch (Model.EquipmentType)
+                                {
+                                    case 1:
+                                        <h4>Plantaflexion</h4>
+                                        break;
+                                    case 2:
+                                        <h4>Flexion</h4>
+                                        break;
+                                    case 3:
+                                        if (Model.Actuator == 1 || Model.Actuator == 2)
+                                        {
+                                            <h4>Flexion</h4>
+                                        }
+                                        else
+                                        {
+                                            <h4>Internal</h4>
+                                        }
+                                        break;
+                                    default:
+                                        <h4>Flexion</h4>
+                                        break;
+
+                                }
+
+                            }
+                           
+                        </div>
+                        <div class="box-body" style="padding:1px;">
+                            <div class="col-md-2 no-pad-left">
+                                <div class="form-group" style="margin-bottom:2px;">
+                                    <label for="FlexUpLimit" class="control-label">Flex Angle</label>
+                                    <div>
+                                        @Html.TextBoxFor(model => model.FlexUpLimit, new { @class = "form-control", @type = "number" })
+                                        @Html.ValidationMessageFor(model => model.FlexUpLimit)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 no-pad-left">
+                                <div class="form-group" style="margin-bottom:2px;">
+                                    <label for="FlexUpHoldtime" class="control-label">Flex Hold time</label>
+
+                                    <div>
+                                        @Html.TextBoxFor(model => model.FlexUpHoldtime, new { @class = "form-control", @type = "number" })
+                                        @Html.ValidationMessageFor(model => model.FlexUpHoldtime)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 no-pad-left">
+                                <div class="form-group" style="margin-bottom:2px;">
+                                    <label for="StretchUpLimit" class="control-label">Stretch Angle</label>
+
+                                    <div>
+                                        @Html.TextBoxFor(model => model.StretchUpLimit, new { @class = "form-control", @type = "number" })
+                                        @Html.ValidationMessageFor(model => model.StretchUpLimit)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 no-pad-left">
+                                <div class="form-group" style="margin-bottom:2px;">
+                                    <label for="StretchUpHoldtime" class="control-label">Stretch Hold time</label>
+
+                                    <div>
+                                        @Html.TextBoxFor(model => model.StretchUpHoldtime, new { @class = "form-control", @type = "number" })
+                                        @Html.ValidationMessageFor(model => model.StretchUpHoldtime)
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-2 no-pad-left">
+                                <div class="form-group" style="margin-bottom:2px;">
+                                    <label for="UpReps" class="control-label">Repeat</label>
+
+                                    <div>
+                                        @Html.TextBoxFor(model => model.UpReps, new { @class = "form-control", @type = "number" })
+                                        @Html.ValidationMessageFor(model => model.UpReps)
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <div class="box box-default" style="margin-bottom:0px;">
+                        <div class="box-header with-border" style="padding:1px;">
+                            @if (Model.EquipmentType > 0)
+                            {
+                                switch (Model.EquipmentType)
+                                {
+                                    case 1:
+                                        <h4>Dorxyflexion</h4>
+                                        break;
+                                    case 2:
+                                        <h4>Extension</h4>
+                                        break;
+                                    case 3:
+                                        if (Model.Actuator == 1 || Model.Actuator == 2)
+                                        {
+                                            <h4>Stretch</h4>
+                                        }
+                                        else
+                                        {
+                                            <h4>External</h4>
+                                        }
+                                        break;
+                                    default:
+                                        <h4>Extension</h4>
+                                        break;
+
+                                }
+
+                            }
+                           
+                        </div>
+                        <div class="box-body" style="padding:1px;">
+                            <div class="col-md-2 no-pad-left">
+                                <div class="form-group">
+                                    <label for="FlexDownLimit" class="control-label">Flex Angle</label>
+
+                                    <div>
+                                        @Html.TextBoxFor(model => model.FlexDownLimit, new { @class = "form-control", @type = "number" })
+                                        @Html.ValidationMessageFor(model => model.FlexDownLimit)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 no-pad-left">
+                                <div class="form-group">
+                                    <label for="FlexDownHoldtime" class="control-label">Flex hold time</label>
+
+                                    <div>
+                                        @Html.TextBoxFor(model => model.FlexDownHoldtime, new { @class = "form-control", @type = "number" })
+                                        @Html.ValidationMessageFor(model => model.FlexDownHoldtime)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 no-pad-left">
+                                <div class="form-group">
+                                    <label for="StretchDownLimit" class="control-label">Stretch Angle</label>
+
+                                    <div>
+                                        @Html.TextBoxFor(model => model.StretchDownLimit, new { @class = "form-control", @type = "number" })
+                                        @Html.ValidationMessageFor(model => model.StretchDownLimit)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 no-pad-left">
+                                <div class="form-group">
+                                    <label for="StretchDownHoldtime" class="control-label">Stretch Hold time</label>
+
+                                    <div>
+                                        @Html.TextBoxFor(model => model.StretchDownHoldtime, new { @class = "form-control", @type = "number" })
+                                        @Html.ValidationMessageFor(model => model.StretchDownHoldtime)
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-2 no-pad-left">
+                                <div class="form-group">
+                                    <label for="DownReps" class="control-label">Repeat</label>
+                                    <div>
+                                        @Html.TextBoxFor(model => model.DownReps, new { @class = "form-control", @type = "number" })
+                                        @Html.ValidationMessageFor(model => model.DownReps)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- /.box-body -->
+            <div class="box-footer">
+                @Html.ActionLink("Cancel", "Index", new { id = ViewBag.PatientId }, new { @class = "btn btn-warning pull-left" })
+              
+               
+                @if (@Context.Session.GetString("UserType") != "0")
+                {
+                    <button type="submit" class="btn btn-success pull-right">Submit</button>
+                }
+            </div>
+        <!-- /.box-footer -->
+        }
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+            });
+            drawCanvas();
+
+            $("input").on('keyup mouseup', function (e) {
+                if (this.id == "FlexUpLimit" && $("#FlexUpLimit").val() != "") {
+                    if (parseInt($("#FlexUpLimit").val()) <= parseInt($("#MaxUpLimit").val())) {
+                        drawCanvas();
+                    }
+                    else {
+                        e.preventDefault();
+                        var flexlabel = $("label[for='" + this.id + "']").text();
+                        alert("" + flexlabel + " should be less than or equal to " + $("#MaxUpLimit").val() + " ");
+                        $("#FlexUpLimit").val($("#FlexUpLimit").val().substring(0, ($("#FlexUpLimit").val().length - 1)))
+                    }
+
+                }
+                else if (this.id == "StretchUpLimit" && $("#StretchUpLimit").val() != "") {
+                    if (parseInt($("#StretchUpLimit").val()) <= parseInt($("#MaxUpLimit").val())) {
+                        drawCanvas();
+                    }
+                    else {
+                        e.preventDefault();
+                        var stretchlabel = $("label[for='" + this.id + "']").text();
+                        alert("" + stretchlabel + " should be less than or equal to " + $("#MaxUpLimit").val() + " ");
+                        $("#StretchUpLimit").val($("#StretchUpLimit").val().substring(0, ($("#StretchUpLimit").val().length - 1)))
+                    }
+
+                }
+                else if (this.id == "FlexDownLimit" && $("#FlexDownLimit").val() != "") {
+                    if (parseInt($("#FlexDownLimit").val()) >= parseInt($("#MaxDownLimit").val())) {
+                        drawCanvas();
+                    }
+                    else {
+                        e.preventDefault();
+                        var flexlabel = $("label[for='" + this.id + "']").text();
+                        alert("" + flexlabel + " should be greater than or equal to " + $("#MaxDownLimit").val() + " ");
+                        $("#FlexDownLimit").val($("#FlexDownLimit").val().substring(0, ($("#FlexDownLimit").val().length - 1)))
+                    }
+
+                }
+                else if (this.id == "StretchDownLimit" && $("#StretchDownLimit").val() != "") {
+                    if (parseInt($("#StretchDownLimit").val()) >= parseInt($("#MaxDownLimit").val())) {
+                        drawCanvas();
+                    }
+                    else {
+                        e.preventDefault();
+                        var stretchlabel = $("label[for='" + this.id + "']").text();
+                        alert("" + stretchlabel + " should be greater than or equal to " + $("#MaxDownLimit").val() + " ");
+                        $("#StretchDownLimit").val($("#StretchDownLimit").val().substring(0, ($("#StretchDownLimit").val().length - 1)))
+                    }
+
+                }
+                else {
+                    drawCanvas();
+
+                }
+
+            });
+        });
+
+
+        function drawCanvas() {
+            var canvas = document.getElementById('demoCanvas');
+
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 340, 230);
+            var x = 250;
+            var y = 100;
+            var radius = 90;
+            var startAngle = 0.5 * Math.PI;
+            var endAngle = 1.5 * Math.PI;
+            var counterClockwise = false;
+            ctx.beginPath();
+
+            ctx.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+            ctx.lineWidth = 10;
+            // line color
+            ctx.strokeStyle = 'red';
+            ctx.stroke();
+
+            if ($("#MaxDownLimit").val().length > 2) {
+                var canvas = document.getElementById('demoCanvas');
+
+                var ctx = canvas.getContext('2d');
+                ctx.beginPath();
+                ctx.font = "14px Verdana normal";
+                ctx.fillText($("#MaxUpLimit").val() + "°", 255, 15);
+
+               
+                ctx.font = "14px Verdana normal";
+                ctx.fillText($("#MaxDownLimit").val() + "°", 255, 190);
+            }
+
+
+            var xpoint = 0;
+            var ypoint = 0;
+            if ($("#RestPosition").val().length > 0) {
+                var canvas = document.getElementById('demoCanvas');
+
+                var unitvalue = (Math.abs(parseInt($("#MaxDownLimit").val())) + Math.abs(parseInt($("#MaxUpLimit").val())));
+                var totalunit = 180;
+                var center = 0;
+                if (Math.abs(parseInt($("#MaxDownLimit").val())) > Math.abs(parseInt($("#MaxUpLimit").val())))
+                    center = (totalunit / unitvalue) * Math.abs(parseInt($("#MaxUpLimit").val()));
+                else
+                    center = (totalunit / unitvalue) * Math.abs(parseInt($("#MaxDownLimit").val()));
+                //Arrow
+                var ctxd = canvas.getContext('2d');
+                ctxd.beginPath();
+                ctxd.moveTo(250, 100);
+                if (Math.abs(parseInt($("#MaxDownLimit").val())) > Math.abs(parseInt($("#MaxUpLimit").val())))
+                    ctxd.lineTo(250 - (center), 100 - (90 - center));
+                else
+                    ctxd.lineTo(250 - (center), 100 - (center - 90));
+
+                ctxd.lineWidth = 5;
+                ctxd.strokeStyle = 'black';
+                ctxd.stroke();
+
+                var ctx = canvas.getContext('2d');
+                ctx.beginPath();
+                ctx.fillText($("#RestPosition").val() + "°", 140, center);
+
+            }
+
+            var canvas = document.getElementById('demoCanvas');
+
+            var ctx = canvas.getContext('2d');
+
+            if ($("#StretchUpLimit").val().length > 1) {
+                //alert();
+                var x = 250;
+                var y = 100;
+                var radius = 90;
+
+                var unitvalue = (Math.abs(parseInt($("#MaxDownLimit").val())) + Math.abs(parseInt($("#MaxUpLimit").val())));
+                var totalunit = 180;
+                var center = (totalunit / unitvalue) * Math.abs(parseInt($("#MaxUpLimit").val()));
+
+                var rangeValue = (1 / totalunit) * center;
+
+                
+                var startAngle = ((1.5 - rangeValue) + ((rangeValue / Math.abs(parseInt($("#MaxUpLimit").val()))) * Math.abs(parseInt($("#FlexUpLimit").val())))) * Math.PI;
+                var endAngle = ((1.5 - rangeValue) + ((rangeValue / Math.abs(parseInt($("#MaxUpLimit").val()))) * Math.abs(parseInt($("#StretchUpLimit").val())))) * Math.PI;
+                
+                var counterClockwise = false;
+                var ctx2 = canvas.getContext('2d');
+                ctx2.beginPath();
+
+                ctx2.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+                ctx2.lineWidth = 10;
+                // line color
+                ctx2.strokeStyle = 'yellow';
+                ctx2.stroke();
+
+
+                var startAngle = (1.5 - rangeValue) * Math.PI;
+                var endAngle = ((1.5 - rangeValue) + ((rangeValue / Math.abs(parseInt($("#MaxUpLimit").val()))) * Math.abs(parseInt($("#FlexUpLimit").val())))) * Math.PI;
+                var counterClockwise = false;
+                var ctx2 = canvas.getContext('2d');
+                ctx2.beginPath();
+
+                ctx2.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+                ctx2.lineWidth = 10;
+                // line color
+                ctx2.strokeStyle = 'green';
+                ctx2.stroke();
+            }
+            if ($("#StretchDownLimit").val().length > 1) {
+                var x = 250;
+                var y = 100;
+                var radius = 90;
+
+                var unitvalue = (Math.abs(parseInt($("#MaxDownLimit").val())) + Math.abs(parseInt($("#MaxUpLimit").val())));
+                var totalunit = 180;
+                var center = (totalunit / unitvalue) * Math.abs(parseInt($("#MaxDownLimit").val()));
+
+                var rangeValue = (1 / totalunit) * center;
+
+               
+                var endAngle = ((0.5 + rangeValue) - ((rangeValue / Math.abs(parseInt($("#MaxDownLimit").val()))) * Math.abs(parseInt($("#FlexDownLimit").val())))) * Math.PI;
+                var startAngle = ((0.5 + rangeValue) - ((rangeValue / Math.abs(parseInt($("#MaxDownLimit").val()))) * Math.abs(parseInt($("#StretchDownLimit").val())))) * Math.PI;
+               
+                var counterClockwise = false;
+                var ctx2 = canvas.getContext('2d');
+                ctx2.beginPath();
+
+                ctx2.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+                ctx2.lineWidth = 10;
+                // line color
+                ctx2.strokeStyle = 'yellow';
+                ctx2.stroke();
+
+
+                var endAngle = (0.5 + rangeValue) * Math.PI;
+                var startAngle = ((0.5 + rangeValue) - ((rangeValue / Math.abs(parseInt($("#MaxDownLimit").val()))) * Math.abs(parseInt($("#FlexDownLimit").val())))) * Math.PI;
+                var counterClockwise = false;
+                var ctx2 = canvas.getContext('2d');
+                ctx2.beginPath();
+
+                ctx2.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+                ctx2.lineWidth = 10;
+                // line color
+                ctx2.strokeStyle = 'green';
+                ctx2.stroke();
+            }
+
+
+            //circle-point
+            var ctx1 = canvas.getContext('2d');
+            var x = 250;
+            var y = 100;
+            var radius = 5;
+            var startAngle = 0 * Math.PI;
+            var endAngle = 2 * Math.PI;
+            var counterClockwise = false;
+            ctx1.beginPath();
+            ctx1.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+            ctx1.lineWidth = 10;
+            // line color
+            ctx1.strokeStyle = 'black';
+            ctx1.stroke();
+        }
+
+
+
+    </script>
+}
+

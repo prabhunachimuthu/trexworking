@@ -1,0 +1,667 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using OneDirect.Helper
+@{
+
+}
+@model OneDirect.ViewModels.NewProtocol
+
+<section class="content-header">
+    <h1>
+        @if (ViewBag.Action == "edit")
+        {
+            @if (Context.Session.GetString("UserType") == ConstantsVar.PatientAdministrator.ToString())
+            {
+
+                <span> @ViewBag.PatientName's  @ViewBag.ProtocolName  @ViewBag.EType Exercise Detail</span>
+            }
+            else
+            {
+                <span>Edit @ViewBag.PatientName's  @ViewBag.ProtocolName  @ViewBag.EType Exercise</span>
+
+            }
+
+        }
+        else
+        {
+            <span>Add @ViewBag.PatientName's  @ViewBag.ProtocolName   @ViewBag.EType Exercise </span>
+        }
+
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Exercise</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+
+@using (Html.BeginForm())
+{
+    <div class="col-md-12" style="padding-top:20px">
+        <!-- Horizontal Form -->
+        <div class="box box-info">
+
+            <!-- /.box-header -->
+            <!-- form start -->
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.EquipmentType)
+            @Html.HiddenFor(model => model.ProtocolId)
+            @Html.HiddenFor(model => model.SurgeryDate)
+            @Html.HiddenFor(model => model.RxEndDate)
+            @Html.HiddenFor(model => model.RxId)
+            @Html.HiddenFor(model => model.PatientId)
+            @Html.HiddenFor(model => model.ExcerciseEnum)
+            @Html.HiddenFor(model => model.ProtocolEnum)
+
+            <div class="box-body" style="font-size:small">
+                <div class="col-md-12 ">
+                    <div class="col-md-3 no-pad-left">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="EquipmentType" class="control-label">Exercise Type</label>
+                            <div>
+                                @if (ViewBag.Action == "edit")
+                                {
+                                    <h4>@ViewBag.Excercise</h4>
+                                    @Html.Hidden("ProtocolType", (string)ViewBag.Excercise)
+                                    @Html.Hidden("Action", "edit")
+                                }
+                                else
+                                {
+                                    @if (Model.EquipmentType.ToLower() == "shoulder")
+                                    {
+                                        @Html.DropDownListFor(model => model.ExcerciseName, ViewBag.Protocol as IEnumerable<SelectListItem>, new { @class = "form-control not-active", @disabled = "disabled" })
+                                        @Html.ValidationMessageFor(model => model.ExcerciseName, "", new { @class = "error" })
+                                        @Html.Hidden("Action", "add")
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(model => model.ExcerciseName, ViewBag.Protocol as IEnumerable<SelectListItem>, new { @class = "form-control", @disabled = "disabled" })
+                                        @Html.ValidationMessageFor(model => model.ExcerciseName, "", new { @class = "error" })
+                                        @Html.Hidden("Action", "add")
+                                    }
+
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 ">
+                        <div class="form-group" style="margin-bottom:2px;">
+                            <label for="FlexUpLimit" class="control-label">Exercise Name</label>
+                            <div>
+                                @Html.TextBoxFor(model => model.ProtocolName, new { @class = "form-control", @disabled = "disabled" })
+                                @Html.ValidationMessageFor(model => model.ProtocolName)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Start Date<span style="color:red">*</span></label>
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker", @placeholder = "Enter surgery date", autocomplete = "off", @disabled = "disabled" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "error" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>End Date<span style="color:red">*</span></label>
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                @Html.TextBoxFor(model => model.EndDate, new { @class = "form-control datepicker", @placeholder = "Enter end date", autocomplete = "off", @disabled = "disabled" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "error" })
+                        </div>
+                    </div>
+                </div>
+                @if (Model.ProtocolEnum == 1 || Model.ProtocolEnum == 3)
+                {
+                    <div class="col-md-6" id="div-flexion" style="display:block;">
+                        <div class="box box-default" style="margin-bottom:2px;margin-top:2px;">
+                            <div class="box-header with-border" style="padding:1px;">
+                                <h4>@ViewBag.flexionString</h4>
+                            </div>
+                            <div class="box-body" style="padding:1px;">
+                                <div class="col-md-12 no-pad-left">
+                                    <div class="form-group">
+                                        <label for="FlexDownLimit" class="control-label">Current End Range <span style="color:red">(Latest Achieved End Range is @Model.FlexUpLimit)</span></label>
+                                        <div>Angle should be between @Model.Flex_Current_Start to @Model.Flex_Current_End</div>
+                                        <div>
+                                            @Html.TextBoxFor(model => model.FlexUpLimit, new { @class = "form-control", @type = "number", autocomplete = "off", @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.FlexUpLimit)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 no-pad-left">
+                                    <div class="form-group" style="margin-bottom:2px;">
+                                        <label for="StretchUpLimit" class="control-label">End Range Goal</label>
+                                        <div>Angle should be between @Model.Flex_Goal_Start to @Model.Flex_Goal_End</div>
+                                        <div>
+                                            @Html.TextBoxFor(model => model.StretchUpLimit, new { @class = "form-control", @type = "number", autocomplete = "off", @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.StretchUpLimit)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 no-pad-left">
+                                    <div class="form-group">
+                                        <label for="StretchUpHoldtime" class="control-label">Hold time(seconds) at End Range Goal</label>
+                                        <div style="margin-top:2px;">
+                                            @Html.TextBoxFor(model => model.StretchUpHoldtime, new { @class = "form-control", @type = "number", autocomplete = "off", @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.StretchUpHoldtime)
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (Model.EquipmentType.ToLower() == "shoulder" && Model.ExcerciseEnum == "Forward Flexion")
+                                {
+                                    <div class="col-md-12 no-pad-left">
+                                        <div class="form-group">
+                                            <label for="Plane" class="control-label">Plane</label>
+                                            <div style="margin-top:2px;">
+                                                @Html.DropDownListFor(model=>model.Plane,
+                                                new List<SelectListItem>
+                            {  new SelectListItem{ Text="Sagittal Angle", Value = "1" },
+                            new SelectListItem{ Text="Scapular Angle", Value = "2" },
+                                                new SelectListItem{ Text="Frontal Angle", Value = "3" }}, "Select", new { @class = "form-control", @disabled = "disabled" })
+                                                @Html.ValidationMessageFor(model => model.Plane)
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+                @if (Model.EquipmentType.ToLower() != "shoulder" && (Model.ProtocolEnum == 1 || Model.ProtocolEnum == 2 || Model.ProtocolEnum == 3))
+                {
+                    <div class="col-md-6" id="div-extension" style="display:@(ViewBag.Action != "edit"?(Model.ExcerciseEnum =="Flexion-Extension"?"none":"block"): (Model.ProtocolEnum !=1  ? "block" : "none"))">
+                        <div class="box box-default" style="margin-bottom:2px;margin-top:2px;">
+                            <div class="box-header with-border" style="padding:1px;">
+                                <h4>@ViewBag.extensionString</h4>
+                            </div>
+                            <div class="box-body" style="padding:1px;">
+                                <div class="col-md-12 no-pad-left">
+                                    <div class="form-group">
+                                        <label for="FlexDownLimit" class="control-label">Current End Range <span style="color:red">(Latest Achieved End Range is @Model.FlexDownLimit)</span></label>
+                                        <div>Angle should be between @Model.Ext_Current_Start to @Model.Ext_Current_End</div>
+                                        <div>
+                                            @Html.TextBoxFor(model => model.FlexDownLimit, new { @class = "form-control", @type = "number", autocomplete = "off", @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.FlexDownLimit)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 no-pad-left">
+                                    <div class="form-group" style="margin-bottom:2px;">
+                                        <label for="StretchUpLimit" class="control-label">End Range Goal</label>
+                                        <div>Angle should be between @Model.Ext_Goal_Start to @Model.Ext_Goal_End</div>
+                                        <div>
+                                            @Html.TextBoxFor(model => model.StretchDownLimit, new { @class = "form-control", @type = "number", autocomplete = "off", @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.StretchDownLimit)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 no-pad-left" style="margin-top:8px;">
+                                    <div class="form-group">
+                                        <label for="StretchDownHoldtime" class="control-label">Hold time(seconds) at End Range Goal</label>
+                                        <div style="margin-top:2px;">
+                                            @Html.TextBoxFor(model => model.StretchDownHoldtime, new { @class = "form-control", @type = "number", autocomplete = "off", @disabled = "disabled" })
+                                            @Html.ValidationMessageFor(model => model.StretchDownHoldtime)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="col-md-12" style="margin-top:10px;">
+                    <div class="box-body" style="padding:1px;">
+                        <div class="col-md-2 no-pad-left">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="FlexUpLimit" class="control-label">Rest Time(seconds)</label>
+                                <div>
+                                    @Html.TextBoxFor(model => model.RestTime, new { @class = "form-control", @type = "number", autocomplete = "off", @disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.RestTime)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 no-pad-left">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="FlexUpLimit" class="control-label">&nbsp;</label>
+                                <div>
+                                    <label for="FlexUpLimit" class="control-label">at</label> &nbsp;       @Html.RadioButtonFor(m => m.RestAt, "0", new { @disabled = "disabled" }) Neutral
+                                    @Html.RadioButtonFor(m => m.RestAt, "1", new { @style = "margin-left: 5px;", @disabled = "disabled" }) Current
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12" style="margin-top:10px;">
+                    <div class="box-body" style="padding:1px;">
+                        <div class="col-md-2 no-pad-left">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="StretchUpLimit" class="control-label">Reps</label>
+                                <div>
+                                    @Html.TextBoxFor(model => model.Reps, new { @class = "form-control", @type = "number", autocomplete = "off", @disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.Reps)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 no-pad-left">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="FlexUpLimit" class="control-label">&nbsp;</label>
+                                <div>
+                                    <label for="FlexUpLimit" class="control-label">at</label> &nbsp;
+                                    @Html.RadioButtonFor(m => m.RepsAt, "0", new { @disabled = "disabled" }) End Range Goal
+                                    @Html.RadioButtonFor(m => m.RepsAt, "1", new { @style = "margin-left: 5px;", @disabled = "disabled" }) Progressing to End Range Goal
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" style="margin-top:10px;">
+                    <div class="box-body" style="padding:1px;">
+                        <div class="col-md-2 no-pad-left">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="FlexUpHoldtime" class="control-label">Speed</label>
+                                <div>
+                                    @Html.TextBoxFor(model => model.Speed, new { @class = "form-control", @type = "number", autocomplete = "off", @disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.Speed)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" style="margin-top:10px;">
+                    <div class="box-body" style="padding:1px;">
+                        <div class="col-md-3 no-pad-left">
+                            <div class="form-group" style="margin-bottom:2px;">
+                                <label for="FlexUpHoldtime" class="control-label">Estimated Duration(minutes)</label>
+                                <div>
+                                    @Html.TextBoxFor(model => model.Time, new { @class = "form-control", @type = "number", autocomplete = "off", @readonly = "true", @disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.Time)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <!-- /.box-footer -->
+        </div>
+    </div>
+}
+
+@section Scripts {
+
+    <script type="text/javascript">
+        var romchange=@Model.RateOfChange;
+        var flexup=@(Model.FlexUpLimit !=null ?Model.FlexUpLimit :0);
+        var stretchup=@(Model.StretchUpLimit != null? Model.StretchUpLimit : 0);
+        var flexdown=@(Model.FlexDownLimit !=null? Model.FlexDownLimit:0);
+        var stretchdown=@(Model.StretchDownLimit !=null?Model.StretchDownLimit:0);
+        $('.datepicker1').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+        $('.datepicker').datepicker({ autoclose: true, format: 'M-dd-yyyy', todayHighlight: true, forceParse: false });
+        $("#datepicker1").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1999:2003",
+            dateFormat: "M-dd-yyyy",
+            defaultDate: '01-01-1999'
+        });
+
+        $(document).ready(function () {
+            $('.input-validation-error').on('focus', function () {
+                $(this).parents('.form-group').removeClass('has-error');
+                $(this).attr('class', 'form-control');
+                $(this).next('span.field-validation-error').attr('class', 'field-validation-valid').html('');
+            })
+
+
+
+            $("#ExcerciseName").change(function () {
+                if ($("#EquipmentType").val() != "Shoulder") {
+                    if (this.value == "1") {
+                        document.getElementById("div-flexion").style.display = "block";
+                        document.getElementById("div-extension").style.display = "none";
+                    }
+                    if (this.value == "2") {
+                        document.getElementById("div-flexion").style.display = "none";
+                        document.getElementById("div-extension").style.display = "block";
+                    }
+                    if (this.value == "3") {
+                        document.getElementById("div-flexion").style.display = "block";
+                        document.getElementById("div-extension").style.display = "block";
+                    }
+                }
+            });
+            $("#StretchUpHoldtime").on("keyup mouseup", function (e) {
+                getDuration();
+            });
+            $("#RestTime").on("keyup mouseup", function (e) {
+                getDuration();
+            });
+            $("#Reps").on("keyup mouseup", function (e) {
+                getDuration();
+            });
+            $("#StretchDownHoldtime").on("keyup mouseup", function (e) {
+                getDuration();
+            });
+
+            $("#FlexUpLimit").on("keyup mouseup", function (e) {
+                var value=Math.round(parseInt($("#FlexUpLimit").val()) + parseInt(romchange));
+                $("#StretchUpLimit").val(value);
+            });
+
+            $("#StretchUpLimit").on("keyup mouseup", function (e) {
+                var value=Math.round(parseInt($("#FlexUpLimit").val()) +  parseInt(romchange));
+                var value1=$("#StretchUpLimit").val();
+                if(parseInt(value) < parseInt(value1)) {
+                    if(confirm("Value entered is higher than Patient’s Current end range, want to continue?"))
+                    {
+                        $('#FlexUpLimit').focus();
+                    }
+                    else{
+
+                        $('#FlexUpLimit').val(flexup);
+                        $('#StretchUpLimit').val(stretchup);
+                    }
+
+                }
+            });
+
+            $("#FlexDownLimit").on("keyup mouseup", function (e) {
+                var value=Math.round(parseInt($("#FlexDownLimit").val()) -  parseInt(romchange));
+                $("#StretchDownLimit").val(value);
+            });
+            $("#StretchDownLimit").on("keyup mouseup", function (e) {
+                var value=Math.round(parseInt($("#FlexDownLimit").val()) - parseInt(romchange));
+                var value1=$("#StretchDownLimit").val();
+                if(parseInt(value1) < parseInt(value)) {
+                    if(confirm("Value entered is less than Patient’s Current end range, want to continue?"))
+                    {
+                        $("#StretchDownLimit").val(value1);
+                        $('#FlexDownLimit').focus();
+                    }
+                    else{
+
+                        $('#FlexDownLimit').val(flexdown);
+                        $('#StretchDownLimit').val(stretchdown);
+                    }
+
+                }
+            });
+
+
+            function getDuration() {
+                var etype = $('#EquipmentType').val();
+                var action = $('#Action').val();
+                var protocol_name;
+                if (action == "edit") {
+                    protocol_name = $('#ProtocolType').val();
+                }
+                else {
+                    protocol_name = $("#ExcerciseName  option:selected").text();
+                }
+                var holdtime = $("#StretchUpHoldtime").val();
+                var resttime = $("#RestTime").val();
+                var reps = $("#Reps").val();
+                var Value;
+                if (etype != "Shoulder" && protocol_name == "Flexion-Extension") {
+                    var holdtime1 = $("#StretchDownHoldtime").val();
+                    Value = Math.round((((parseInt(resttime) + (parseInt(holdtime) + parseInt(holdtime1))) / 60) + 2) * parseInt(reps));
+                }
+                else if (etype != "Shoulder" && protocol_name == "Extension") {
+                    var holdtime1 = $("#StretchDownHoldtime").val();
+                    Value = Math.round((((parseInt(resttime) + parseInt(holdtime1)) / 60) + 2) * parseInt(reps));
+                }
+                else
+                    Value = Math.round((((parseInt(resttime) + parseInt(holdtime)) / 60) + 2) * parseInt(reps));
+                $("#Time").val(Value);
+            }
+            $("button[type=submit]").click(function (e) {
+                if ($('form').valid() == false) {
+                    $('.field-validation-error').addClass('text-danger');
+                }
+
+                var RxStart_date = $('#SurgeryDate').val();
+                var start_date = $('#StartDate').val();
+                var end_date = $('#EndDate').val();
+                var Rxend_date = $('#RxEndDate').val();
+                var etype = $('#EquipmentType').val();
+                var action = $('#Action').val();
+                var speed=parseInt($("#Speed").val());
+                var protocol_name;
+                if (action == "edit") {
+                    protocol_name = $('#ProtocolType').val();
+                }
+                else {
+                    protocol_name = $("#ExcerciseName  option:selected").text();
+                }
+                var flex_min = parseInt($('#FlexUpLimit').val());
+                var flex_max = parseInt($('#StretchUpLimit').val());
+                if(speed >250)
+                {
+                    $("span[data-valmsg-for='Speed']").html("<br><span for='Speed' class='' style='color:red'>Speed should not greater than 250</span>");
+                    return false;
+
+                }
+                if (etype == "Knee") {
+
+                    var exten_min = parseInt($('#FlexDownLimit').val());
+                    var exten_max = parseInt($('#StretchDownLimit').val());
+                    if (new Date(start_date) > new Date(end_date) || new Date(Rxend_date) < new Date(end_date)) {
+                        $("span[data-valmsg-for='EndDate']").html("<br><span for='EndDate' class='' style='color:red'>End date should be greater than Start date or Less than RxEnd date</span>");
+
+                        return false;
+                    }
+                    if (new Date(RxStart_date) > new Date(start_date) || new Date(Rxend_date) < new Date(start_date)) {
+                        $("span[data-valmsg-for='StartDate']").html("<br><span for='StartDate' class='' style='color:red'>Start date should be greater than Rx Start date or Less than End date</span>");
+
+                        return false;
+                    }
+                    if (protocol_name == "Flexion" || protocol_name == "Flexion-Extension") {
+                        if (flex_min < parseInt('@Constants.Knee_Flex_Current_Start') || flex_min > parseInt('@Constants.Knee_Flex_Current_End')) {
+                            $("span[data-valmsg-for='FlexUpLimit']").html("<br><span for='#FlexUpLimit' class='' style='color:red'>Angle should be greater than or equal to @Constants.Knee_Flex_Current_Start and lesser than or equal to @Constants.Knee_Flex_Current_End </span>");
+                            $('#FlexUpLimit').focus();
+                            return false;
+                        }
+
+                        if (flex_max < parseInt('@Constants.Knee_Flex_Goal_Start') || flex_max > parseInt('@Constants.Knee_Flex_Goal_End')) {
+                            $("span[data-valmsg-for='StretchUpLimit']").html("<br><span for='#StretchUpLimit' class='' style='color:red'>Angle should be greater than or equal to @Constants.Knee_Flex_Goal_Start and lesser than or equal to @Constants.Knee_Flex_Goal_End</span>");
+                            $('#StretchUpLimit').focus();
+                            return false;
+                        }
+                        if (flex_max < flex_min) {
+                            $("span[data-valmsg-for='StretchUpLimit']").html("<br><span for='#StretchUpLimit' class='' style='color:red'>Angle should be greater than Current angle</span>");
+                            $('#StretchUpLimit').focus();
+                            return false;
+                        }
+                    }
+                    if (protocol_name == "Extension" || protocol_name == "Flexion-Extension") {
+                        if (exten_min > parseInt('@Constants.Knee_Ext_Current_Start') || exten_min < parseInt('@Constants.Knee_Ext_Current_End')){
+                            $("span[data-valmsg-for='FlexDownLimit']").html("<br><span for='#FlexDownLimit' class='' style='color:red'>Angle should be greater than or equal to @Constants.Knee_Ext_Current_Start and lesser than or equal to @Constants.Knee_Ext_Current_End</span>");
+                            $('#FlexDownLimit').focus();
+                            return false;
+                        }
+
+                        if (exten_max > parseInt('@Constants.Knee_Ext_Goal_Start') || exten_max < parseInt('@Constants.Knee_Ext_Goal_End')){
+                            $("span[data-valmsg-for='StretchDownLimit']").html("<br><span for='#StretchDownLimit' class='' style='color:red'>Angle should be greater than or equal to @Constants.Knee_Ext_Goal_Start and lesser than or equal to @Constants.Knee_Ext_Goal_End</span>");
+                            $('#StretchDownLimit').focus();
+                            return false;
+                        }
+                        if (exten_max > exten_min) {
+                            $("span[data-valmsg-for='StretchDownLimit']").html("<br><span for='#StretchDownLimit' class='' style='color:red'>Angle should be less than Current angle</span>");
+                            $('#StretchDownLimit').focus();
+                            return false;
+                        }
+                    }
+                }
+                else if (etype == "Ankle") {
+
+                    var exten_min = parseInt($('#FlexDownLimit').val());
+                    var exten_max = parseInt($('#StretchDownLimit').val());
+
+                    if (new Date(start_date) > new Date(end_date) || new Date(Rxend_date) < new Date(end_date)) {
+                        $("span[data-valmsg-for='EndDate']").html("<br><span for='EndDate' class='' style='color:red'>End date should be greater than Start date or Less than RxEnd date</span>");
+
+                        return false;
+                    }
+                    if (new Date(RxStart_date) > new Date(start_date) || new Date(Rxend_date) < new Date(start_date)) {
+                        $("span[data-valmsg-for='StartDate']").html("<br><span for='StartDate' class='' style='color:red'>Start date should be greater than Rx Start date or Less than End date</span>");
+
+                        return false;
+                    }
+                    if (protocol_name == "Flexion" || protocol_name == "Flexion-Extension") {
+                        if (flex_min <= parseInt('@Constants.Ankle_Flex_Current_Start') || flex_min > parseInt('@Constants.Ankle_Flex_Current_End')) {
+                            $("span[data-valmsg-for='FlexUpLimit']").html("<br><span for='#FlexUpLimit' class='' style='color:red'>Angle should be greater than or equal to @Constants.Ankle_Flex_Current_Start and lesser than or equal to @Constants.Ankle_Flex_Current_End </span>");
+                            $('#FlexUpLimit').focus();
+                            return false;
+                        }
+
+                        if (flex_max < parseInt('@Constants.Ankle_Flex_Goal_Start') || flex_max > parseInt('@Constants.Ankle_Flex_Goal_End')) {
+                            $("span[data-valmsg-for='StretchUpLimit']").html("<br><span for='#StretchUpLimit' class='' style='color:red'>Angle should be greater than or equal to @Constants.Ankle_Flex_Goal_Start and lesser than or equal to @Constants.Ankle_Flex_Goal_End</span>");
+                            $('#StretchUpLimit').focus();
+                            return false;
+                        }
+                        if (flex_max < flex_min) {
+                            $("span[data-valmsg-for='StretchUpLimit']").html("<br><span for='#StretchUpLimit' class='' style='color:red'>Angle should be greater than Current angle</span>");
+                            $('#StretchUpLimit').focus();
+                            return false;
+                        }
+                    }
+                    if (protocol_name == "Extension" || protocol_name == "Flexion-Extension") {
+                        if (exten_min > parseInt('@Constants.Ankle_Ext_Current_Start') || exten_min < parseInt('@Constants.Ankle_Ext_Current_End')) {
+                            $("span[data-valmsg-for='FlexDownLimit']").html("<br><span for='#FlexDownLimit' class='' style='color:red'>Angle should be greater than or equal to @Constants.Ankle_Ext_Current_End and lesser than or equal to @Constants.Ankle_Ext_Current_Start</span>");
+                            $('#FlexDownLimit').focus();
+                            return false;
+                        }
+
+                        if (exten_max > parseInt('@Constants.Ankle_Ext_Goal_Start') || exten_max < parseInt('@Constants.Ankle_Ext_Goal_End')) {
+                            $("span[data-valmsg-for='StretchDownLimit']").html("<br><span for='#StretchDownLimit' class='' style='color:red'>Angle should be greater than or equal to @Constants.Ankle_Ext_Goal_End and lesser than or equal to @Constants.Ankle_Ext_Goal_Start</span>");
+                            $('#StretchDownLimit').focus();
+                            return false;
+                        }
+                        if (exten_max > exten_min) {
+                            $("span[data-valmsg-for='StretchDownLimit']").html("<br><span for='#StretchDownLimit' class='' style='color:red'>Angle should be less than Current angle</span>");
+                            $('#StretchDownLimit').focus();
+                            return false;
+                        }
+                    }
+                }
+                else {
+
+                    if (new Date(start_date) > new Date(end_date) || new Date(Rxend_date) < new Date(end_date)) {
+                        $("span[data-valmsg-for='EndDate']").html("<br><span for='EndDate' class='' style='color:red'>End date should be greater than Start date or Less than RxEnd date</span>");
+
+                        return false;
+                    }
+                    if (new Date(RxStart_date) > new Date(start_date) || new Date(Rxend_date) < new Date(start_date)) {
+                        $("span[data-valmsg-for='StartDate']").html("<br><span for='StartDate' class='' style='color:red'>Start date should be greater than Rx Start date or Less than End date</span>");
+
+                        return false;
+                    }
+
+                    if (protocol_name == "Forward Flexion") {
+
+                        if (flex_min < parseInt('@Constants.Sh_Flex_Current') || flex_min > parseInt('@Constants.Sh_Flex_Goal')) {
+                            $("span[data-valmsg-for='FlexUpLimit']").html("<br><span for='#FlexUpLimit' class='' style='color:red'>Angle should be greater than @Constants.Sh_Flex_Current</span>");
+                            $('#FlexUpLimit').focus();
+                            return false;
+                        }
+                        if (flex_max > parseInt('@Constants.Sh_Flex_Goal')) {
+                            $("span[data-valmsg-for='StretchUpLimit']").html("<br><span for='#StretchUpLimit' class='' style='color:red'>Angle should be less than or equal to  @Constants.Sh_Flex_Goal </span>");
+                            $('#StretchUpLimit').focus();
+                            return false;
+                        }
+                        if (flex_max < flex_min) {
+                            $("span[data-valmsg-for='StretchUpLimit']").html("<br><span for='#StretchUpLimit' class='' style='color:red'>Angle should be greater than Current angle</span>");
+                            $('#StretchUpLimit').focus();
+                            return false;
+                        }
+                    }
+                    if (protocol_name == "External Rotation") {
+
+                        if (flex_min < parseInt('@Constants.Sh_ExRot_Current') || flex_min > parseInt('@Constants.Sh_ExRot_Goal')) {
+                            $("span[data-valmsg-for='FlexUpLimit']").html("<br><span for='#FlexUpLimit' class='' style='color:red'>Angle should be greater than @Constants.Sh_ExRot_Current</span>");
+                            $('#FlexUpLimit').focus();
+                            return false;
+                        }
+                        if (flex_max > parseInt('@Constants.Sh_ExRot_Goal')) {
+                            $("span[data-valmsg-for='StretchUpLimit']").html("<br><span for='#StretchUpLimit' class='' style='color:red'>Angle should be less than or equal to @Constants.Sh_ExRot_Goal</span>");
+                            $('#StretchUpLimit').focus();
+                            return false;
+                        }
+                        if (flex_max < flex_min) {
+                            $("span[data-valmsg-for='StretchUpLimit']").html("<br><span for='#StretchUpLimit' class='' style='color:red'>Angle should be greater than Current angle</span>");
+                            $('#StretchUpLimit').focus();
+                            return false;
+                        }
+                    }
+                    if (protocol_name == "Abduction") {
+                        if (flex_min < parseInt('@Constants.Sh_Abd_Current') || flex_min > parseInt('@Constants.Sh_Abd_Goal')) {
+                            $("span[data-valmsg-for='FlexUpLimit']").html("<br><span for='#FlexUpLimit' class='' style='color:red'>Angle should be greater than @Constants.Sh_Abd_Current</span>");
+                            $('#FlexUpLimit').focus();
+                            return false;
+                        }
+                        if (flex_max > parseInt('@Constants.Sh_Abd_Goal')) {
+                            $("span[data-valmsg-for='StretchUpLimit']").html("<br><span for='#StretchUpLimit' class='' style='color:red'>Angle should be less than or equal to @Constants.Sh_Abd_Goal</span>");
+                            $('#StretchUpLimit').focus();
+                            return false;
+                        }
+                        if (flex_max < flex_min) {
+                            $("span[data-valmsg-for='StretchUpLimit']").html("<br><span for='#StretchUpLimit' class='' style='color:red'>Angle should be greater than Current angle</span>");
+                            $('#StretchUpLimit').focus();
+                            return false;
+                        }
+                    }
+
+                }
+
+            });
+
+            if ($('[name=StartDate]').val().length >= 8) {
+                $('[name=StartDate]').val($.datepicker.formatDate('M-dd-yy', new Date($('[name=StartDate]').val())));
+            }
+            else {
+                $("#datepicker1").val('');
+            }
+
+            if ($('[name=EndDate]').val().length >= 8) {
+                $('[name=EndDate]').val($.datepicker.formatDate('M-dd-yy', new Date($('[name=EndDate]').val())));
+            }
+            else {
+                $("#datepicker").val('');
+            }
+
+
+
+            getDuration();
+        });
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

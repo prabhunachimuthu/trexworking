@@ -1,0 +1,315 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using System;
+@using OneDirect.Extensions;
+
+@using System.Globalization;
+@model IEnumerable<OneDirect.ViewModels.DashboardView>
+@{
+
+    Func<int, string> getcolor = (progress) =>
+    {
+        if (progress == 0)
+            return "";
+        else if (progress < 50)
+            return "background-color:red;font-weight:bold;";
+        else if (progress > 70)
+            return "background-color:green;font-weight:bold;";
+        else
+            return "background-color:yellow;font-weight:bold;";
+    };
+}
+
+<style>
+    hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border: 0;
+        border-top: 1px solid #eee;
+    }
+
+
+    #label label-primary pull-right {
+        float: right !important;
+    }
+
+
+
+    #progressbar {
+        border-radius: 8px;
+        margin-top: 5px;
+        overflow: hidden;
+        border-color: black;
+        border-width: 3px;
+        height: 15px;
+    }
+
+    .container_circle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .circle {
+        background-color: slateblue;
+        border-color: white;
+        border-radius: 50%;
+        border-width: 1px;
+        height: 50px;
+        width: 50px;
+    }
+</style>
+
+<section class="content-header" style="padding-bottom:20px">
+    <h1>
+        @Context.Session.GetString("UserName")'s Patients
+
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="~/Therapist/Dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Therapist</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        @*<div class="col-md-12">
+                <div class="col-sm-6">
+
+                </div>
+                <div class="col-sm-6">
+
+             <div id="example1_filter" class="dataTables_filter">
+                <label>
+                    Search:<input type="search" class="searchbox input-sm" placeholder="" aria-controls="example1">
+                </label>
+            </div>
+            </div>
+            </div>*@
+        @*<div id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">*@
+
+        <div class="forsearch">
+            <div class="row">
+                <div class="col-md-12">
+                    @foreach (var item in Model)
+                    {
+                        if (item.PatientRx != null)
+                        {
+                            <div class="review_redirect" style="cursor:pointer" onclick="reviewRedirect('@item.PatientRx.PatientId','@item.PatientRx.Patient.PatientName','@item.PatientRx.EquipmentType','@item.PatientRx.DeviceConfiguration');">
+                                <div class="col-md-12">
+                                    <div class="box box-primary">
+                                        <div class="box-header with-border" data-name="PatientName">
+                                            <div class=" col-md-12 col-xs-12 no-padding">
+                                                <div class="col-md-8 col-xs-8">
+                                                    <h4 class="box-title">
+
+                                                        <strong><span style="color:deepskyblue"> @item.PatientRx.Patient.PatientName</span><span>(@item.PatientRx.Patient.PatientLoginId)</span></strong>
+
+
+                                                    </h4>
+                                                </div>
+                                                <div class="col-md-2 col-xs-2" align="left">
+                                                    @item.PatientRx.EquipmentType
+                                                </div>
+                                                <div class="col-md-2 col-xs-2" align="right">
+                                                    @if (ViewBag.usertype != "0")
+                                                    {
+                                                        @Html.ActionLink("Video Call", "VideoCallTherapist", "Therapist", new { patientId = item.PatientRx.Patient.PatientLoginId }, new { @class = "label label-primary" })
+
+                                                    }
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <!-- /.box-header -->
+                                        <div class="box-body">
+                                            <div class="col-md-12 col-xs-12">
+                                                <div class="col-md-4 col-xs-4">
+                                                    <strong><i class="sorting_asc"></i> Doctor</strong>
+
+                                                    <p class="text-muted">@item.PatientRx.Provider.Name</p>
+                                                </div>
+
+                                                <div class="col-md-4 col-xs-4" align="center">
+                                                    <strong><i class="sorting_asc"></i> Date of Surgery</strong>
+
+                                                    <p class="text-muted">@(item.PatientRx.Patient.SurgeryDate != null ? Convert.ToDateTime(item.PatientRx.Patient.SurgeryDate).ToString("MMM-dd-yyyy") : "")</p>
+                                                </div>
+                                                <div class="col-md-4 col-xs-4" align="right">
+                                                    <span style="font-weight:bold">Last Use</span>
+                                                    <p class="text-muted">@(item.LastUse.HasValue ? Convert.ToDateTime(item.LastUse).ToString("MMM-dd-yyyy") : "")</p>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-12 col-xs-12">
+                                                <div class="col-md-4 col-xs-4">
+                                                    <strong><i class="sorting_asc"></i> Rx Start:</strong>
+
+                                                    <p class="text-muted" style="font-size:large;color:steelblue;">@(item.PatientRx.RxStartDate.HasValue ? Convert.ToDateTime(item.PatientRx.RxStartDate).ToString("MM/dd/yy") : "")</p>
+                                                </div>
+                                                <div class="col-md-4 col-xs-4" align="center">
+                                                    <div class="circle" style="font-weight:bold;color:white;padding-top:14px;padding-left:8px;font-size:medium">
+                                                        @item.percentage%
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-4 col-xs-4" align="right">
+                                                    <div>
+                                                        <strong><i class="sorting_asc"></i> Rx End:</strong>
+                                                    </div>
+
+                                                    <div>
+                                                        <p class="text-muted" id="date-color" style="font-size:large;color:steelblue;">
+                                                            @(item.PatientRx.RxEndDate.HasValue ? Convert.ToDateTime(item.PatientRx.RxEndDate).ToString("MM/dd/yy") : "")
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            @*<div class="col-md-12 col-xs-12" id="dateprogress">
+                                                    <div class="col-md-2 col-xs-2"><strong style="font-size:medium;">0%</strong></div>
+                                                    <div class="col-md-8 col-xs-8 no-padding">
+                                                        <div class="progress sm" id="progressbar" style="border-radius:8px;border-color:black;border-width:2px;">
+                                                            <div class="progress-bar" style="width:@item.percentage%;@getcolor(item.percentage)"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2 col-xs-2" align="right">
+                                                        <strong style="font-size:medium;margin-left:0px">100%</strong>
+                                                    </div>
+
+                                                </div>*@
+
+                                            <div class="col-md-12 col-xs-12">
+                                                <div class="col-md-12 col-xs-12">
+                                                    <strong><i class="sorting_asc"></i> Progress</strong>
+
+                                                    <p class="text-muted">
+
+
+
+                                                        @if (item.Progress != null)
+                                                        {
+                                                            if (item.PatientRx.EquipmentType.ToLower() == "shoulder")
+                                                            {
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.shoulderflexionString </span>
+                                                                    <span class="progress-number"><b>@(item.Progress.Forward > 100 ? 100 : item.Progress.Forward)%</b></span>
+                                                                    <div class="progress sm" id="progressbar" style="display:@(item.Progress.Forward > 0 ? "block" : "block")">
+                                                                        <div class="progress-bar" style="width:@item.Progress.Forward%;@getcolor(item.Progress.Forward)"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.shoulderflexionString1</span>
+                                                                    <span class="progress-number"><b>@(item.Progress.Rotation > 100 ? 100 : item.Progress.Rotation)%</b></span>
+                                                                    <div class="progress sm" id="progressbar" style="display:@(item.Progress.Rotation > 0 ? "block" : "block")">
+                                                                        <div class="progress-bar" style="width: @item.Progress.Rotation%;@getcolor(item.Progress.Rotation)"></div>
+                                                                    </div>
+                                                                </div>
+                                                                @*<div class="progress-group">
+                                                                        <span class="progress-text">Abduction</span>
+                                                                        <span class="progress-number"><b>@item.Progress.Abduction%</b></span>
+                                                                        <div class="progress sm" style="display:@(item.Progress.Abduction>0?"block":"block")">
+                                                                            <div class="progress-bar" style="width: @item.Progress.Abduction%;@getcolor(item.Progress.Abduction)"></div>
+                                                                        </div>
+                                                                    </div>*@
+                                                            }
+                                                            else if (item.PatientRx.EquipmentType.ToLower() == "ankle")
+                                                            {
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.ankleflexionString </span>
+                                                                    <span class="progress-number"><b>@(item.Progress.Flexexion > 100 ? 100 : item.Progress.Flexexion)%</b></span>
+                                                                    <div class="progress sm" id="progressbar" style="display:@(item.Progress.Flexexion > 0 ? "block" : "block")">
+                                                                        <div class="progress-bar" style="width: @item.Progress.Flexexion%;@getcolor(item.Progress.Flexexion)"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.ankleextensionString</span>
+                                                                    <span class="progress-number"><b>@(item.Progress.Extension > 100 ? 100 : item.Progress.Extension)%</b></span>
+                                                                    <div class="progress sm" id="progressbar" style="display:@(item.Progress.Extension > 0 ? "block" : "block")">
+                                                                        <div class="progress-bar" style="width: @item.Progress.Extension%;@getcolor(item.Progress.Extension)"></div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.kneeflexionString </span>
+                                                                    <span class="progress-number"><b>@(item.Progress.Flexexion > 100 ? 100 : item.Progress.Flexexion)%</b></span>
+                                                                    <div class="progress sm" id="progressbar" style="display:@(item.Progress.Flexexion > 0 ? "block" : "block")">
+                                                                        <div class="progress-bar" style="width: @item.Progress.Flexexion%;@getcolor(item.Progress.Flexexion)"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="progress-group">
+                                                                    <span class="progress-text">@ViewBag.kneeextensionString</span>
+                                                                    <span class="progress-number"><b>@(item.Progress.Extension > 100 ? 100 : item.Progress.Extension)%</b></span>
+                                                                    <div class="progress sm" id="progressbar" style="display:@(item.Progress.Extension > 0 ? "block" : "block")">
+                                                                        <div class="progress-bar" style="width: @item.Progress.Extension%;@getcolor(item.Progress.Extension)"></div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+
+
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /.box-body -->
+
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+        </div>
+        </div>
+</section>
+
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#example1').DataTable({
+            "stateSave": true,
+            "stateDuration": -1,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1] /* 1st one, start by the right */
+            }]
+        });
+
+
+        //$(".dataTables_filter").keyup(function () {
+
+        //    var filter = $(".searchbox input-sm").val(), count = 0;
+        //    $("#PatientId").each(function () {
+
+        //        var current = $('#PatientId').val();
+        //        if ($(this).text().search(new RegExp(filter, "i")) < 0) {
+        //            $(this).fadeOut();
+        //        } else {
+        //            $(this).show();
+        //            count++;
+        //        }
+        //    });
+
+        //});
+    });
+    function reviewRedirect(id, Username, EquipmentType, actuator, tab = "Dashboard") {
+
+        window.location.href = '@Url.Action("Index","Review")?id='+ id + "&Username=" + Username + "&EquipmentType="+EquipmentType+"&actuator="+actuator+"&tab=" + tab
+    }
+
+
+</script>
