@@ -36,6 +36,52 @@
             Review
         </h1>
     }
+
+    @*@if (ViewBag.page != null && ViewBag.page == "Review")
+    {
+        <div class="dropdown" id="reviewsidebar">
+            <div class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </div>
+            <ul class="dropdown-menu">
+
+                <li class="@(ViewBag.tab == "Dashboard" ? "active" : "")" onclick="triggerfunction(this)">
+                    <a href="#tab_1" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Dashboard" })" data-toggle="tab">Summary</a>
+                </li>
+                <li class="@(ViewBag.tab == "Details" ? "active" : "")" onclick="triggerfunction(this)">
+                    <a href="#tab_2" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Details" })" data-toggle="tab">Details</a>
+                </li>
+                <li class="@(ViewBag.tab == "Rx" ? "active" : "")" onclick="triggerfunction(this)">
+                    <a href="#tab_3" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Rx" })" data-toggle="tab">Rx</a>
+                </li>
+                <li class="@(ViewBag.tab == "Exercises" ? "active" : "")" onclick="triggerfunction(this)">
+                    <a href="#tab_4" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Exercises" })" data-toggle="tab">Exercises</a>
+                </li>
+                <li class="@(ViewBag.tab == "Sessions" ? "active" : "")" onclick="triggerfunction(this)">
+                    <a href="#tab_5" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Sessions" })" data-toggle="tab">Sessions</a>
+                </li>
+                <li class="@(ViewBag.tab == "PatientReviews" ? "active" : "")" onclick="triggerfunction(this)">
+                    <a href="#tab_5" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "PatientReviews" })" data-toggle="tab">Patient Reviews</a>
+                </li>
+
+                @if (Context.Session.GetString("UserType") != "6")
+                {
+                    @if (Context.Session.GetString("UserType") != "0" && Context.Session.GetString("UserType") != "2")
+                    {
+                        <li class="@(ViewBag.tab == "History" ? "active" : "")" onclick="triggerfunction(this)">
+                            <a href="#tab_6" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "History" })" data-toggle="tab">Appointments</a>
+                        </li>
+                    }
+                    <li class="@(ViewBag.tab == "Messages" ? "active" : "")" onclick="triggerfunction(this)">
+                        <a href="#tab_7" data-value="@Url.Action("Index", "Review", new { id = ViewBag.id, Username = ViewBag.User, EquipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, tab = "Messages" })" data-toggle="tab">Messages</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }*@
+
+
+
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
         <li class="active">View Review</li>

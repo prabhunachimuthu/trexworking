@@ -25,30 +25,34 @@
                             <div class="box-header with-border" data-name="PatientName">
 
                                 <div class="col-xs-12 col-md-12 no-padding">
-                                    <div class="col-xs-4 col-md-4 no-pad-left" align="left">
+                                    <div class="col-xs-3 col-md-3 no-pad-left" align="left">
+                                        <strong><span>Name:</span></strong>
+                                        <p class="text-muted"> @item.Name</p>
+                                    </div>
+                                    <div class="col-xs-3 col-md-3 no-pad-left" align="left">
                                         <strong><span>Limb:</span></strong>
                                         <p class="text-muted"> @item.Limb</p>
                                     </div>
-                                    <div class="col-xs-4 col-md-4 no-pad-left" align="center">
+                                    <div class="col-xs-3 col-md-3 no-pad-left" align="center">
                                         <strong><span>Exercise</span></strong>
                                         <p class="text-muted">@item.Exercise</p>
                                     </div>
-                                    <div class="col-xs-4 col-md-4 no-pad-left" align="right">
+                                    <div class="col-xs-3 col-md-3 no-pad-left" align="right">
                                         <strong><span>Actions</span></strong>
                                         <p class="text-muted">@Html.ActionLink("Deactivate", "Deactivate", "PatientLibrary", new { id = item.Id, patId = ViewBag.Id, eType = ViewBag.EquipmentType, actuator = ViewBag.actuator, returnView = "Review" }, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('Are you sure want to deactivate the library?')" })</p>
                                     </div>
                                 </div>
 
                                 @*<div class="col-xs-12 col-md-12 no-padding">
-                                    <div class="col-xs-12 col-md-12 no-pad-left" align="left">
-                                        <strong><span>Exercise</span></strong>
-                                        <p class="text-muted">@item.Exercise</p>
-                                    </div>
-                                    <div class="col-xs-6 col-md-6 no-pad-left" align="right">
-                                        <strong><span>Side:</span></strong>
-                                        <p class="text-muted">@item.Side</p>
-                                    </div>
-                                </div>*@
+                                        <div class="col-xs-12 col-md-12 no-pad-left" align="left">
+                                            <strong><span>Exercise</span></strong>
+                                            <p class="text-muted">@item.Exercise</p>
+                                        </div>
+                                        <div class="col-xs-6 col-md-6 no-pad-left" align="right">
+                                            <strong><span>Side:</span></strong>
+                                            <p class="text-muted">@item.Side</p>
+                                        </div>
+                                    </div>*@
                                 <div class="col-xs-12 col-md-12 no-padding" align="left">
                                     <strong><span>Url</span></strong>
                                     <p class="text-muted"><a href="@item.Url" target="_blank">@item.Url</a></p>
@@ -90,6 +94,7 @@
                                                     <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
                                                         <thead>
                                                             <tr role="row">
+                                                                <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Name</th>
                                                                 <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Patient Name: activate to sort column descending" style="width: 182px;">Limb</th>
                                                                 @*<th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Side</th>*@
                                                                 <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Phone: activate to sort column descending" style="width: 182px;">Exercise </th>
@@ -107,6 +112,9 @@
                                                                     @foreach (var item in lview.OrderByDescending(x => x.Limb))
                                                                     {
                                                                         <tr>
+                                                                            <td>
+                                                                                @item.Name
+                                                                            </td>
                                                                             <td>
                                                                                 @item.Limb
                                                                             </td>
@@ -128,17 +136,20 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
+                                                                                @item.Name
+                                                                            </td>
+                                                                            <td>
                                                                                 @item.Limb
                                                                             </td>
                                                                             @*<td>@item.Side</td>*@
                                                                             <td>@item.Exercise</td>
                                                                             <td style="white-space:nowrap"><a href="@item.Url" target="_blank">@item.Url</a></td>
-                                                                            <td>@Html.ActionLink("Activate", "Deactivate", "LibraryView", new { id = item.LibraryId, patId = ViewBag.Id, equipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, returnView = "Review", patientlibraryid= item.Id}, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('Are you sure want to activate the library?')" })</td>
+                                                                            <td>@Html.ActionLink("Activate", "Deactivate", "LibraryView", new { id = item.LibraryId, patId = ViewBag.Id, equipmentType = ViewBag.EquipmentType, actuator = ViewBag.actuator, returnView = "Review", patientlibraryid = item.Id }, new { @class = "btn btn-primary btn-xs", onclick = "return confirm('Are you sure want to activate the library?')" })</td>
                                                                         </tr>
                                                                     }
                                                                 }
                                                             }
-<tbody>
+                                                        <tbody>
                                                     </table>
                                                 </div>
                                             </div>

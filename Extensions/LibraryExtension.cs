@@ -16,6 +16,7 @@ namespace OneDirect.Extensions
             LibraryView lLibraryView = new LibraryView()
             {
                 Id = lLibrary.Id,
+                Name=lLibrary.Name,
                 Limb = lLibrary.Limb,
                 Side = lLibrary.Side,
                 Exercise = lLibrary.Exercise,
@@ -34,7 +35,8 @@ namespace OneDirect.Extensions
                 Limb = lLibrary.Limb,
                 Side = lLibrary.Side,
                 Exercise = lLibrary.Exercise,
-                Url = lLibrary.Url
+                Url = lLibrary.Url,
+                Name = lLibrary.Name
             };
             return pLibrary;
         }

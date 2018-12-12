@@ -28,6 +28,7 @@ namespace OneDirect.Areas.Patient.Controllers
         private readonly IEquipmentExerciseInterface lIEquipmentExerciseRepository;
         private readonly IPatientRxInterface lIPatientRxRepository;
         private readonly IUserInterface lIUserRepository;
+        private readonly IMessageInterface lIMessageRepository;
         private readonly IPatient lIPatient;
         private readonly ILogger logger;
         private OneDirectContext context;
@@ -44,6 +45,7 @@ namespace OneDirect.Areas.Patient.Controllers
             lIPatient = lPatientRepository;
             lILibraryRepository = ILibraryRepository;
             lIPatientLibraryRepository = IPatientLibraryRepository;
+            lIMessageRepository = new MessageRepository(context);
         }
 
         public string RemoveSpecialChars(string str)
@@ -440,6 +442,148 @@ namespace OneDirect.Areas.Patient.Controllers
             }
             return View(null);
         }
+
+        //meghna
+
+        [HttpPost]
+        [ActionName("sendmessage")]
+        public JsonResult SendMessage(string id = "", string message = "")
+        {
+            User luser1 = lIUserRepository.getUser(HttpContext.Session.GetString("UserId"));
+
+            User luser = lIUserRepository.getUser(id);
+
+
+            JsonResult lJson = null;
+            try
+            {
+                if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(message))
+                {
+
+
+
+                    if (luser1 != null && (luser.Type == 2 || luser.Type == 3))
+
+                    {
+                        Messages lmessages1 = new Messages();
+                        lmessages1.PatientId = luser1.UserId;
+                        lmessages1.BodyText = message;
+                        lmessages1.UserId = luser.UserId;
+                        lmessages1.UserType = luser.Type;
+                        lmessages1.UserName = luser.Name;
+                        lmessages1.SentReceivedFlag = 0;
+                        lmessages1.ReadStatus = 0;
+                        lmessages1.Datetime = DateTime.Now;
+                        int res = lIMessageRepository.InsertMessage(lmessages1);
+                        if (res > 0)
+                        {
+                            lmessages1.Datetime = Convert.ToDateTime(Utilities.ConverTimetoBrowserTimeZone(lmessages1.Datetime, DateTime.Now.ToString()));
+
+                            JsonSerializerSettings lsetting = new JsonSerializerSettings();
+                            lsetting.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                            lsetting.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                            lJson = Json(new { result = "success", message = lmessages1 }, lsetting);
+                            return lJson;
+                        }
+                    }
+
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                return Json("");
+            }
+            return Json("");
+        }
+        public IActionResult SendMessage(string id = "")
+        {
+            ViewBag.PatientId = id;
+
+            User luser1 = lIUserRepository.getUser(HttpContext.Session.GetString("UserId"));
+
+            User luser = lIUserRepository.getUser(id);
+
+            List<PatientMessage> lpatientList = new List<PatientMessage>();
+
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("UserId")) && !string.IsNullOrEmpty(HttpContext.Session.GetString("UserType")) && HttpContext.Session.GetString("UserType") != "0")
+            {
+                if (luser.Type == 2)
+                {
+                    lpatientList = lIPatient.GetPatientWithStatusByTherapistId(luser.UserId).OrderBy(x => x.Patient.PatientName).ToList();
+                }
+                else if (luser.Type == 3)
+                {
+                    lpatientList = lIPatient.GetPatientWithStatusByProviderId(luser.UserId).OrderBy(x => x.Patient.PatientName).ToList();
+                }
+                else if (HttpContext.Session.GetString("UserType") == ConstantsVar.Support.ToString())
+                {
+                    lpatientList = lIPatient.GetAllPatientStatus(HttpContext.Session.GetString("UserId")).OrderBy(x => x.Patient.PatientName).ToList();
+                }
+
+                ViewBag.UserType = luser.Type;
+
+                if (lpatientList != null && lpatientList.Count >= 0 && (luser.Type == 2 || luser.Type == 3))
+                {
+                    PatientMessage lpatient = (!string.IsNullOrEmpty(id) ? lpatientList.FirstOrDefault(x => x.Patient.PatientLoginId == luser1.UserId) : lpatientList.FirstOrDefault());
+                    ViewBag.Patient = lpatient.Patient.PatientName;
+                    ViewBag.PatientId = lpatient.Patient.PatientLoginId;
+                    List<MessageView> lmessages1 = lIMessageRepository.getMessagesbyTimeZone(lpatient.Patient.PatientLoginId, luser.UserId, DateTime.Now.ToString());
+
+                    ViewBag.Messages = lmessages1.OrderBy(x => x.Datetime);
+                }
+
+
+            }
+            return View();
+        }
+
+
+        public IActionResult UsersList(String id = "")
+        {
+
+            ViewBag.PatientId = id;
+
+            List<Models.Patient> p1 = lIPatient.GetPatients(id);
+
+            var x = (from Patient in p1
+                     where Patient.PatientLoginId == id
+                     select Patient.PatientName).ToList();
+
+            ViewBag.PatientName = x[0];
+
+            //List <User> pUser = lIUserRepository.getUserListByUser(id);
+
+            var x1 = (from Therapist in p1
+                      where Therapist.PatientLoginId == id
+                      select Therapist.Therapistid).ToList();
+
+
+
+
+
+            var x2 = (from Provider in p1
+                      where Provider.PatientLoginId == id
+                      select Provider.ProviderId).ToList();
+
+            String x3 = x2[0];
+            String x4 = x1[0];
+
+
+            List<UserListView> pUser1 = lIUserRepository.getUserList(ConstantsVar.Therapist, x4);
+
+            List<UserListView> pUser2 = lIUserRepository.getUserList(ConstantsVar.Provider, x3);
+
+            List<UserListView> pUser3 = pUser1.Concat(pUser2).ToList();
+
+
+
+            ViewBag.UserList = pUser3;
+            return View();
+        }
+
 
     }
 

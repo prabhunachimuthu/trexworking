@@ -189,29 +189,29 @@ namespace OneDirect
 
 
 
-            //Hangfire configuration
-            Hangfire.Logging.LogProvider.SetCurrentLogProvider(null);
-            var pgoptions = new PostgreSqlStorageOptions
-            {
-                InvisibilityTimeout = TimeSpan.FromHours(2) // default value
-            };
-            GlobalConfiguration.Configuration.UsePostgreSqlStorage(ConfigVars.NewInstance.hangfireConnectionString, pgoptions);
+            ////Hangfire configuration
+            //Hangfire.Logging.LogProvider.SetCurrentLogProvider(null);
+            //var pgoptions = new PostgreSqlStorageOptions
+            //{
+            //    InvisibilityTimeout = TimeSpan.FromHours(2) // default value
+            //};
+            //GlobalConfiguration.Configuration.UsePostgreSqlStorage(ConfigVars.NewInstance.hangfireConnectionString, pgoptions);
 
-            app.UseHangfireDashboard("/hangfirejobs", new DashboardOptions()
-            {
-                Authorization = new[] { new HangFireAuthorizationFilter() },
-            });
-            var serverOptions = new BackgroundJobServerOptions()
-            {
-                WorkerCount = (env.IsDevelopment() ? 2 : Environment.ProcessorCount),
-                Activator = null,
-                FilterProvider = null,
-                ServerTimeout = TimeSpan.FromDays(4),
-                Queues = new[] { "critical", "default" },
+            //app.UseHangfireDashboard("/hangfirejobs", new DashboardOptions()
+            //{
+            //    Authorization = new[] { new HangFireAuthorizationFilter() },
+            //});
+            //var serverOptions = new BackgroundJobServerOptions()
+            //{
+            //    WorkerCount = (env.IsDevelopment() ? 2 : Environment.ProcessorCount),
+            //    Activator = null,
+            //    FilterProvider = null,
+            //    ServerTimeout = TimeSpan.FromDays(4),
+            //    Queues = new[] { "critical", "default" },
 
-            };
-            //assign hangfire server options(background jobs)
-            app.UseHangfireServer(serverOptions);
+            //};
+            ////assign hangfire server options(background jobs)
+            //app.UseHangfireServer(serverOptions);
 
             //app.Use(async (context, next) =>
             //{
@@ -243,8 +243,8 @@ namespace OneDirect
 
             });
             //to start worker thread
-            JobScheduler.Instance.ResetScheduledJobs();
-            RecurringJob.AddOrUpdate(() => JobScheduler.Instance.NotifyNewComment(), Cron.MinuteInterval(5), null, "critical");
+            //JobScheduler.Instance.ResetScheduledJobs();
+            //RecurringJob.AddOrUpdate(() => JobScheduler.Instance.NotifyNewComment(), Cron.MinuteInterval(5), null, "critical");
 
             //Log
             appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);

@@ -32,5 +32,10 @@ namespace OneDirect.Repository.Interface
         List<Patient> GetAllPatients();
         Patient GetPatientBySessionID(string sessionId);
         string UpdatePatientSessionId(string patientloginid);
+
+        //meghna
+        List<Patient> GetPatients(String id = "");
+
+
     }
 }

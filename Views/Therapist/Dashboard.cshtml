@@ -78,23 +78,29 @@
         border-width: 1px;
         height: 35px;
         width: 35px;
-        color: white;
+        color: black;
         padding-top: 6px;
         padding-left: 5px;
-        font-size: large;
+    }
+
+    #redirect:hover {
+        background-color: aliceblue;
     }
 </style>
-<section class="content-header" style="padding-bottom:20px">
-    <h1>
-        @Context.Session.GetString("UserName")'s Patients
 
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="~/Therapist/Dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Therapist</li>
-    </ol>
-</section>
+   
+        <section class="content-header" style="padding-bottom:20px">
 
+            @*<h1>
+                @Context.Session.GetString("UserName")'s Patients
+            </h1>*@
+            <ol class="breadcrumb">
+                <li><a href="~/Therapist/Dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active">Therapist</li>
+            </ol>
+
+        </section>
+  
 
 <!-- Main content -->
 <!-- Main content -->
@@ -116,7 +122,7 @@
                                             <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 182px;"></th>
                                             <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date of Surgery: activate to sort column descending" style="width: 182px;"></th>
                                             <th tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;"></th>
-                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="2" aria-sort="ascending" aria-label="Rx End Date: activate to sort column descending" style="width: 182px;" align="center">Progress</th>
+                                            <th tabindex="0" aria-controls="example1" rowspan="1" colspan="2" aria-sort="ascending" aria-label="Rx End Date: activate to sort column descending" style="width: 182px;">Progress</th>
 
                                         </tr>
                                         <tr role="row">
@@ -126,7 +132,7 @@
                                             <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Date of Surgery: activate to sort column descending" style="width: 182px;">Pain</th>
                                             <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Max Pain: activate to sort column descending" style="width: 182px;">Usage</th>
                                             <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rx End Date: activate to sort column descending" style="width: 182px;">Flex%</th>
-                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Last Use Date: activate to sort column descending" style="width: 182px;">Ext%</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rx End Date: activate to sort column descending" style="width: 182px;">Ext%</th>
 
                                         </tr>
                                     </thead>
@@ -156,7 +162,7 @@
                                                     </td>
                                                     <td align="center">
 
-                                                        <div class="circle" style="@getcolorLastUse(item.LastUse)">
+                                                        <div class="circle" style="font-size:14px;@getcolorLastUse(item.LastUse)">
                                                             @if (item.LastUse != null)
                                                             {
                                                                 @((DateTime.Now - Convert.ToDateTime(item.LastUse.Value)).Days)
@@ -178,7 +184,7 @@
                                                         @if (item.TotalSession > 0 && item.PatientRx.RxDaysPerweek > 0 && item.PatientRx.RxSessionsPerWeek > 0)
                                                         {
                                                             <div class="circle" style="@getcolorUsage(Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100))">
-                                                                @(Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100) >100 ? 100 : Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100))
+                                                                @(Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100) > 100 ? 100 : Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100))
                                                             </div>
                                                         }
                                                         else
@@ -264,7 +270,7 @@
             "stateDuration": -1,
             'aoColumnDefs': [{
                 'bSortable': false,
-                'aTargets': [-1] /* 1st one, start by the right */
+                'aTargets': [] /* 1st one, start by the right */
             }]
         });
         $(".dataTables_length").parent().addClass("col-xs-6");

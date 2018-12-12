@@ -116,15 +116,60 @@
         @if (Context.Session.GetString("UserType") != ConstantsVar.Patient.ToString())
         {
             <header class="main-header" id="mobileview">
-                <!-- Logo -->
-                <a href="http://trexrehab.com/" class="logo">
-                    <!-- mini logo for sidebar mini 50x50 pixels -->
-                    <span class="logo-mini"><b>O</b>D</span>
-                    <!-- logo for regular state and mobile devices -->
-                    @*<span class="logo-lg"><b>One</b>Direct</span>*@
-                    <img src="~/images/logo_small.png" height="47" width="150" />
-                </a>    <!-- Header Navbar: style can be found in header.less -->
 
+                <!-- Logo -->
+                @if (Context.Session.GetString("UserType") == ConstantsVar.Admin.ToString())
+                {
+                    <a href="@Url.Action("Index", "Patient")" class="logo" name="trex-logo">
+                        <!-- mini logo for sidebar mini 50x50 pixels -->
+                        <span class="logo-mini"><b>O</b>D</span>
+                        <!-- logo for regular state and mobile devices -->
+                        @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                        <img src="~/images/logo_small.png" height="47" width="150" />
+                    </a> <!-- Header Navbar: style can be found in header.less -->
+                }
+                @if (Context.Session.GetString("UserType") == ConstantsVar.Support.ToString())
+                {
+                    <a href="@Url.Action("Dashboard", "Support", new { id = @Context.Session.GetString("UserId") })" class="logo" name="trex-logo">
+                        <!-- mini logo for sidebar mini 50x50 pixels -->
+                        <span class="logo-mini"><b>O</b>D</span>
+                        <!-- logo for regular state and mobile devices -->
+                        @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                        <img src="~/images/logo_small.png" height="47" width="150" />
+                    </a> <!-- Header Navbar: style can be found in header.less -->
+                }
+
+                @if (Context.Session.GetString("UserType") == ConstantsVar.Therapist.ToString())
+                {
+                    <a href="@Url.Action("Dashboard", "Therapist", new { id = @Context.Session.GetString("UserId") })" class="logo" name="trex-logo">
+                        <!-- mini logo for sidebar mini 50x50 pixels -->
+                        <span class="logo-mini"><b>O</b>D</span>
+                        <!-- logo for regular state and mobile devices -->
+                        @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                        <img src="~/images/logo_small.png" height="47" width="150" />
+                    </a> <!-- Header Navbar: style can be found in header.less -->
+                }
+                @if (Context.Session.GetString("UserType") == ConstantsVar.Provider.ToString())
+                {
+                    <a href="@Url.Action("Dashboard", "Provider", new { id = @Context.Session.GetString("UserId") })" class="logo" name="trex-logo">
+                        <!-- mini logo for sidebar mini 50x50 pixels -->
+                        <span class="logo-mini"><b>O</b>D</span>
+                        <!-- logo for regular state and mobile devices -->
+                        @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                        <img src="~/images/logo_small.png" height="47" width="150" />
+                    </a> <!-- Header Navbar: style can be found in header.less -->
+                }
+
+                @if (Context.Session.GetString("UserType") == ConstantsVar.PatientAdministrator.ToString())
+                {
+                    <a href="@Url.Action("Dashboard", "PatientAdministrator", new { id = @Context.Session.GetString("UserId")})" class="logo" name="trex-logo">
+                        <!-- mini logo for sidebar mini 50x50 pixels -->
+                        <span class="logo-mini"><b>O</b>D</span>
+                        <!-- logo for regular state and mobile devices -->
+                        @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                        <img src="~/images/logo_small.png" height="47" width="150" />
+                    </a> <!-- Header Navbar: style can be found in header.less -->
+                }
                 <nav class="navbar navbar-static-top">
                     <!-- Sidebar toggle button-->
                     <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
@@ -136,7 +181,7 @@
                             @if (Context.Session.GetString("UserType") != ConstantsVar.Admin.ToString() && (!string.IsNullOrEmpty(Context.Request.HttpContext.GetCookie("ReviewID")) || !string.IsNullOrEmpty(Context.Session.GetString("ReviewID"))))
                             {
                                 <li class="dropdown user user-menu reviewtimer">
-                                   
+
                                     <a class="dropdown-toggle" data-toggle="dropdown">
                                         <b> <span style="word-wrap:break-word">Review ON </span>: <span class="m"></span> : <span class="s"></span></b>
                                     </a>
@@ -161,19 +206,20 @@
                             </li>
 
                             <!-- Control Sidebar Toggle Button -->
-                            @if (ViewBag.page != null && ViewBag.page == "Review")
+                            @*@if (ViewBag.page != null && ViewBag.page == "Review")
                             {
                                 <li id="reviewsidebar">
-                                    <a href="#" data-toggle="control-sidebar"><i class="fa fa-calendar-plus-o"></i></a>
+                                    <a href="#" data-toggle="control-sidebar"><i class="fa fa-cart-arrow-down"></i></a>
                                 </li>
 
-                            }
+                            }*@
 
                         </ul>
                     </div>
 
                 </nav>
             </header>
+
         }
         else
         {
@@ -208,14 +254,58 @@
         }
         <header class="main-header" id="fullview">
             <!-- Logo -->
-            <a href="http://trexrehab.com/" class="logo">
-                <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><b>O</b>D</span>
-                <!-- logo for regular state and mobile devices -->
-                @*<span class="logo-lg"><b>One</b>Direct</span>*@
-                <img src="~/images/logo_small.png" height="47" width="150" />
-            </a>    <!-- Header Navbar: style can be found in header.less -->
+            @if (Context.Session.GetString("UserType") == ConstantsVar.Admin.ToString())
+            {
+                <a href="@Url.Action("Index", "Patient")" class="logo" name="trex-logo">
+                    <!-- mini logo for sidebar mini 50x50 pixels -->
+                    <span class="logo-mini"><b>O</b>D</span>
+                    <!-- logo for regular state and mobile devices -->
+                    @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                    <img src="~/images/logo_small.png" height="47" width="150" />
+                </a> <!-- Header Navbar: style can be found in header.less -->
+            }
+            @if (Context.Session.GetString("UserType") == ConstantsVar.Support.ToString())
+            {
+                <a href="@Url.Action("Dashboard", "Support", new { id = @Context.Session.GetString("UserId") })" class="logo" name="trex-logo">
+                    <!-- mini logo for sidebar mini 50x50 pixels -->
+                    <span class="logo-mini"><b>O</b>D</span>
+                    <!-- logo for regular state and mobile devices -->
+                    @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                    <img src="~/images/logo_small.png" height="47" width="150" />
+                </a> <!-- Header Navbar: style can be found in header.less -->
+            }
 
+            @if (Context.Session.GetString("UserType") == ConstantsVar.Therapist.ToString())
+            {
+                <a href="@Url.Action("Dashboard", "Therapist", new { id = @Context.Session.GetString("UserId") })" class="logo" name="trex-logo">
+                    <!-- mini logo for sidebar mini 50x50 pixels -->
+                    <span class="logo-mini"><b>O</b>D</span>
+                    <!-- logo for regular state and mobile devices -->
+                    @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                    <img src="~/images/logo_small.png" height="47" width="150" />
+                </a> <!-- Header Navbar: style can be found in header.less -->
+            }
+            @if (Context.Session.GetString("UserType") == ConstantsVar.Provider.ToString())
+            {
+                <a href="@Url.Action("Dashboard", "Provider", new { id = @Context.Session.GetString("UserId") })" class="logo" name="trex-logo">
+                    <!-- mini logo for sidebar mini 50x50 pixels -->
+                    <span class="logo-mini"><b>O</b>D</span>
+                    <!-- logo for regular state and mobile devices -->
+                    @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                    <img src="~/images/logo_small.png" height="47" width="150" />
+                </a> <!-- Header Navbar: style can be found in header.less -->
+            }
+
+            @if (Context.Session.GetString("UserType") == ConstantsVar.PatientAdministrator.ToString())
+            {
+                <a href="@Url.Action("Dashboard", "PatientAdministrator", new { id = @Context.Session.GetString("UserId")})" class="logo" name="trex-logo">
+                    <!-- mini logo for sidebar mini 50x50 pixels -->
+                    <span class="logo-mini"><b>O</b>D</span>
+                    <!-- logo for regular state and mobile devices -->
+                    @*<span class="logo-lg"><b>One</b>Direct</span>*@
+                    <img src="~/images/logo_small.png" height="47" width="150" />
+                </a> <!-- Header Navbar: style can be found in header.less -->
+            }
             <nav class="navbar navbar-static-top">
                 @if (Context.Session.GetString("UserType") != ConstantsVar.Patient.ToString())
                 {
@@ -253,13 +343,13 @@
                             </li>
 
                             <!-- Control Sidebar Toggle Button -->
-                            @if (ViewBag.page != null && ViewBag.page == "Review")
+                            @*@if (ViewBag.page != null && ViewBag.page == "Review")
                             {
                                 <li id="reviewsidebar">
                                     <a href="#" data-toggle="control-sidebar"><i class="fa fa-calendar-plus-o"></i></a>
                                 </li>
 
-                            }
+                            }*@
 
                         </ul>
                     </div>
@@ -326,6 +416,7 @@
 
                             <li><a href="@Url.Action("Index", "SessionAuditTrail")"><i class="fa fa-circle-o text-aqua"></i> <span>Audit Trail</span></a></li>
                             <li><a href="@Url.Action("PatientReview", "SessionAuditTrail")"><i class="fa fa-circle-o text-aqua"></i> <span>Patient Reviews</span></a></li>
+                            <li><a href="@Url.Action("Index", "LibraryView")"><i class="fa fa-circle-o text-aqua"></i> <span>Library</span></a></li>
 
 
 
@@ -674,6 +765,23 @@
         </div>
     </div>
 
+    @*<div id="divpopup1" class="col-md-6" style="border:1px solid black;display:none;position:fixed;top:25%;left:25%;z-index:300003;background-color:#e8e8e8">
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Would you like to leave a comment?</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+
+                    <input type="button" class="btn btn-success" value="Yes" onclick="btnUpdateClick();" />
+
+                    <input type="button" class="btn btn-success" value="No" onclick="btnCancelClick();" />
+                </div>
+            </div>
+        </div>*@
+
 
     <a href="@Url.Action("Signout", "Login", new {id="Expired" })" id="redirecturl" style="display:none"></a>
     <!-- jQuery 2.2.3 -->
@@ -1021,6 +1129,22 @@
             });
 
             $("ol.breadcrumb li a").on("click", function (event) {
+                if ($(".activityid").val() != undefined && $(".activityid").val() != "") {
+                    $("#returnurl").val($(this).attr("href"));
+                    if (confirm('Exit Review mode?')) {
+                        if (confirm('Would you like to leave a comment?')) {
+                            document.getElementById("divpopup").style.display = "block";
+                            document.getElementById("mask").style.display = "block";
+                        }
+                        else {
+                            btnUpdateClick();
+                        }
+                    }
+                    event.preventDefault();
+
+                }
+            });
+            $("[name='trex-logo']").on("click", function (event) {
                 if ($(".activityid").val() != undefined && $(".activityid").val() != "") {
                     $("#returnurl").val($(this).attr("href"));
                     if (confirm('Exit Review mode?')) {

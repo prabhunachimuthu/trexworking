@@ -10,5 +10,6 @@ namespace OneDirect.Models
         public string Side { get; set; }
         public string Exercise { get; set; }
         public string Url { get; set; }
+        public string Name { get; set; }
     }
 }

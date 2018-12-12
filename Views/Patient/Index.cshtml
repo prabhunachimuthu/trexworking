@@ -75,10 +75,12 @@
         border-width: 1px;
         height: 35px;
         width: 35px;
-        color: white;
+        color: Black;
         padding-top: 6px;
         padding-left: 5px;
-        font-size: large;
+    }
+    #redirect:hover {
+        background-color: aliceblue;
     }
 </style>
 
@@ -158,99 +160,99 @@
                                         {
                                             @foreach (var item in Model)
                                             {
-                                        <tr role="row" id="redirect" onclick="DashboardRedirect('@item.PatientRx.PatientId','@item.TotalSession');">
-                                            <td>
-                                                @*@if (item.TotalSession > 0)
-            {
+                                                <tr role="row" id="redirect" onclick="DashboardRedirect('@item.PatientRx.PatientId','@item.TotalSession');">
+                                                    <td>
+                                                        @*@if (item.TotalSession > 0)
+                                                            {
 
-                <a href="@Url.Action("Index", "Review", new { id = item.PatientRx.PatientId, Username = item.PatientRx.Patient.PatientName, EquipmentType = item.PatientRx.EquipmentType, actuator = item.PatientRx.DeviceConfiguration,tab="Dashboard" })">@item.PatientRx.Patient.PatientName</a>
-            }
-            else
-            {
-                <span>@item.PatientRx.Patient.PatientName</span>
-            }*@
-                                                <span>@item.PatientRx.Patient.PatientName</span>
-                                            </td>
+                                                                <a href="@Url.Action("Index", "Review", new { id = item.PatientRx.PatientId, Username = item.PatientRx.Patient.PatientName, EquipmentType = item.PatientRx.EquipmentType, actuator = item.PatientRx.DeviceConfiguration,tab="Dashboard" })">@item.PatientRx.Patient.PatientName</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>@item.PatientRx.Patient.PatientName</span>
+                                                            }*@
+                                                        <span>@item.PatientRx.Patient.PatientName</span>
+                                                    </td>
 
-                                            <td align="center">
-                                                <div class="circle" style="@getcolorRx(item.percentage)">
-                                                    @item.percentage
-                                                </div>
-                                            </td>
-                                            <td align="center">
+                                                    <td align="center">
+                                                        <div class="circle" style="@getcolorRx(item.percentage)">
+                                                            @item.percentage
+                                                        </div>
+                                                    </td>
+                                                    <td align="center">
 
-                                                <div class="circle" style="@getcolorLastUse(item.LastUse)">
-                                                    @if (item.LastUse != null)
+                                                        <div class="circle" style="font-size:14px;@getcolorLastUse(item.LastUse)">
+                                                            @if (item.LastUse != null)
+                                                            {
+                                                                @((DateTime.Now - Convert.ToDateTime(item.LastUse.Value)).Days)
+                                                            }
+                                                            @*else
+                                                                {
+                                                                    <span>-</span>
+
+                                                                }*@
+                                                        </div>
+                                                    </td>
+                                                    <td align="center">
+                                                        <div class="circle" style="@getcolorPain(item.MaxPain)">
+                                                            @item.MaxPain
+                                                        </div>
+                                                    </td>
+
+                                                    <td align="center">
+                                                        @if (item.TotalSession > 0 && item.PatientRx.RxDaysPerweek > 0 && item.PatientRx.RxSessionsPerWeek > 0)
+                                                        {
+                                                            <div class="circle" style="@getcolorUsage(Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100))">
+                                                                @(Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100))
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="circle" style="@getcolorUsage(0)">
+                                                                0
+                                                            </div>
+                                                        }
+                                                    </td>
+
+                                                    @if (item.Progress != null)
                                                     {
-                                                        @((DateTime.Now - Convert.ToDateTime(item.LastUse.Value)).Days)
+                                                        if (item.PatientRx.EquipmentType.ToLower() == "shoulder")
+                                                        {
+                                                            <td align="center">
+                                                                <div class="circle" style="@getcolor(item.Progress.Forward)">@item.Progress.Forward</div>
+                                                            </td>
+                                                            <td align="center">
+                                                                <div class="circle" style="@getcolor(item.Progress.Rotation)"> @item.Progress.Rotation</div>
+                                                            </td>
+
+                                                        }
+                                                        else if (item.PatientRx.EquipmentType.ToLower() == "ankle")
+                                                        {
+                                                            <td align="center">
+                                                                <div class="circle" style="@getcolor(item.Progress.Flexexion)"> @item.Progress.Flexexion</div>
+                                                            </td>
+                                                            <td align="center">
+                                                                <div class="circle" style="@getcolor(item.Progress.Extension)"> @item.Progress.Extension</div>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+
+                                                            <td align="center">
+                                                                <div class="circle" style="@getcolor(item.Progress.Flexexion)"> @item.Progress.Flexexion</div>
+                                                            </td>
+                                                            <td align="center">
+                                                                <div class="circle" style="@getcolor(item.Progress.Extension)"> @item.Progress.Extension</div>
+                                                            </td>
+
+                                                        }
                                                     }
-                                                    @*else
-                {
-                    <span>-</span>
-
-                }*@
-                                                </div>
-                                            </td>
-                                            <td align="center">
-                                                <div class="circle" style="@getcolorPain(item.MaxPain)">
-                                                    @item.MaxPain
-                                                </div>
-                                            </td>
-
-                                            <td align="center">
-                                                @if (item.TotalSession > 0 && item.PatientRx.RxDaysPerweek > 0 && item.PatientRx.RxSessionsPerWeek > 0)
-                                                {
-                                                    <div class="circle" style="@getcolorUsage(Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100))">
-                                                        @(Math.Round((decimal)(item.TotalSession / ((((Convert.ToDateTime(item.PatientRx.RxEndDate) - Convert.ToDateTime(item.PatientRx.RxStartDate)).TotalDays) / 7) * item.PatientRx.RxDaysPerweek * item.PatientRx.RxSessionsPerWeek)) * 100))
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <div class="circle" style="@getcolorUsage(0)">
-                                                        0
-                                                    </div>
-                                                }
-                                            </td>
-
-                                            @if (item.Progress != null)
-                                            {
-                                                if (item.PatientRx.EquipmentType.ToLower() == "shoulder")
-                                                {
                                                     <td align="center">
-                                                        <div class="circle" style="@getcolor(item.Progress.Forward)">@item.Progress.Forward</div>
+                                                        <div style="margin-top:5px;">
+                                                            @Html.ActionLink("Delete", "Delete", "Provider", new { patid = item.PatientRx.PatientId }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete patient " + item.PatientRx.Patient.PatientName + "? ');" })
+                                                        </div>
                                                     </td>
-                                                    <td align="center">
-                                                        <div class="circle" style="@getcolor(item.Progress.Rotation)"> @item.Progress.Rotation</div>
-                                                    </td>
-
-                                                }
-                                                else if (item.PatientRx.EquipmentType.ToLower() == "ankle")
-                                                {
-                                                    <td align="center">
-                                                        <div class="circle" style="@getcolor(item.Progress.Flexexion)"> @item.Progress.Flexexion</div>
-                                                    </td>
-                                                    <td align="center">
-                                                        <div class="circle" style="@getcolor(item.Progress.Extension)"> @item.Progress.Extension</div>
-                                                    </td>
-                                                }
-                                                else
-                                                {
-
-                                                    <td align="center">
-                                                        <div class="circle" style="@getcolor(item.Progress.Flexexion)"> @item.Progress.Flexexion</div>
-                                                    </td>
-                                                    <td align="center">
-                                                        <div class="circle" style="@getcolor(item.Progress.Extension)"> @item.Progress.Extension</div>
-                                                    </td>
-
-                                                }
-                                            }
-                                            <td align="center">
-                                                <div style="margin-top:5px;">
-                                                    @Html.ActionLink("Delete", "Delete", "Provider", new { patid = item.PatientRx.PatientId }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete patient " + item.PatientRx.Patient.PatientName + "? ');" })
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </tr>
                                             }
                                         }
                                     </tbody>
@@ -276,7 +278,7 @@
             "stateDuration": -1,
             'aoColumnDefs': [{
                 'bSortable': false,
-                'aTargets': [-1, -2] /* 1st one, start by the right */
+                'aTargets': [-1] /* 1st one, start by the right */
             }]
         });
 

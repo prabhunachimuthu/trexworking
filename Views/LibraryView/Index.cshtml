@@ -41,6 +41,7 @@
                                 <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
                                     <thead>
                                         <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="time: activate to sort column descending" style="width: 182px;">Name</th>
                                             <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Time: activate to sort column descending" style="width: 182px;">Limb</th>
                                             @*<th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Pain Level: activate to sort column descending" style="width: 182px;">Side</th>*@
                                             <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Angle: activate to sort column descending" style="width: 182px;">Exercise</th>
@@ -53,16 +54,17 @@
                                         {
                                             @foreach (var item in Model)
                                             {
-                                                <tr>
-                                                    <td>@item.Limb</td>
-                                                    @*<td>@item.Side</td>*@
-                                                    <td>@item.Exercise</td>
-                                                    <td style="white-space: nowrap;"><a href="@item.Url" target="_blank">@item.Url</a></td>
-                                                    <td style="white-space: nowrap;">
-                                                        @Html.ActionLink("Edit", "AddEdit", "LibraryView", new { id = item.Id }, new { @class = "label label-primary" })
-                                                        @Html.ActionLink("Delete", "Delete", "LibraryView", new { id = item.Id }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete? ');" })
-                                                    </td>
-                                                </tr>
+                                        <tr>
+                                            <td>@item.Name</td>
+                                            <td>@item.Limb</td>
+                                            @*<td>@item.Side</td>*@
+                                            <td>@item.Exercise</td>
+                                            <td style="white-space: nowrap;"><a href="@item.Url" target="_blank">@item.Url</a></td>
+                                            <td style="white-space: nowrap;">
+                                                @Html.ActionLink("Edit", "AddEdit", "LibraryView", new { id = item.Id }, new { @class = "label label-primary" })
+                                                @Html.ActionLink("Delete", "Delete", "LibraryView", new { id = item.Id }, new { @class = "label label-primary", onclick = "return confirm('Are you sure you wish to delete? ');" })
+                                            </td>
+                                        </tr>
                                             }
                                         }
 

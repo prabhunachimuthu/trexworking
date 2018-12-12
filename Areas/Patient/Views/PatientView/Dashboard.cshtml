@@ -38,6 +38,7 @@
             height: 45px;
             width: 45px;
             padding-bottom: 0;
+            font-size:large;
         }
     </style>
 }
@@ -52,12 +53,16 @@
 </style>
 
 <div class="checkout pages section" style="padding-top:15px">
+    <div class="side-nav-panel-right pull-right" style="background-color:none;padding-top:5px">
+        <a href="#" data-activates="" class="" style="background-color:none;" onclick="changechartView();"><img src="~/images/calendar_icon.png" id="imageicon" width="30" height="30" title="calendar" /></a>
+    </div>
+
     <div class="container">
         <!-- checkout -->
 
-        @*<div class="pages-head" style="padding-bottom:5px;">
+        <div class="pages-head" style="padding-bottom:5px;">
             <h3 style="color:white">@ViewBag.HeaderName</h3>
-        </div>*@
+        </div>
         <div class="checkout-content">
             <div class="row">
                 <div class="col s12">
@@ -72,7 +77,7 @@
                                         <p class="text-muted" style="font-size:large;color:steelblue;">@(Model.PatientRx.RxStartDate.HasValue ? Convert.ToDateTime(Model.PatientRx.RxStartDate).ToString("MM/dd/yy") : "")</p>
                                     </div>
                                     <div class="col s4" align="center">
-                                        <div class="circle" style="font-weight:bold;color:white;padding-top:8px;padding-left:5px;font-size:medium">
+                                        <div class="circle" style="font-weight:bold;color:white;padding-top:8px;padding-left:5px;font-size:large">
                                             <label for="guest-checkout"><span style="font-weight:bold;color:white">@Model.percentage%</span></label>
                                         </div>
                                     </div>

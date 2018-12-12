@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Mvc
 @using Microsoft.AspNetCore.Http
 @using OneDirect.ViewModels
+@using OneDirect.Helper
 @{
 
 }
@@ -19,7 +20,7 @@
                         </div>
                         <div class="col-md-4 pull-right" align="right">
                             @Html.ActionLink("Add", "AddEdit", "SessionView", new { id = ViewBag.patientId, Username = ViewBag.PatientName, Etype = ViewBag.EquipmentType, actuator = ViewBag.actuator, returnView = "Review" }, new { @class = "btn btn-warning btn-sm", @style = "" })
-                            @if (@Context.Session.GetString("UserType") != "2")
+                            @if (@Context.Session.GetString("UserType") == ConstantsVar.Admin.ToString())
                             {
                                 <input type="button" class="btn btn-warning btn-sm" onclick="divpopupimportclick()" value="Import Sessions" />
                             }

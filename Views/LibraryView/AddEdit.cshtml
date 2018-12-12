@@ -32,30 +32,30 @@
                     <div>
                         @Html.DropDownListFor(model => model.Limb, ViewBag.Limb as IEnumerable<SelectListItem>
                             , "Select", new { @class = "form-control", onchange = "dropdownChanged();" })
-                            @Html.ValidationMessageFor(model => model.Limb)
+                        @Html.ValidationMessageFor(model => model.Limb)
                     </div>
                 </div>
             </div>
 
             @*<div class="col-md-6">
-                <div class="form-group">
-                    <label for="inputEmail3" class="control-label">Side</label>
-                    <div>
-                        @Html.DropDownListFor(model => model.Side,
-                        new List<SelectListItem>
-                            {  new SelectListItem{ Text="Left", Value = "Left" },
-                            new SelectListItem{ Text="Right", Value = "Right" } },"Select", new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.Side)
-                    </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="control-label">Side</label>
+                <div>
+                    @Html.DropDownListFor(model => model.Side,
+                    new List<SelectListItem>
+                        {  new SelectListItem{ Text="Left", Value = "Left" },
+                        new SelectListItem{ Text="Right", Value = "Right" } },"Select", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Side)
                 </div>
-            </div>*@
+            </div>
+        </div>*@
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="inputPassword3" class="control-label">Exercise</label>
                     <div>
                         @Html.DropDownListFor(model => model.Exercise, ViewBag.Exercise as IEnumerable<SelectListItem>
                             , "Select", new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.Exercise)
+                        @Html.ValidationMessageFor(model => model.Exercise)
                     </div>
                 </div>
             </div>
@@ -68,6 +68,16 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="inputPassword3" class="control-label">Name</label>
+                    <div>
+                        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Name)
+                    </div>
+                </div>
+            </div>
+
         </div>
         <!-- /.box-body -->
         <div class="box-footer">

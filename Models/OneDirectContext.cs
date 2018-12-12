@@ -27,9 +27,8 @@ namespace OneDirect.Models
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserActivityLog> UserActivityLog { get; set; }
         public virtual DbSet<Vtransact> Vtransact { get; set; }
-
         public OneDirectContext(DbContextOptions<OneDirectContext> options)
-    : base(options)
+   : base(options)
         { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -37,7 +36,7 @@ namespace OneDirect.Models
             if (!optionsBuilder.IsConfigured)
             {
                 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                //optionsBuilder.UseNpgsql(@"Host=ec2-54-83-8-246.compute-1.amazonaws.com;Port=5432;Database=ddh2qscke6khal;User ID=jmbezzzwpaicso;Password=3c70e292d3c61592c6f5512bfe9bfe3cc66fdde9d05d4b618492b4b5df5ac896;sslmode=Require;Trust Server Certificate=true;");
+                //                optionsBuilder.UseNpgsql(@"Host=ec2-54-83-8-246.compute-1.amazonaws.com;Port=5432;Database=ddh2qscke6khal;User ID=jmbezzzwpaicso;Password=3c70e292d3c61592c6f5512bfe9bfe3cc66fdde9d05d4b618492b4b5df5ac896;sslmode=Require;Trust Server Certificate=true;");
             }
         }
 
@@ -293,6 +292,10 @@ namespace OneDirect.Models
 
                 entity.Property(e => e.Limb).IsRequired();
 
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasDefaultValueSql("''::text");
+
                 entity.Property(e => e.Url)
                     .IsRequired()
                     .HasColumnName("URL");
@@ -443,6 +446,10 @@ namespace OneDirect.Models
                 entity.Property(e => e.Exercise).IsRequired();
 
                 entity.Property(e => e.Limb).IsRequired();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasDefaultValueSql("''::text");
 
                 entity.Property(e => e.Patient).IsRequired();
 

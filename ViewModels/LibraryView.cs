@@ -10,6 +10,8 @@ namespace OneDirect.ViewModels
         [Required]
         public string Limb { get; set; }
         [Required]
+        public string Name { get; set; }
+        [Required]
         public string Side { get; set; }
         [Required]
         public string Exercise { get; set; }

@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Http
+@using System;
+@using OneDirect.ViewModels;
+@{
+
+}
+<section class="content-header" style="padding-bottom:20px">
+    <h1 style="color:white !important">
+        @ViewBag.PatientName
+
+    </h1>
+
+</section>
+<section class="content" style="background-color:ghostwhite">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-12" style="overflow-x:auto">
+
+                                <table id="example1" class="table table-bordered table-striped dataTable" style="font-size:small" role="grid" aria-describedby="example1_info">
+
+                                    <thead>
+                                        <tr role="row">
+                                            <th>Users</th>
+                                            @*<td>ID</td>*@
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var item in ViewBag.UserList)
+                                        {
+
+                                            <tr role="row">
+
+                                                <td><a href="@Url.Action("SendMessage","PatientView",new { area="Patient",id=item.UserId})">@item.Name</a></td>
+                                                @*<td>@item.UserId</td>*@
+
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -32,6 +32,40 @@
     <link rel="shortcut icon" href="~/PatientApp/img/favicon.png">
 
     <link rel="manifest" href="~/js/manifest.json">
+    <link rel="stylesheet" href="~/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="~/plugins/datepicker/bootstrap-datepicker.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="~/plugins/datatables/dataTables.bootstrap.css">
+
+    <!-- fullCalendar -->
+    <link rel="stylesheet" href="~/plugins/fullcalendar/fullcalendar.css">
+    <link rel="stylesheet" href="~/plugins/fullcalendar/fullcalendar.print.css" media="print">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/AdminLTE.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="~/dist/css/skins/_all-skins.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="~/plugins/iCheck/all.css">
+    <!-- Morris chart -->
+    <link rel="stylesheet" href="~/plugins/morris/morris.css">
+
+    <!-- jvectormap -->
+
+    <link rel="stylesheet" href="~/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
+    <!-- bootstrap wysihtml5 - text editor -->
+    <link rel="stylesheet" href="~/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+    <link href="~/alertifyjs/css/alertify.css" rel="stylesheet" />
+    <!-- Google Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link href="~/css/media.css" rel="stylesheet" />
+
     <style type="text/css">
 
 
@@ -114,9 +148,9 @@
         </div>
         @if (!string.IsNullOrEmpty(ViewBag.HeaderName) && ViewBag.HeaderName == "Progress")
         {
-            <div class="side-nav-panel-right" style="background-color:none;padding-top:5px">
+            @*<div class="side-nav-panel-right" style="background-color:none;padding-top:5px">
                 <a href="#" data-activates="" class="" style="background-color:none;" onclick="changechartView();"><img src="~/images/calendar_icon.png" id="imageicon" width="30" height="30" title="calendar" /></a>
-            </div>
+            </div>*@
         }
 
     </div>
@@ -140,19 +174,26 @@
     <div class="navbar-bottom" style="background:white;padding-top:10px">
         <div class="row">
             <div class="col s3">
+                <a href="@Url.Action("Dashboard","PatientView",new { area="Patient",id=Context.Session.GetString("UserId")})" title="Progress"><i class="fa fa-bars" style="color:@(ViewBag.HeaderName=="Progress"?"green":"#00488B")"></i></a>
+                <div style="font-weight:bold;color:@(ViewBag.HeaderName=="Progress"?"green":"#00488B")">Progress</div>
+               
+            </div>
+            <div class="col s2">
                 <a href="@Url.Action("VideoCallPatient","PatientView",new {area="Patient"})" title="Video Call"><i class="fa fa-video-camera" style="color:@(ViewBag.HeaderName=="VideoCall"?"green":"#00488B")"></i></a>
                 <div style="font-weight:bold;color:@(ViewBag.HeaderName=="VideoCall"?"green":"#00488B") ">
                     Video Call
                 </div>
             </div>
-            <div class="col s3">
-                <a href="@Url.Action("Dashboard","PatientView",new { area="Patient",id=Context.Session.GetString("UserId")})" title="Progress"><i class="fa fa-bars" style="color:@(ViewBag.HeaderName=="Progress"?"green":"#00488B")"></i></a>
-                <div style="font-weight:bold;color:@(ViewBag.HeaderName=="Progress"?"green":"#00488B")">Progress</div>
-            </div>
-            <div class="col s3">
+            <div class="col s2">
                 <a href="@Url.Action("PatientLibrary","PatientView",new { area="Patient"})"><i class="fa fa-folder" style="color:@(ViewBag.HeaderName=="Library"?"green":"#00488B")"></i></a>
                 <div style="font-weight:bold;color:@(ViewBag.HeaderName=="Library"?"green":"#00488B")">
                     Library
+                </div>
+            </div>
+            <div class="col s2">
+                <a href="@Url.Action("UsersList","PatientView",new { area="Patient" ,id=Context.Session.GetString("UserId")})"><i class="fa fa-envelope" style="color:#00488B"></i></a>
+                <div style="font-weight:bold;color:#00488B">
+                    Message
                 </div>
             </div>
             <div class="col s3">
@@ -163,6 +204,15 @@
             </div>
         </div>
     </div>
+    @*<div id="divMask" class="screenMask">
+        <p style="position: fixed;left:50%;top:50%;">
+            <img src="~/images/loader.gif" alt="Loading..." style="z-index:400000;" />
+        </p>
+    </div>
+
+    <div class="screenMask" id="mask" style="display:none"></div>
+    <div id="divpopup" class="col-md-6" style="border:1px solid black;display:none;position:fixed;top:25%;left:25%;z-index:300003;background-color:#e8e8e8">
+    </div>*@
     <!-- end navbar bottom -->
     <!-- menu -->
     <!-- end menu -->
@@ -235,7 +285,8 @@
         "use strict";
         //        $("#fakeLoader").hide();
         $(document).ready(function () {
-            $("#renderbody").css("min-height", $(window).height() - $(".navbar-bottom").height() - $(".navbar-top").height());
+            //$("#renderbody").css("min-height", $(window).height() - $(".navbar-bottom").height() - $(".navbar-top").height());
+            $("#renderbody").css("min-height", 0);
         });
         $("#fakeLoader").css("display", "none");
         $("#fakeLoader").fakeLoader({
@@ -277,6 +328,28 @@
                 drawCalendar();
             }
 
+        }
+
+        function showMask(isDelay) {
+
+            if (isDelay) {
+                console.log("if mask");
+                setTimeout(function () {
+                    document.getElementById("divMask").style.display = "block";
+
+                }, 10);
+            }
+            else {
+                console.log("else mask");
+                setTimeout(function () {
+                    document.getElementById("divMask").style.display = "block";
+
+                }, 10);
+            }
+        }
+
+        function hideMask() {
+            document.getElementById("divMask").style.display = "none";
         }
 
     </script>

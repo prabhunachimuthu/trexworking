@@ -1,0 +1,219 @@
+﻿@using Microsoft.AspNetCore.Mvc
+
+
+@{
+
+}
+
+<style type="text/css">
+    li::-webkit-scrollbar {
+        width: 0.5em;
+    }
+
+    li::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    li::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+    }
+
+    #tabpanel::-webkit-scrollbar {
+        width: 0.5em;
+    }
+
+    #tabpanel::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    #tabpanel::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+    }
+
+    #chatbox::-webkit-scrollbar {
+        width: 0.5em;
+    }
+
+    #chatbox::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    #chatbox::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+    }
+
+    span {
+        display: inline-block;
+    }
+</style>
+
+<!-- Main content -->
+<!-- Main content -->
+<section style="padding-left:0px;padding-top:0px;">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box direct-chat direct-chat-primary">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <!-- Conversations are loaded here -->
+                    <div class="direct-chat-messages" id="chatbox" style="height:63vmin;overflow-y:auto;white-space:normal">
+
+                        @if (ViewBag.Messages != null)
+                        {
+                            @foreach (var item in ViewBag.Messages)
+                            {
+                                @if (item.SentReceivedFlag == 0)
+                                {
+                                    <div class="direct-chat-msg">
+                                        <div class="direct-chat-info clearfix">
+
+                                            <span class="direct-chat-timestamp pull-right" date-value="formatdate">@(item.Datetime.ToString("MM/dd/yyyy hh:mm:ss tt"))</span>
+                                        </div>
+                                        <div class="direct-chat-text">
+                                            @item.BodyText
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="direct-chat-msg right"  style="float:none !important">
+                                        <div class="direct-chat-info clearfix">
+
+                                            <span class="direct-chat-timestamp pull-left" date-value="formatdate">@(item.Datetime.ToString("MM/dd/yyyy hh:mm:ss tt"))</span>
+                                        </div>
+                                        <div class="direct-chat-text">
+                                            @item.BodyText
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer">
+                    <div class="input-group">
+
+                        <input type="text" name="message" placeholder="Type Message ..." class="form-control" id="txtMessage" style="font-size:16px !important">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary btn-flat" onclick="sendClick('@ViewBag.PatientId')">Send</button>
+                        </span>
+                    </div>
+                </div>
+                <!-- /.box-footer-->
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+
+<script src="~/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+   
+    $(document).ready(function () {
+
+        //scroll down to bottom by default
+        var id = '@ViewBag.PatientId';
+
+
+        $('#chatbox').scrollTop($('#chatbox').prop("scrollHeight"));
+        //$('#example1').DataTable({
+
+        //});
+        $(".formatdate").each(function () {
+
+            $(this).text(toValidDate($(this).text()));
+        })
+
+        $('#txtMessage').keypress(function (e) {
+            if (e.keyCode == 13) {
+                sendClick(id);
+
+            }
+        });
+
+        $('input[name="txtAppSearch"]').keyup(function () {
+
+            var searchText = $(this).val();
+            searchText = searchText.toLowerCase();
+            var i = 0;
+            $('ul[name=application] > li').each(function () {
+
+                var currentLiText = $(this).text(),
+                    showCurrentLi = currentLiText.toLowerCase().indexOf(searchText) !== -1;
+
+                if (showCurrentLi) {
+                    i++;
+
+                }
+                $(this).toggle(showCurrentLi);
+
+            });
+            if (i == 0) {
+                $('ul[name=application]').append('<li id="norecords"><a><span style="color:red">No Records Found !</span></a></li>')
+
+            }
+            else {
+                if ($('ul[name=application] > li[id=norecords]').length > 0) {
+                    $('ul[name=application] > li[id=norecords]').remove();
+
+                }
+
+            }
+
+        });
+    });
+    function toValidDate(datestring) {
+        var dateFormat = 'DD-MMM-YYYY, h:mm:ss a';
+        var testDateUtc = moment.utc(datestring);
+        var localDate = testDateUtc.local();
+        console.log(localDate.format(dateFormat));
+        return localDate.format(dateFormat);
+    }
+    function sendClick(id) {
+        if (id != '' && $("#txtMessage").val() != "") {
+            showMask();
+
+
+            $.ajax({
+                url: '@Url.Action("SendMessage", "PatientView")' + "?id=" + id + "&message=" + encodeURIComponent($("#txtMessage").val()),
+
+                type: 'post',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != null) {
+
+                        console.log(data);
+                        if (data.result == "success" && data.message != null) {
+                            var lhtml = "";
+                            lhtml = lhtml + "<div class='direct-chat-msg'>";
+                            lhtml = lhtml + "<div class='direct-chat-info clearfix'>";
+                            lhtml = lhtml + "<span class='direct-chat-timestamp pull-right' date-value='formatdate'>" + moment(data.message.datetime).format("MM/DD/YYYY hh:mm:ss A") + "</span>";
+                            lhtml = lhtml + "</div>";
+                            lhtml = lhtml + "<div class='direct-chat-text'>" + data.message.bodyText + "</div>";
+                            lhtml = lhtml + "</div>";
+                            $("#chatbox").append(lhtml);
+                            $("#status_" + id).hide();
+                            $("#txtMessage").val("");
+                            $('#chatbox').scrollTop($('#chatbox').prop("scrollHeight"));
+                            hideMask();
+                        }
+                    }
+                },
+                error: function (data) {
+
+                }
+            });
+        }
+    }
+
+    
+
+</script>

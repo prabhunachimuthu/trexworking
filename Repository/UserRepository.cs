@@ -740,6 +740,27 @@ namespace OneDirect.Repository
         }
 
 
+        //meghna
+        public List<UserListView> getUserList(int lUserType, String UserID)
+        {
+
+            return (from p in context.User
+                    let cCount = (from pat in context.Patient where (p.Type == 2 ? pat.Therapistid == p.UserId : pat.ProviderId == p.UserId) select pat).Count()
+                    where p.Type == lUserType && p.UserId == UserID
+                    select new UserListView
+                    {
+                        UserId = p.UserId,
+                        Type = p.Type,
+                        Name = p.Name,
+                        Email = p.Email,
+                        Phone = p.Phone,
+                        Npi = p.Npi,
+                        Count = cCount,
+                        Address = p.Address,
+                        Password = p.Password
+                    }).ToList();
+        }
+
 
         public User LoginUser(string username, string password)
         {

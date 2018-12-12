@@ -44,5 +44,8 @@ namespace OneDirect.Repository.Interface
         List<DashboardView> getDashboard(string id);
         List<DashboardView> getDashboardForPatientAdmin(string id);
         List<DashboardView> getDashboardForTherapist(string id);
+
+        //meghna
+        List<UserListView> getUserList(int lUserType, String UserID);
     }
 }

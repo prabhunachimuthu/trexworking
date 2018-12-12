@@ -693,5 +693,24 @@ namespace OneDirect.Repository
             }
             return result;
         }
+
+        //meghna
+        public List<Patient> GetPatients(String id = "")
+        {
+            List<Patient> result = null;
+            try
+            {
+                result = (from p in context.Patient.Where(p => p.PatientLoginId == id)
+                          select p).ToList();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return result;
+        }
+
+       
     }
 }

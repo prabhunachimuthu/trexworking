@@ -475,11 +475,10 @@ namespace OneDirect.Controllers
 
 
                         }
-
-
-
+                        
                     }
                 }
+              
 
                 return View(lreport);
             }
